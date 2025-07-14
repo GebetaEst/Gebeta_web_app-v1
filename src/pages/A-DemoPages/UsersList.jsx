@@ -41,7 +41,7 @@ const UsersList = () => {
           <Card key={user._id}>
             <div className="flex  items-center justify-between space-x-2 min-w-[400px] ">
               <div className="flex flex-col self-start items-center w-[150px]">
-                <img
+                <img 
                   className={`${
                     user.profilePicture ? "" : "bg-gray"
                   } w-[70px] h-[70px] flex justify-center items-center shadow-lg rounded-full`}
