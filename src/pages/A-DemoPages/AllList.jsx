@@ -88,98 +88,100 @@ const AllList = () => {
 
   return (
     <>
-      <div className="p-2 flex gap-2 items-center font-noto">
+      <div className="p-8 flex gap-2 items-center justify-center  h-[85vh]  font-noto">
         <Card>
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">{list}</h2>
-            <button
-              onClick={() => setShowAdd(true)}
-              className="flex items-center text-xs border rounded-xl px-1 border-blue-200 hover:scale-105 transition-all duration-300 active:scale-95 active:rotate-3 bg-blue-50"
-            >
-              <span className="rounded-full mr-1 w-[20px] h-[20px] flex items-center justify-center bg-blue-100">
-                <Plus strokeWidth={1} />
-              </span>
-              add {list}
-            </button>
-          </div>
-          <div className="flex justify-between mt-4 mb-6">
-            <div className="flex flex-wrap gap-3">
+          <div className="w-[450px] ">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold">{list}</h2>
               <button
-                className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                  list === "Managers" ? "translate-y-2" : ""
-                } transition-all duration-300`}
-                onClick={() => setList("Managers")}
+                onClick={() => setShowAdd(true)}
+                className="flex items-center text-xs border rounded-xl px-1 border-blue-200 hover:scale-105 transition-all duration-300 active:scale-95 active:rotate-3 bg-blue-50"
               >
-                Managers
-              </button>
-              <button
-                className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                  list === "Users" ? "translate-y-2" : ""
-                } transition-all duration-300`}
-                onClick={() => setList("Users")}
-              >
-                Users
-              </button>
-              <button
-                className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                  list === "Employee" ? "translate-y-2" : ""
-                } transition-all duration-300`}
-                onClick={() => setList("Employee")}
-              >
-                Employees
-              </button>
-              <button
-                className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                  list === "Demonstration" ? "translate-y-2" : ""
-                } transition-all duration-300`}
-                onClick={() => setList("Demonstration")}
-              >
-                Demo
+                <span className="rounded-full mr-1 w-[20px] h-[20px] flex items-center justify-center bg-blue-100">
+                  <Plus strokeWidth={1} />
+                </span>
+                add {list}
               </button>
             </div>
-          </div>
-
-          <div className="flex flex-col space-y-2 max-h-[430px] overflow-y-auto scrollbar-hide pt-2">
-            {list === "Managers" ? (
-              <ManagerList />
-            ) : list === "Users" ? (
-              <UserList />
-            ) : list === "Employee" ? (
-              <EmployeeList />
-            ) : list === "Demonstration" ? (
-              demoManagerList.map((manager, index) => (
-                <div 
-                  className="border border-gray shadow rounded-lg p-3 flex justify-between items-center space-y-4 hover:shadow-inner hover:-translate-y-1 transition-all duration-300"
-                  key={index}
-                  onClick={() => setShow(index)}
+            <div className="flex justify-between mt-4 mb-6">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
+                    list === "Managers" ? "translate-y-2" : ""
+                  } transition-all duration-300`}
+                  onClick={() => setList("Managers")}
                 >
-                  <div className="text-center">
-                    <div className=" flex self-center justify-self-center ">
-                      <div className="p-2 rounded-full bg-primary flex items-center justify-center justify-self-center">
-                        <Contact strokeWidth={1.5} size={30} color="white" />
+                  Managers
+                </button>
+                <button
+                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
+                    list === "Users" ? "translate-y-2" : ""
+                  } transition-all duration-300`}
+                  onClick={() => setList("Users")}
+                >
+                  Users
+                </button>
+                <button
+                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
+                    list === "Employee" ? "translate-y-2" : ""
+                  } transition-all duration-300`}
+                  onClick={() => setList("Employee")}
+                >
+                  Employees
+                </button>
+                <button
+                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
+                    list === "Demonstration" ? "translate-y-2" : ""
+                  } transition-all duration-300`}
+                  onClick={() => setList("Demonstration")}
+                >
+                  Demo
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col space-y-2 max-h-[430px] overflow-y-auto scrollbar-hide pt-2">
+              {list === "Managers" ? (
+                <ManagerList />
+              ) : list === "Users" ? (
+                <UserList />
+              ) : list === "Employee" ? (
+                <EmployeeList />
+              ) : list === "Demonstration" ? (
+                demoManagerList.map((manager, index) => (
+                  <div
+                    className="border border-gray shadow rounded-lg p-3 flex justify-between items-center space-y-4 hover:shadow-inner hover:-translate-y-1 transition-all duration-300"
+                    key={index}
+                    onClick={() => setShow(index)}
+                  >
+                    <div className="text-center">
+                      <div className=" flex self-center justify-self-center ">
+                        <div className="p-2 rounded-full bg-primary flex items-center justify-center justify-self-center">
+                          <Contact strokeWidth={1.5} size={30} color="white" />
+                        </div>
                       </div>
+                      <h2 className="text-xl font-semibold">{manager.name}</h2>
+                      <p className="text-xs "> {manager.role}</p>
+                      <p className="text-xs"> {manager.branch}</p>
                     </div>
-                    <h2 className="text-xl font-semibold">{manager.name}</h2>
-                    <p className="text-xs "> {manager.role}</p>
-                    <p className="text-xs"> {manager.branch}</p>
+                    <p className="text-xs flex flex-col items-center">
+                      Enrolled on
+                      <span className="text-placeholderText text-[10px] ">
+                        {manager.hiredDate}
+                      </span>
+                    </p>
+                    <div className="flex gap-3">
+                      <button className=" bg-blue-200 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
+                        <Pencil strokeWidth={1} size={20} />
+                      </button>
+                      <button className=" bg-red-200 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
+                        <Trash strokeWidth={1} size={20} />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-xs flex flex-col items-center">
-                    Enrolled on
-                    <span className="text-placeholderText text-[10px] ">
-                      {manager.hiredDate}
-                    </span>
-                  </p>
-                  <div className="flex gap-3">
-                    <button className=" bg-blue-200 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
-                      <Pencil strokeWidth={1} size={20} />
-                    </button>
-                    <button className=" bg-red-200 rounded-full w-[30px] h-[30px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
-                      <Trash strokeWidth={1} size={20} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : null}
+                ))
+              ) : null}
+            </div>
           </div>
         </Card>
         <div className="w-[60%] h-[400px] flex self-center justify-center rounded-lg border border-gray bg-cardBackground">
@@ -271,7 +273,10 @@ const AllList = () => {
           <div className="w-[30%] h-[65%] bg-white transition-all ease-out rounded-lg p-8 motion-scale-in-[0.13] motion-translate-x-in-[-36%] motion-translate-y-in-[-10%] motion-opacity-in-[0%] motion-rotate-in-[7deg] motion-blur-in-[5px] motion-duration-[0.35s] motion-duration-[0.53s]/scale motion-duration-[0.53s]/translate motion-duration-[0.63s]/rotate">
             <div className="flex justify-between border-b pb-2 border-gray">
               <h1 className="text-xl font-semibold">Add {list}</h1>
-              <button onClick={() => setShowAdd(false)} className="rounded-full hover:bg-red-50 ">
+              <button
+                onClick={() => setShowAdd(false)}
+                className="rounded-full hover:bg-red-50 "
+              >
                 <X strokeWidth={2} size={30} color="red" />
               </button>
             </div>
@@ -280,8 +285,6 @@ const AllList = () => {
             </div>
           </div>
         </div>
-
-        
       )}
     </>
   );

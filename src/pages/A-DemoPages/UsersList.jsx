@@ -1,66 +1,82 @@
-import React, { useEffect, useState } from "react";
-// import axios from "axios"; // Removed unused import
-import Card from "../../components/Cards/Cards"; // Assuming these components exist
-import Loading from "../../components/Loading/Loading"; // Assuming these components exist
+import { useState, useEffect } from "react";
+import UseFetch from "../../services/get";
+import Card from "../../components/Cards/Cards";
+import Loading from "../../components/Loading/Loading";
+import { Pencil, Trash } from "lucide-react";
 
-const UserList = () => {
+const UsersList = () => {
   const [users, setUsers] = useState([]);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-
-  // For testing, hardcoded token. In production, get this securely.
-  const authToken = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmQxMTQwNTk2ZWI2YmE5Njk2YTlkMSIsImlhdCI6MTc1MjQ3OTc5OCwiZXhwIjoxNzYwMjU1Nzk4fQ.2W_zd3SEekaE8GouOsq0CAdIWtoPERYs4ap1Lyvj-LM`;
+  const { data, loading, errorMg } = UseFetch(
+    "https://gebeta-delivery1.onrender.com/api/v1/users",
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true); // Start loading
-      setError(""); // Clear previous errors
-      try {
-        const res = await fetch("https://gebeta-delivery1.onrender.com/api/v1/users", {
-          headers: {
-            Authorization: authToken,
-          },
-        });
+    if (Array.isArray(data?.data?.users)) {
+      setUsers(data.data.users);
+    }
+  }, [data]);
 
-        const data = await res.json(); // Await the JSON parsing
-
-        if (!res.ok) {
-          // If response is not OK (e.g., 401, 404, 500), throw an error
-          throw new Error(data.message || `API Error: ${res.status}`);
-        }
-
-        setUsers(data.data.users); // Access the 'users' array within 'data.data'
-        console.log("Fetched users:", data.data.users); // Log fetched data
-      } catch (err) {
-        console.error("Error fetching users:", err);
-        setError(err.message || "Failed to fetch users"); // Use err.message for fetch errors
-      } finally {
-        setIsLoading(false); // End loading regardless of success or failure
-      }
-    };
-
-    fetchUsers();
-  }, [authToken]); // Re-run if authToken changes (though it's hardcoded here)
+  // 🧠 Helper function to format date as DD-MM-YYYY
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   return (
-    <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {error && <p className="text-red-500 max-w-[500px]">{error}</p>}
-
-      {isLoading && !error && <Loading />} {/* Show loading only if no error and loading */}
-
-      {!isLoading && !error && users.length > 0 ? (
-        users.map((user) => (
-          <Card key={user._id}> {/* Assuming user object has an _id for key */}
-            <h2 className="text-xl font-semibold">{user.name}</h2>
-            <p>Email: {user.email}</p>
-            <p>Phone: {user.phone}</p>
-          </Card>
-        ))
+    <div className="">
+      {errorMg && <p className="text-red-500">{errorMg}</p>}
+      {loading ? (
+        <Loading />
       ) : (
-        !isLoading && !error && users.length === 0 && <p className="text-gray-600">No users found.</p>
+        users.map((user) => (
+          <div className=" hover:-translate-y-1 transition-all duration-300 hover:shadow-inner">
+          <Card key={user._id}>
+            <div className="flex  items-center justify-between space-x-2 min-w-[400px] ">
+              <div className="flex flex-col self-start items-center w-[150px]">
+                <img
+                  className={`${
+                    user.profilePicture ? "" : "bg-gray"
+                  } w-[70px] h-[70px] flex justify-center items-center shadow-lg rounded-full`}
+                  src={user.profilePicture}
+                  alt=""
+                />
+                <h2 className="text-md font-semibold text-center">
+                  {user.firstName || "Unnamed"} {user.lastName || "Unnamed"}
+                </h2>
+                <p className="text-[10px]">{user.phone || "N/A"}</p>
+                <p className=" text-[10px]">{user.email || "N/A"}</p>
+              </div>
+                <p className="text-xs"><span className="font-semibold text-[10px]">Enrolled on</span> <br/> {formatDate(user.createdAt)}</p>
+              <div className="flex flex-col text-xs text-center gap-2">
+                {/* <p><span className="font-semibold text-[10px]">Email</span> <br/>{user.email || "N/A"}</p>
+                <p><span className="font-semibold text-[10px]">Phone</span><br/>{user.phone || "N/A"}</p> */}
+                <div className="flex gap-4 justify-end pr-5">
+                      <button className=" bg-blue-200 rounded-full w-[26px] h-[26px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
+                        <Pencil strokeWidth={1} size={18} />
+                      </button>
+                      <button className=" bg-red-200 rounded-full w-[26px] h-[26px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
+                        <Trash strokeWidth={1} size={18} />
+                      </button>
+                    </div> 
+              </div>
+            </div>
+            <div>
+            
+            </div>
+          </Card>
+          </div>
+        ))
       )}
     </div>
   );
 };
 
-export default UserList;
+export default UsersList;
