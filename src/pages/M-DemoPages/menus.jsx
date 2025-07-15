@@ -46,6 +46,7 @@ const Menus = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [form, setForm] = useState({ name: '', description: '', image: '' })
   const [search, setSearch] = useState('')
+  const [createModalOpen, setCreateModalOpen] = useState(false)
 
   const handleDelete = (id) => {
     setFoods(foods.filter((food) => food.id !== id))
@@ -86,9 +87,9 @@ const Menus = () => {
   return (
     <div className='rounded-lg shadow-2xl bg-white w-full max-w-5xl my-8 mx-auto p-6'>
       <h1 className='text-xl font-bold mb-4 text-black'>Food Menu</h1>
-      {/* Search Bar */}
-      <div className='flex items-center justify-start mb-6 w-full max-w-xs'>
-        <div className='relative w-full'>
+      {/* Search Bar and Create Button */}
+      <div className='flex items-center justify-between mb-6 w-full max-w-5xl mx-auto'>
+        <div className='relative w-full max-w-md'>
           <span className='absolute left-3 top-2.5 text-gray-400'>
             <Search size={20} />
           </span>
@@ -100,24 +101,50 @@ const Menus = () => {
             className='pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none text-lg bg-white'
           />
         </div>
+        <div className='w-full max-w-md flex justify-end'>
+          <button
+            onClick={() => setCreateModalOpen(true)}
+            className='bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow font-semibold text-base transform hover:scale-105 duration-150'
+          >
+            + Create Menu Item
+          </button>
+        </div>
       </div>
       <div className='overflow-x-auto'>
-        <table className='table-auto w-full rounded-lg'>
+        <table
+          className='table-auto w-full rounded-lg border-separate'
+          style={{ borderSpacing: 0 }}
+        >
           <thead>
             <tr>
-              <th className='px-4 py-2 text-left text-gray-700 font-medium'>
+              <th
+                className='px-4 py-2 text-left text-gray-700 font-medium'
+                style={{ border: '1px solid #C0C0C0' }}
+              >
                 No.
               </th>
-              <th className='px-4 py-2 text-left text-gray-700 font-medium'>
+              <th
+                className='px-4 py-2 text-left text-gray-700 font-medium'
+                style={{ border: '1px solid #C0C0C0' }}
+              >
                 Image
               </th>
-              <th className='px-4 py-2 text-left text-gray-700 font-medium'>
+              <th
+                className='px-4 py-2 text-left text-gray-700 font-medium'
+                style={{ border: '1px solid #C0C0C0' }}
+              >
                 Name
               </th>
-              <th className='px-4 py-2 text-left text-gray-700 font-medium'>
+              <th
+                className='px-4 py-2 text-left text-gray-700 font-medium'
+                style={{ border: '1px solid #C0C0C0' }}
+              >
                 Description
               </th>
-              <th className='px-4 py-2 text-left text-gray-700 font-medium'>
+              <th
+                className='px-4 py-2 text-left text-gray-700 font-medium'
+                style={{ border: '1px solid #C0C0C0' }}
+              >
                 Actions
               </th>
             </tr>
@@ -125,43 +152,59 @@ const Menus = () => {
           <tbody>
             {filteredFoods.length === 0 && (
               <tr>
-                <td colSpan={5} className='text-center text-gray-500 py-8'>
+                <td
+                  colSpan={5}
+                  className='text-center text-gray-500 py-8'
+                  style={{ border: '1px solid #C0C0C0' }}
+                >
                   No food items found.
                 </td>
               </tr>
             )}
             {filteredFoods.map((food, idx) => (
-              <tr
-                key={food.id}
-                className='border-b border-gray-200 hover:bg-gray-50 transition'
-              >
-                <td className='px-4 py-2 font-mono font-bold text-black align-middle'>
+              <tr key={food.id} className='hover:bg-gray-50 transition'>
+                <td
+                  className='px-4 py-2 font-mono font-bold text-black align-middle'
+                  style={{ border: '1px solid #C0C0C0' }}
+                >
                   #MENU{String(idx + 12).padStart(4, '0')}
                 </td>
-                <td className='px-4 py-2 align-middle'>
+                <td
+                  className='px-4 py-2 align-middle'
+                  style={{ border: '1px solid #C0C0C0' }}
+                >
                   <img
                     src={food.image}
                     alt={food.name}
                     className='w-16 h-16 object-cover rounded-lg shadow'
                   />
                 </td>
-                <td className='px-4 py-2 font-semibold text-lg text-black align-middle'>
+                <td
+                  className='px-4 py-2 font-semibold text-lg text-black align-middle'
+                  style={{ border: '1px solid #C0C0C0' }}
+                >
                   {food.name}
                 </td>
-                <td className='px-4 py-2 text-gray-700 align-middle'>
+                <td
+                  className='px-4 py-2 text-gray-700 align-middle'
+                  style={{ border: '1px solid #C0C0C0' }}
+                >
                   {food.description}
                 </td>
-                <td className='px-4 py-2 align-middle'>
+                <td
+                  className='px-4 py-2 align-middle'
+                  style={{ border: '1px solid #C0C0C0' }}
+                >
                   <div className='flex gap-2'>
                     <button
                       onClick={() => handleEdit(food)}
-                      className='flex items-center gap-1 bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-lg shadow transition font-semibold text-base'
+                      className='flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg shadow transition font-semibold text-base transform hover:scale-105 duration-150'
                     >
                       <Pencil size={16} /> Update
                     </button>
                     <button
                       onClick={() => handleDelete(food.id)}
-                      className='flex items-center gap-1 bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-lg shadow transition font-semibold text-base'
+                      className='flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow transition font-semibold text-base transform hover:scale-105 duration-150'
                     >
                       <Trash2 size={16} /> Delete
                     </button>
@@ -239,6 +282,26 @@ const Menus = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Create Menu Item (Coming Soon) */}
+      {createModalOpen && (
+        <div className='fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50'>
+          <div className='bg-white rounded-xl shadow-xl p-8 w-full max-w-md relative animate-fade-in'>
+            <button
+              className='absolute top-2 right-2 text-gray-400 hover:text-red-500 text-2xl font-bold'
+              onClick={() => setCreateModalOpen(false)}
+            >
+              &times;
+            </button>
+            <h2 className='text-xl font-bold mb-4 text-black'>
+              Create Menu Item
+            </h2>
+            <div className='text-center text-gray-600 text-lg py-8'>
+              Coming soon
+            </div>
           </div>
         </div>
       )}
