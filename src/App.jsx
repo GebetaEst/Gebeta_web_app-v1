@@ -13,6 +13,7 @@ import Settings from './pages/M-DemoPages/Settings'
 import Landing from './pages/Landing';
 import NotFoundPage from './pages/NotFoundPage';
 import AdminNav from './components/Sidebar/A-sidBarNav'
+import EditUser from './pages/A-DemoPages/Edit-user'
 function App() {
   const [count, setCount] = useState(0)
 

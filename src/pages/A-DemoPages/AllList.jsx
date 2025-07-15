@@ -6,6 +6,7 @@ import Card from "../../components/Cards/Cards";
 import { Pencil, Trash, Contact, UserRoundPen, Plus, X } from "lucide-react";
 import AddUserForm from "../../components/UserForms/AddUserForm";
 import PopupCard from "../../components/Cards/PopupCard";
+import ShowById from "./showById";
 const AllList = () => {
   const demoManagerList = [
     {
@@ -83,8 +84,9 @@ const AllList = () => {
   ];
 
   const [show, setShow] = useState(0);
-  const [list, setList] = useState("Managers");
-  const [showAdd, setShowAdd] = useState(false);
+  const [list, setList] = useState("Demonstration");
+  const [showAddBtn, setShowAddBtn] = useState(false);
+
 
   return (
     <>
@@ -94,7 +96,7 @@ const AllList = () => {
             <div className="flex justify-between">
               <h2 className="text-xl font-semibold">{list}</h2>
               <button
-                onClick={() => setShowAdd(true)}
+                onClick={() => setShowAddBtn(true)}
                 className="flex items-center text-xs border rounded-xl px-1 border-blue-200 hover:scale-105 transition-all duration-300 active:scale-95 active:rotate-3 bg-blue-50"
               >
                 <span className="rounded-full mr-1 w-[20px] h-[20px] flex items-center justify-center bg-blue-100">
@@ -105,14 +107,14 @@ const AllList = () => {
             </div>
             <div className="flex justify-between mt-4 mb-6">
               <div className="flex flex-wrap gap-3">
-                <button
+                {/* <button
                   className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
                     list === "Managers" ? "translate-y-2" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Managers")}
                 >
                   Managers
-                </button>
+                </button> */}
                 <button
                   className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
                     list === "Users" ? "translate-y-2" : ""
@@ -184,97 +186,15 @@ const AllList = () => {
             </div>
           </div>
         </Card>
-        <div className="w-[60%] h-[400px] flex self-center justify-center rounded-lg border border-gray bg-cardBackground">
-          {demoManagerList.map((item, index) => (
-            <div key={index} className="motion-preset-blur-right ">
-              {show === index ? (
-                <div className="grid grid-cols-2 motion-preset-slide-right  ">
-                  <div className="p-2 flex flex-col  items-center m-5 h-full">
-                    <div className="p-2 rounded-2xl bg-placeholderText flex items-center justify-center justify-self-center m-5">
-                      <UserRoundPen
-                        strokeWidth={1.5}
-                        size={200}
-                        color="white"
-                      />
-                    </div>
-                    <h2 className="text-xl font-semibold">Name: {item.name}</h2>
-                  </div>
-                  <div className="p-2 items-start mt-7 m-5">
-                    <h1 className="text-xl  font-semibold ">
-                      Personal Information
-                    </h1>
-                    <div className="p-2 flex flex-col text-xs items-start border-b border-gray">
-                      <p>
-                        <span className="font-semibold text-sm">Role:</span>{" "}
-                        {item.role}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-sm">Branch:</span>{" "}
-                        {item.branch}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-sm">
-                          Hired Date:
-                        </span>{" "}
-                        {item.hiredDate}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-sm">Salary:</span>{" "}
-                        {item.salary}
-                      </p>
-                    </div>
-                    <div className="p-2 flex flex-col text-xs items-start border-b border-gray">
-                      <p>
-                        <span className="font-semibold text-sm">Email:</span>{" "}
-                        {item.email}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-sm">Phone:</span>{" "}
-                        {item.phone}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-sm">Address:</span>{" "}
-                        {item.address}
-                      </p>
-                    </div>
-
-                    <div className="p-2 flex flex-col text-xs items-start ">
-                      <p>
-                        <span className="font-semibold text-sm">
-                          Date of Birth:
-                        </span>{" "}
-                        {item.dateOfBirth}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-sm">Gender:</span>{" "}
-                        {item.gender}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-10 justify-end ">
-                      <button className=" bg-blue-200 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
-                        <Pencil strokeWidth={1} size={30} />
-                      </button>
-                      <button className=" bg-red-200 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300">
-                        <Trash strokeWidth={1} size={30} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-          ))}
-        </div>
+        <ShowById />
       </div>
-      {showAdd && (
+      {showAddBtn && (
         <div className="fixed top-0 left-0 w-[100%] h-[100%] bg-black/50 z-50 flex items-center justify-center font-noto ">
           <div className="w-[30%] h-[65%] bg-white transition-all ease-out rounded-lg p-8 motion-scale-in-[0.13] motion-translate-x-in-[-36%] motion-translate-y-in-[-10%] motion-opacity-in-[0%] motion-rotate-in-[7deg] motion-blur-in-[5px] motion-duration-[0.35s] motion-duration-[0.53s]/scale motion-duration-[0.53s]/translate motion-duration-[0.63s]/rotate">
             <div className="flex justify-between border-b pb-2 border-gray">
               <h1 className="text-xl font-semibold">Add {list}</h1>
               <button
-                onClick={() => setShowAdd(false)}
+                onClick={() => setShowAddBtn(false)}
                 className="rounded-full hover:bg-red-50 "
               >
                 <X strokeWidth={2} size={30} color="red" />
