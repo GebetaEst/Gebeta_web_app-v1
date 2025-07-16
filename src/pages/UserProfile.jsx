@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import { useUserProfile } from "../contexts/UserProfileContext";
-import ProfileEditForm from "../components/UserForms/ProfilEditForm";
+import ProfileEditForm from "../components/UserForms/MyProfilEditForm";
 const UserProfile = () => {
   const { setUserProfile } = useUserProfile();
   return (

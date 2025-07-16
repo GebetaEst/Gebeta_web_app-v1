@@ -1,7 +1,8 @@
-import { useNavigation } from "../../contexts/NavigationContext";
+import { useNavigation } from "../contexts/NavigationContext";
 import { useState, useEffect } from "react";
-import UserProfile from "../UserProfile";
-import { useUserProfile } from "../../contexts/UserProfileContext";
+import UserProfile from "./UserProfile";
+import { useUserProfile } from "../contexts/UserProfileContext";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const TopDash = () => {
   const { activeNav, setActiveNav } = useNavigation();
@@ -11,7 +12,9 @@ const TopDash = () => {
   useEffect(() => {
     setTitle(activeNav);
   }, [activeNav]);
-  // console.log(Title);
+
+  const storedUser = JSON.parse(sessionStorage.getItem("user-data")).state.user;
+  // console.log(storedUser.role);
   return (
     <>
       <div className="pl-12 flex items-center justify-between bg-white h-[70px] w-[100%] px-28">
@@ -28,8 +31,11 @@ const TopDash = () => {
           </div>
           <p className="text-lg font-semibold">User Name</p>
         </div>
+        <ProtectedRoute allowedRoles={["Manager"]}></ProtectedRoute>
       </div>
-      {userProfile && <UserProfile />}
+      {userProfile && storedUser?.role === "Manager" && <UserProfile />}
+
+
     </>
   );
 };

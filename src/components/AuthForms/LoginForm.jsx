@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import UseStore from "../../Store/UseStore";
+import Loading from "../Loading/Loading";
 const LoginForm = () => {
-  const navigate = useNavigate();
+  
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [errorMg, setErrorMg] = useState("");
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+  const {setUser } = UseStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +26,7 @@ const LoginForm = () => {
     
     
     try {
+      setLoading(true);
       const res = await fetch(
         "https://gebeta-delivery1.onrender.com/api/v1/users/login",
         {
@@ -34,23 +40,27 @@ const LoginForm = () => {
       
       const data = await res.json();
       
+      
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
+        setUser(data.data.user); 
       
       localStorage.setItem("token", data.token);
       // navigate("/adminDashboard");
-      console.log(data.data.user.role)
+      // console.log(data.data.user._id)
       console.log(data)
-      // if(data.data.user.role === "Manager"){
-      //   navigate("/managerDashboard");
-      // }else if(data.data.user.role === "admin"){
-      //   navigate("/adminDashboard");
-      // }
+      if(data.data.user.role === "Manager"){
+        navigate("/managerDashboard");
+      }else if(data.data.user.role === "admin"){
+        navigate("/adminDashboard");
+      }
       
     } catch (error) {
       console.error("Login error:", error.message);
       setErrorMg("Something went wrong. Please try again. try again later");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -103,15 +113,16 @@ const LoginForm = () => {
       >
         Log In
       </button>
+      {loading && <Loading/>}
       
       <p className="text-[13px] text-gray-800 flex self-end">
-        Don't have an account? &nbsp;
+        {/* Don't have an account? &nbsp;
         <Link
           to="/signup"
           className="underline font-semibold hover:font-bold"
         >
           Sign Up
-        </Link>
+        </Link> */}
       </p>
     </form>
   );

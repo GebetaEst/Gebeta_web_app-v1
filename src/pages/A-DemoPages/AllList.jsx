@@ -87,13 +87,12 @@ const AllList = () => {
   const [list, setList] = useState("Demonstration");
   const [showAddBtn, setShowAddBtn] = useState(false);
 
-
   return (
     <>
       <div className="p-8 flex gap-2 items-center justify-center  h-[85vh]  font-noto">
         <Card>
-          <div className="w-[450px] ">
-            <div className="flex justify-between">
+          <div className="w-[450px] h-[550px]">
+            <div className="flex justify-between ">
               <h2 className="text-xl font-semibold">{list}</h2>
               <button
                 onClick={() => setShowAddBtn(true)}
@@ -116,24 +115,24 @@ const AllList = () => {
                   Managers
                 </button> */}
                 <button
-                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                    list === "Users" ? "translate-y-2" : ""
+                  className={`bg-green-200  px-4 py-2 rounded-lg hover:bg-green-300 text-primary    ${
+                    list === "Users" ? "translate-y-2 bg-green-400" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Users")}
                 >
                   Users
                 </button>
                 <button
-                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                    list === "Employee" ? "translate-y-2" : ""
+                  className={`bg-green-200  text-primary px-4 py-2 rounded-lg hover:bg-green-300   ${
+                    list === "Employee" ? "translate-y-2 bg-green-400" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Employee")}
                 >
                   Employees
                 </button>
                 <button
-                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
-                    list === "Demonstration" ? "translate-y-2" : ""
+                  className={`bg-green-200 text-primary px-4 py-2 rounded-lg hover:bg-green-300 ${
+                    list === "Demonstration" ? "translate-y-2 bg-green-400" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Demonstration")}
                 >

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserId } from "../../contexts/userIdContext";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../Loading/Loading";
 
 const EditUser = () => {
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ const EditUser = () => {
     if (getId) fetchUser();
   }, [getId]);
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -64,11 +65,15 @@ const EditUser = () => {
     setSuccess("");
 
     try {
+      const sanitizedPhone =
+    formData.phone.startsWith("0")
+      ? formData.phone.slice(1)
+      : formData.phone;
       const form = new FormData();
       form.append("firstName", formData.firstName);
       form.append("lastName", formData.lastName);
       form.append("email", formData.email);
-      form.append("phone", formData.phone);
+      form.append("phone", sanitizedPhone);
       if (profilePicture) {
         form.append("profilePicture", profilePicture);
       }

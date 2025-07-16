@@ -1,7 +1,7 @@
 import AdminSidebar from "../components/Sidebar/A-sidBar";
 import { useState } from "react";
 import { PanelLeftClose, PanelRightClose } from "lucide-react";
-import TopDash from "../pages/M-DemoPages/TopDash";
+import TopDash from "../pages/TopDash";
 const AdminDashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 

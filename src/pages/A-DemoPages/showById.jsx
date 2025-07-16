@@ -6,11 +6,12 @@ import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
 import Loading from "../../components/Loading/Loading";
 import { Contact , X} from "lucide-react";
-import EditUser from "./Edit-user";
+import EditUser from "../../components/UserForms/Edit-user";
 import PopupCard from "../../components/Cards/PopupCard";
 const ShowById = () => {
   const navigate = useNavigate();
   const [showEditForm, setShowEditForm] = useState(false);
+  const [message , setMessage] = useState('Select a user');
   const { getId, setGetId } = useUserId();
 
   const { data, loading, errorMg } = UseFetch(
@@ -21,7 +22,7 @@ const ShowById = () => {
       },
     }
   );
-  console.log(data);
+  // console.log(data);
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -31,6 +32,9 @@ const ShowById = () => {
   };
 
   const deleteUser = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return; // ❌ Cancel deletion if user selects "No"
+  
     try {
       await fetch(`https://gebeta-delivery1.onrender.com/api/v1/users/${id}`, {
         method: "DELETE",
@@ -38,18 +42,23 @@ const ShowById = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+  
+      setGetId('');
+      setRefreshUsers((prev) => !prev);
+      setMessage('User deleted successfully');
     } catch (error) {
       console.error("Error deleting user:", error);
     }
   };
+  
 
   return (
     <>
-      <div className="w-[600px] h-[400px] flex items-center justify-center bg-white shadow-lg  rounded-xl border border-gray">
+      <div className="w-[600px] h-[400px] flex items-center justify-center bg-white shadow-lg  rounded-xl border border-gray ">
         {loading ? (
           <Loading />
         ) : getId ?(
-          <div className="space-x-28 flex justify-around items-center">
+          <div className="space-x-28 flex justify-around items-center motion-scale-in-[0.72] motion-translate-x-in-[-22%] motion-translate-y-in-[-3%] ">
                 <div className="flex flex-col self-start justify-self-start justify-center items-center gap-4 border-r h-[350px]  border-gray p-4">
                     <img
                         className={` ${data?.data?.user?.profilePicture ? "rounded-full shadow-lg w-[150px] h-[150px]" : "p-2 rounded-md border"}  m-2 `}
@@ -68,7 +77,7 @@ const ShowById = () => {
                     <p className="text-gray-600 font-semibold"> Role: <span className="text- font-normal">{data?.data?.user?.role}</span></p>
                     <p className="text-gray-600 font-semibold"> Created At: <span className="text-primary font-normal">{formatDate(data?.data?.user?.createdAt)}</span></p>
                 </div>
-                <div className="flex gap-3 self-end translate-y-20">
+                <div className="flex gap-3 self-end pr-5 translate-y-20">
                     <button className=" bg-blue-200 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300" onClick={() =>setShowEditForm(true)}>
                         <Pencil strokeWidth={1} size={20} />
                     </button>
@@ -79,7 +88,7 @@ const ShowById = () => {
             </div>
           </div>
         ) : <div>
-            <p>Select a user</p>
+            <p>{message}</p>
             </div>}
       </div>
       {showEditForm ? (
@@ -90,7 +99,7 @@ const ShowById = () => {
                 </button>
                 
             </div>
-        <EditUser />
+          <EditUser /> 
         </PopupCard>) : null}
     </>
   );
