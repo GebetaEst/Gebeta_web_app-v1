@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-
+import {useUserId} from "../contexts/userIdContext";
 const UseFetch = (url, options = {}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMg, setErrorMg] = useState("");
-
+  const {getId} = useUserId();
   async function fetchData() {
       setLoading(true);
     try {
@@ -24,7 +24,7 @@ const UseFetch = (url, options = {}) => {
 
   useEffect(() => {
     fetchData();
-  }, [url]);
+  }, [url,getId]);
 
   return { data, loading, errorMg };
 };

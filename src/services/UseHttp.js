@@ -1,32 +1,46 @@
 import { useState } from "react";
-import { getData, postData, patchData, deleteData } from "./httpMethods";
 
-const UseHttp = () => {
+const useHttp = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
+  const [response, setResponse] = useState(null);
 
-  const request = async (method, ...args) => {
+  const request = async (method, url, payload = null, options = {}) => {
     setLoading(true);
-    setError(null);
+    setError("");
+    setResponse(null);
+
     try {
-      const res = await method(...args);
-      return res;
-    } catch (err) {
-      setError(err.response?.data?.message || err.message || "Something went wrong");
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        },
+        body: payload ? JSON.stringify(payload) : null,
+        ...options,
+      });
+
+      const resData = await res.json();
+
+      if (!res.ok) throw new Error(resData.message || "Request failed");
+
+      setResponse(resData);
+      return resData;
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Something went wrong!!");
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    loading,
-    error,
-    get: (endpoint, headers) => request(getData, endpoint, headers),
-    post: (endpoint, payload, headers) => request(postData, endpoint, payload, headers),
-    patch: (endpoint, payload, headers) => request(patchData, endpoint, payload, headers),
-    del: (endpoint, headers) => request(deleteData, endpoint, headers),
-  };
+  const post = (url, payload, options) => request("POST", url, payload, options);
+  const patch = (url, payload, options) => request("PATCH", url, payload, options);
+  const del = (url, options) => request("DELETE", url, null, options);
+
+  return { post, patch, del, loading, error, response };
 };
 
-export default UseHttp;
+export default useHttp;

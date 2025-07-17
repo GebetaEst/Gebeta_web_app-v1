@@ -1,7 +1,7 @@
 import ManagerSidebar from "../components/Sidebar/M-sidebar";
 import { useState } from "react";
 import { PanelLeftClose, PanelRightClose } from "lucide-react";
-import TopDash from "../pages/M-DemoPages/TopDash";
+import TopDash from "../pages/TopDash";
 const DashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
