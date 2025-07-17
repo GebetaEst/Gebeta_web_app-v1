@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Pencil,
   Trash2,
@@ -9,7 +9,41 @@ import {
   FileText,
   ToggleLeft,
   ToggleRight,
+  Bell,
+  RefreshCw,
 } from 'lucide-react'
+
+// API Configuration
+const API_BASE_URL = 'https://your-api-endpoint.com/api'
+const API_ENDPOINTS = {
+  GET_MENU: '/menu',
+  CREATE_MENU: '/menu',
+  UPDATE_MENU: '/menu',
+  DELETE_MENU: '/menu',
+}
+
+// API Helper Functions
+const apiCall = async (endpoint, options = {}) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Add your authentication headers here
+        // 'Authorization': `Bearer ${token}`,
+      },
+      ...options,
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}
 
 const initialFoods = [
   {
@@ -38,7 +72,7 @@ const initialFoods = [
     id: 4,
     name: 'Vegan Salad Bowl',
     image:
-      'https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80',
     description: 'Fresh greens, avocado, cherry tomatoes, and vinaigrette.',
   },
   {
@@ -72,34 +106,238 @@ const Menus = () => {
   })
   const [createErrors, setCreateErrors] = useState({})
   const [createTouched, setCreateTouched] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [statusDropdowns, setStatusDropdowns] = useState({})
+  const [notificationPermission, setNotificationPermission] =
+    useState('default')
+  const [refreshing, setRefreshing] = useState(false)
+
+  // Enhanced notification function
+  const showNotification = (type, message) => {
+    setNotification({
+      show: true,
+      type,
+      message,
+    })
+
+    // Show browser notification
+    setTimeout(() => {
+      const title = type === 'success' ? 'Success!' : 'Error!'
+      showBrowserNotification(title, message, type)
+    }, 100)
+
+    // Auto hide after 4 seconds
+    setTimeout(() => {
+      setNotification({ show: false, type: '', message: '' })
+    }, 4000)
+  }
+
+  // Show browser notification
+  const showBrowserNotification = (title, message, type = 'info') => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const notification = new Notification(title, {
+        body: message,
+        icon: '/src/assets/logo.svg',
+        badge: '/src/assets/logo.svg',
+        tag: 'menu-notification',
+        requireInteraction: false,
+        silent: true, // No system notification sound
+      })
+
+      // Auto close after 4 seconds
+      setTimeout(() => {
+        notification.close()
+      }, 4000)
+    }
+  }
+
+  // Request notification permission on component mount
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+          const permission = await Notification.requestPermission()
+          setNotificationPermission(permission)
+        } else {
+          setNotificationPermission(Notification.permission)
+        }
+      }
+    }
+
+    requestNotificationPermission()
+  }, [])
+
+  // Fetch menu data from API
+  const fetchMenuData = async () => {
+    try {
+      setLoading(true)
+      // const data = await apiCall(API_ENDPOINTS.GET_MENU)
+      // setFoods(data.menu || [])
+      console.log('Fetching menu data from API...')
+    } catch (error) {
+      console.error('Failed to fetch menu data:', error)
+      setNotification({
+        show: true,
+        type: 'error',
+        message: 'Failed to load menu data.',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Refresh table data
+  const refreshTableData = async () => {
+    try {
+      setRefreshing(true)
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // In real implementation, this would fetch fresh data from API
+      // const data = await apiCall(API_ENDPOINTS.GET_MENU)
+      // setFoods(data.menu || [])
+
+      console.log('Table data refreshed successfully')
+      showNotification('success', 'Table data refreshed successfully.')
+    } catch (error) {
+      console.error('Failed to refresh table data:', error)
+      showNotification('error', 'Failed to refresh table data.')
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
+  // Create new menu item
+  const createMenuItem = async (menuData) => {
+    try {
+      setLoading(true)
+      // const response = await apiCall(API_ENDPOINTS.CREATE_MENU, {
+      //   method: 'POST',
+      //   body: JSON.stringify(menuData),
+      // })
+      // setFoods(prev => [...prev, response.menu])
+      console.log('Creating menu item:', menuData)
+      return { success: true }
+    } catch (error) {
+      console.error('Failed to create menu item:', error)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Update existing menu item
+  const updateMenuItem = async (id, menuData) => {
+    try {
+      setLoading(true)
+      // const response = await apiCall(`${API_ENDPOINTS.UPDATE_MENU}/${id}`, {
+      //   method: 'PUT',
+      //   body: JSON.stringify(menuData),
+      // })
+      // setFoods(prev => prev.map(food => food.id === id ? response.menu : food))
+      console.log('Updating menu item:', id, menuData)
+      return { success: true }
+    } catch (error) {
+      console.error('Failed to update menu item:', error)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Delete menu item
+  const deleteMenuItem = async (id) => {
+    try {
+      setLoading(true)
+      // await apiCall(`${API_ENDPOINTS.DELETE_MENU}/${id}`, {
+      //   method: 'DELETE',
+      // })
+      // setFoods(prev => prev.filter(food => food.id !== id))
+      console.log('Deleting menu item:', id)
+      return { success: true }
+    } catch (error) {
+      console.error('Failed to delete menu item:', error)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Toggle status dropdown visibility
+  const toggleStatusDropdown = (id) => {
+    setStatusDropdowns((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
+
+  // Update menu item status
+  const updateItemStatus = async (id, newStatus) => {
+    try {
+      setLoading(true)
+      // await apiCall(`${API_ENDPOINTS.UPDATE_MENU}/${id}`, {
+      //   method: 'PUT',
+      //   body: JSON.stringify({ status: newStatus }),
+      // })
+      setFoods((prev) =>
+        prev.map((food) =>
+          food.id === id ? { ...food, status: newStatus } : food
+        )
+      )
+      showNotification('success', `Menu item status updated to ${newStatus}.`)
+      setStatusDropdowns((prev) => ({ ...prev, [id]: false }))
+    } catch (error) {
+      console.error('Failed to update status:', error)
+      showNotification('error', 'Failed to update menu item status.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Close all dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.status-dropdown')) {
+        setStatusDropdowns({})
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  // Load data on component mount
+  useEffect(() => {
+    // fetchMenuData()
+    console.log('Component mounted - ready to fetch data when API is available')
+  }, [])
 
   const handleDelete = (id) => {
     setDeleteConfirm({ open: true, id })
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     const id = deleteConfirm.id
+    // Close the modal first
+    setDeleteConfirm({ open: false, id: null })
+
     if (id !== null) {
       const exists = foods.some((food) => food.id === id)
       if (exists) {
-        setFoods(foods.filter((food) => food.id !== id))
-        setNotification({
-          show: true,
-          type: 'success',
-          message: 'Menu item deleted successfully.',
-        })
+        try {
+          // await deleteMenuItem(id)
+          setFoods(foods.filter((food) => food.id !== id))
+          // Show notification immediately after deletion
+          showNotification('success', 'Menu item deleted successfully.')
+        } catch (error) {
+          showNotification('error', 'Failed to delete menu item.')
+        }
       } else {
-        setNotification({
-          show: true,
-          type: 'error',
-          message: 'Failed to delete menu item.',
-        })
+        showNotification('error', 'Failed to delete menu item.')
       }
     }
-    setDeleteConfirm({ open: false, id: null })
-    setTimeout(() => {
-      setNotification({ show: false, type: '', message: '' })
-    }, 4000)
   }
 
   const cancelDelete = () => {
@@ -120,13 +358,19 @@ const Menus = () => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault()
-    setFoods(
-      foods.map((food) =>
-        food.id === editFood.id ? { ...editFood, ...form } : food
+    try {
+      // await updateMenuItem(editFood.id, form)
+      setFoods(
+        foods.map((food) =>
+          food.id === editFood.id ? { ...editFood, ...form } : food
+        )
       )
-    )
+      showNotification('success', 'Menu item updated successfully.')
+    } catch (error) {
+      showNotification('error', 'Failed to update menu item.')
+    }
     setModalOpen(false)
     setEditFood(null)
   }
@@ -171,7 +415,7 @@ const Menus = () => {
     setCreateErrors(validateCreateForm())
   }
 
-  const handleCreateSubmit = (e) => {
+  const handleCreateSubmit = async (e) => {
     e.preventDefault()
     const errors = validateCreateForm()
     setCreateErrors(errors)
@@ -182,8 +426,18 @@ const Menus = () => {
       image: true,
     })
     if (Object.keys(errors).length === 0) {
-      // Here you would add the new menu item logic
-      // For now, just close the modal and reset
+      try {
+        // const newMenuItem = await createMenuItem(createForm)
+        // Add to local state for now
+        const newMenuItem = {
+          id: Date.now(),
+          ...createForm,
+        }
+        setFoods((prev) => [...prev, newMenuItem])
+        showNotification('success', 'Menu item created successfully.')
+      } catch (error) {
+        showNotification('error', 'Failed to create menu item.')
+      }
       setCreateModalOpen(false)
       setCreateForm({
         name: '',
@@ -209,6 +463,15 @@ const Menus = () => {
       className='rounded-lg shadow-2xl bg-white w-full my-8 mx-auto p-6'
       style={{ maxWidth: '110rem' }}
     >
+      {/* Loading Indicator */}
+      {loading && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]'>
+          <div className='bg-white rounded-lg p-6 shadow-xl'>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto'></div>
+            <p className='mt-2 text-gray-600'>Loading...</p>
+          </div>
+        </div>
+      )}
       <h1 className='text-xl font-bold mb-4 text-black'>Food Menu</h1>
       {/* Search Bar and Create Button */}
       <div
@@ -228,6 +491,16 @@ const Menus = () => {
           />
         </div>
         <div className='w-full max-w-md flex justify-end'>
+          <button
+            onClick={refreshTableData}
+            disabled={refreshing}
+            className='mr-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg shadow font-semibold text-base transform hover:scale-105 duration-150 disabled:transform-none'
+          >
+            <RefreshCw
+              size={18}
+              className={`${refreshing ? 'animate-spin' : ''}`}
+            />
+          </button>
           <button
             onClick={() => setCreateModalOpen(true)}
             className='bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow font-semibold text-base transform hover:scale-105 duration-150'
@@ -321,18 +594,63 @@ const Menus = () => {
                   className='px-4 py-2 align-middle'
                   style={{ border: '1px solid #C0C0C0' }}
                 >
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      food.status === 'inactive'
-                        ? 'bg-gray-300 text-gray-700'
-                        : 'bg-green-100 text-green-700'
-                    }`}
-                  >
-                    {food.status
-                      ? food.status.charAt(0).toUpperCase() +
-                        food.status.slice(1)
-                      : 'Active'}
-                  </span>
+                  <div className='relative status-dropdown'>
+                    <button
+                      onClick={() => toggleStatusDropdown(food.id)}
+                      className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors ${
+                        food.status === 'inactive'
+                          ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                          : 'bg-green-100 text-green-700 hover:bg-green-200'
+                      }`}
+                    >
+                      {food.status
+                        ? food.status.charAt(0).toUpperCase() +
+                          food.status.slice(1)
+                        : 'Active'}
+                      <svg
+                        className='w-3 h-3'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M19 9l-7 7-7-7'
+                        />
+                      </svg>
+                    </button>
+
+                    {statusDropdowns[food.id] && (
+                      <div className='absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 min-w-[120px]'>
+                        <div className='py-1'>
+                          <button
+                            onClick={() => updateItemStatus(food.id, 'active')}
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition-colors ${
+                              food.status === 'active'
+                                ? 'bg-green-50 text-green-700 font-semibold'
+                                : 'text-gray-700'
+                            }`}
+                          >
+                            Active
+                          </button>
+                          <button
+                            onClick={() =>
+                              updateItemStatus(food.id, 'inactive')
+                            }
+                            className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 transition-colors ${
+                              food.status === 'inactive'
+                                ? 'bg-red-50 text-red-700 font-semibold'
+                                : 'text-gray-700'
+                            }`}
+                          >
+                            Inactive
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </td>
                 <td
                   className='px-4 py-2 text-gray-700 align-middle'
@@ -631,14 +949,42 @@ const Menus = () => {
         </div>
       )}
 
+      {/* Notification Permission Status */}
+      {notificationPermission === 'default' && (
+        <div className='fixed top-20 right-6 z-[100] px-4 py-2 bg-yellow-500 text-white rounded-lg shadow-lg text-sm'>
+          <div className='flex items-center gap-2'>
+            <Bell className='w-4 h-4' />
+            <span>Click to enable notifications</span>
+          </div>
+        </div>
+      )}
+
+      {notificationPermission === 'denied' && (
+        <div className='fixed top-20 right-6 z-[100] px-4 py-2 bg-red-500 text-white rounded-lg shadow-lg text-sm'>
+          <div className='flex items-center gap-2'>
+            <Bell className='w-4 h-4' />
+            <span>
+              Notifications blocked. Please enable in browser settings.
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Notification */}
       {notification.show && (
         <div
           className={`fixed top-6 right-6 z-[100] px-6 py-4 rounded-lg shadow-lg text-white text-lg font-semibold transition-all duration-500 ${
             notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-          } animate-fade-in`}
+          } animate-fade-in flex items-center gap-3`}
           style={{ minWidth: '250px' }}
         >
+          <Bell
+            className={`w-6 h-6 animate-bounce ${
+              notification.type === 'success'
+                ? 'text-green-200'
+                : 'text-red-200'
+            }`}
+          />
           {notification.message}
         </div>
       )}
