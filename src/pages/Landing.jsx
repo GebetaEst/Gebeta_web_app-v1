@@ -21,14 +21,14 @@ const Landing = () => {
             >
               Login
             </button>
-            <button
+            {/* <button
               onClick={() => {
                 navigate("/signup");
               }}
               className="bg-black text-white font-semibold p-2 hover:bg-white hover:text-black transform duration-200 rounded-lg w-[100px]  "
             >
               Signup
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="flex justify-start items-center h-[50%] motion-scale-in-[0.77] motion-translate-x-in-[30%] motion-translate-y-in-[0%] motion-rotate-in-[15deg] motion-duration-1500">
