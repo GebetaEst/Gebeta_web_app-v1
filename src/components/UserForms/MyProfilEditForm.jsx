@@ -23,7 +23,7 @@ const ProfileEditForm = () => {
   // Load from sessionStorage on mount
   useEffect(() => {
     const storedUser = JSON.parse(sessionStorage.getItem("user-data")).state?.user;
-    console.log(JSON.parse(sessionStorage.getItem("user-data")).state.user)
+    // console.log(JSON.parse(sessionStorage.getItem("user-data")).state.user)
 
     if (storedUser) {
       setFormData({
@@ -102,7 +102,7 @@ const ProfileEditForm = () => {
             name="username"
             type="text"
             className="w-full border-[0.5px] border-gray p-2 rounded-lg"
-            value={formData.username}
+            value={formData?.username}
             onChange={handleChange}
             
           />

@@ -52,7 +52,7 @@ const LoginForm = () => {
       console.log(data)
       if(data.data.user.role === "Manager"){
         navigate("/managerDashboard");
-      }else if(data.data.user.role === "admin"){
+      }else if(data.data.user.role === "Admin"){
         navigate("/adminDashboard");
       }
       
