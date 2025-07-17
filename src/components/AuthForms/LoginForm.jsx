@@ -78,7 +78,12 @@ const LoginForm = () => {
           type="text"
           name="phone"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => {
+            const sanitizedPhone =
+            e.target.value.startsWith("0")
+              ? e.target.value.slice(1)
+              : e.target.value;
+            setPhone(sanitizedPhone)}}
           placeholder="912345678"
           required
           className="bg-white border-[0.5px] border-gray p-2 rounded-md w-full text-black"
