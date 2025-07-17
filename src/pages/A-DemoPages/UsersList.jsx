@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
 import Loading from "../../components/Loading/Loading";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, Search } from "lucide-react";
 import ShowById from "./showById";
 import { useUserId } from "../../contexts/userIdContext";
 
@@ -12,6 +12,7 @@ const UsersList = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMg, setErrorMg] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -32,13 +33,14 @@ const UsersList = () => {
       }
 
       const result = await response.json();
-      setData(result); // or setData(result.data.users) depending on API shape
+      setData(result);
     } catch (error) {
       setErrorMg(error.message);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (Array.isArray(data?.data?.users)) {
       setUsers(data.data.users);
@@ -47,7 +49,6 @@ const UsersList = () => {
 
   useEffect(() => {
     fetchUsers();
-    // window.location.reload();
   }, [refreshUsers]);
 
   const formatDate = (isoString) => {
@@ -57,15 +58,28 @@ const UsersList = () => {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-  // console.log(getId);
+
+  const filteredUsers = users.filter((user) => {
+    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+    return fullName.includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div className="">
+      <input
+        type="text"
+        placeholder={`Search by name...`}
+        style={{ backgroundImage: 'url("https://img.icons8.com/ios/24/000000/search--v1.png")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right center' }}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className=" border px-2 py-1 mb-4 rounded-lg  shadow-sm w- max-w-md sticky top-0 z-50"
+      />
+
       {errorMg && <p className="text-red-500">{errorMg}</p>}
       {loading ? (
         <Loading />
       ) : (
-        users?.map((user) => (
+        filteredUsers?.map((user) => (
           <div
             key={user._id}
             className=" hover:-translate-y-1 transition-all duration-300"
@@ -74,7 +88,7 @@ const UsersList = () => {
             }}
           >
             <Card>
-              <div className="flex  items-center justify-between space-x-2 min-w-[400px] ">
+              <div className="flex items-center justify-between space-x-2 min-w-[400px]">
                 <div className="flex flex-col self-start items-center w-[150px]">
                   <img
                     className={`${
@@ -87,7 +101,7 @@ const UsersList = () => {
                     {user.firstName || "Unnamed"} {user.lastName || "Unnamed"}
                   </h2>
                   <p className="text-[10px]">{user.phone || "N/A"}</p>
-                  <p className=" text-[10px]">{user.email || "N/A"}</p>
+                  <p className="text-[10px]">{user.email || "N/A"}</p>
                 </div>
                 <p className="text-xs">
                   <span className="font-semibold text-[10px]">Enrolled on</span>{" "}
@@ -97,7 +111,6 @@ const UsersList = () => {
                   <div className="flex gap-4 justify-end pr-5"></div>
                 </div>
               </div>
-              <div></div>
             </Card>
           </div>
         ))

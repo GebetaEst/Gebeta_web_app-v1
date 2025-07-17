@@ -38,9 +38,9 @@ function App() {
           <Route
             path="/adminDashboard"
             element={
-              <ProtectedRoute allowedRoles={["Admin"]}>
+              // <ProtectedRoute allowedRoles={["Admin"]}>
+              // </ProtectedRoute>
               <AdminNav />
-              </ProtectedRoute>
             }
           />
           <Route path="*" element={<NotFoundPage />}></Route>

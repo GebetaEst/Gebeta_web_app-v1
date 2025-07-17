@@ -32,9 +32,8 @@ const TopDash = () => {
           <p className="text-lg font-semibold">User Name</p>
         </div>
       </div>
-      {userProfile && storedUser?.role === "Manager" && <UserProfile />}
-
-
+      {userProfile  && <UserProfile />}
+{/* && storedUser?.role === "Manager"  */}
     </>
   );
 };
