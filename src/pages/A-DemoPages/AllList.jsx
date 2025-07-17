@@ -115,24 +115,24 @@ const AllList = () => {
                   Managers
                 </button> */}
                 <button
-                  className={`bg-green-200  px-4 py-2 rounded-lg hover:bg-green-300 text-primary    ${
-                    list === "Users" ? "translate-y-2 bg-green-400" : ""
+                  className={`bg-primary  px-4 py-2 rounded-lg hover:bg-primary text-white    ${
+                    list === "Users" ? "translate-y-2 bg-primary" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Users")}
                 >
                   Users
                 </button>
                 <button
-                  className={`bg-green-200  text-primary px-4 py-2 rounded-lg hover:bg-green-300   ${
-                    list === "Employee" ? "translate-y-2 bg-green-400" : ""
+                  className={`bg-primary  text-white px-4 py-2 rounded-lg hover:bg-primary   ${
+                    list === "Employee" ? "translate-y-2 bg-primary" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Employee")}
                 >
                   Employees
                 </button>
                 <button
-                  className={`bg-green-200 text-primary px-4 py-2 rounded-lg hover:bg-green-300 ${
-                    list === "Demonstration" ? "translate-y-2 bg-green-400" : ""
+                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary ${
+                    list === "Demonstration" ? "translate-y-2 bg-primary" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Demonstration")}
                 >

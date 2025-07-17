@@ -31,7 +31,6 @@ const TopDash = () => {
           </div>
           <p className="text-lg font-semibold">User Name</p>
         </div>
-        <ProtectedRoute allowedRoles={["Manager"]}></ProtectedRoute>
       </div>
       {userProfile && storedUser?.role === "Manager" && <UserProfile />}
 

@@ -32,17 +32,15 @@ function App() {
           <Route
             path="/managerDashboard"
             element={
-              <ProtectedRoute allowedRoles={["Manager"]}>
                 <ManagerNav />
-              </ProtectedRoute>
             }
           />
           <Route
             path="/adminDashboard"
             element={
-              // <ProtectedRoute allowedRoles={["admin"]}>
-              // </ProtectedRoute>
-                <AdminNav />
+              <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminNav />
+              </ProtectedRoute>
             }
           />
           <Route path="*" element={<NotFoundPage />}></Route>
