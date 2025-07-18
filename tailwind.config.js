@@ -30,7 +30,7 @@ export default {
         // Common colors
         white: "#FFFFFF",
         black: "#000000",
-        gray: "#CCCCCC",
+        // gray: "#CCCCCC",
         lightGray: "#EEEEEE",
         darkGray: "#333333",
 
