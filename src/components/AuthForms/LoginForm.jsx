@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UseStore from "../../Store/UseStore";
-import Loading from "../Loading/Loading";
+import {Loading , InlineLoadingDots} from "../Loading/Loading";
 const LoginForm = () => {
   
   const [phone, setPhone] = useState("");
@@ -37,7 +37,7 @@ const LoginForm = () => {
           body: JSON.stringify({ phone, password }), 
         }
       );
-      
+      console.log(res)
       const data = await res.json();
       
       
@@ -49,6 +49,7 @@ const LoginForm = () => {
       localStorage.setItem("token", data.token);
       // navigate("/adminDashboard");
       // console.log(data.data.user._id)
+
       console.log(data)
       if(data.data.user.role === "Manager"){
         navigate("/managerDashboard");
@@ -114,11 +115,11 @@ const LoginForm = () => {
 
       <button
         type="submit"
-        className="bg-white transform duration-200 text-gray-800 font-bold py-2 px-4 rounded-md w-[100px] hover:bg-black hover:text-white border-[0.5px] border-gray"
+        className={`bg-white flex items-center justify-center transform duration-200 text-gray-800 font-bold py-2 px-4 rounded-md w-[100px] hover:bg-black hover:text-white border-[0.5px] border-gray ${loading ? "cursor-not-allowed opacity-50 hover:bg-white" : ""}`}
       >
-        Log In
+        {loading ? <InlineLoadingDots/> : "Log In"}
       </button>
-      {loading && <Loading/>}
+      {/* {loading && <Loading/>} */}
       
       <p className="text-[13px] text-gray-800 flex self-end">
         {/* Don't have an account? &nbsp;

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import UseHttp from "../../services/UseHttp";
-import Loading from "../Loading/Loading";
-import  useStore  from "../../Store/UseStore";
+import axios from "axios";
+import {Loading , InlineLoadingDots} from "../Loading/Loading";
+import useStore from "../../Store/UseStore";
 import { useUserProfile } from "../../contexts/UserProfileContext";
 
 const ProfileEditForm = () => {
   const { userProfile, setUserProfile } = useUserProfile();
-  const { patch, loading } = UseHttp();
   const { setUser } = useStore();
 
   const [formData, setFormData] = useState({
@@ -17,24 +16,26 @@ const ProfileEditForm = () => {
     phone: "",
     restaurantName: "",
     restaurantAddress: "",
-    profileImage: "",
+    profilePicture: "",
   });
 
-  // Load from sessionStorage on mount
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Load user data from sessionStorage
   useEffect(() => {
-    const storedUser = JSON.parse(sessionStorage.getItem("user-data")).state?.user;
-    // console.log(JSON.parse(sessionStorage.getItem("user-data")).state.user)
+    const storedUser = JSON.parse(sessionStorage.getItem("user-data"))?.state?.user;
 
     if (storedUser) {
       setFormData({
-        // username: storedUser.username || "",
+        username: storedUser.username || "",
         firstName: storedUser.firstName || "",
         lastName: storedUser.lastName || "",
         email: storedUser.email || "",
         phone: storedUser.phone || "",
-        // restaurantName: storedUser.restaurantName || "",
-        // restaurantAddress: storedUser.restaurantAddress || "",
-        profileImage: storedUser.profilePicture || "",
+        restaurantName: storedUser.restaurantName || "",
+        restaurantAddress: storedUser.restaurantAddress || "",
+        profilePicture: storedUser.profilePicture || "",
       });
     }
   }, []);
@@ -45,25 +46,54 @@ const ProfileEditForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle image input change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await patch("https://gebeta-delivery1.onrender.com/api/v1/users/updateMe", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const form = new FormData();
 
-      if (response?.data?.user) {
-        const updatedUser = response.data.user;
+      // Only append fields that backend expects
+      form.append("firstName", formData.firstName);
+      form.append("lastName", formData.lastName);
+      form.append("email", formData.email);
+      // form.append("phone", formData.phone);
+      if (profilePicture) {
+        form.append("profilePicture", profilePicture);
+      }
+
+      const response = await axios.patch(
+        "https://gebeta-delivery1.onrender.com/api/v1/users/updateMe",
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response);
+
+      if (response?.data?.data?.user) {
+        const updatedUser = response.data.data.user;
 
         // Update Zustand
         setUser(updatedUser);
 
         // Update sessionStorage
-        sessionStorage.setItem("user-data", JSON.stringify({ user: updatedUser }));
+        sessionStorage.setItem(
+          "user-data",
+          JSON.stringify({ state: { user: updatedUser } })
+        );
 
         alert("Profile updated successfully!");
         setUserProfile(false);
@@ -73,6 +103,8 @@ const ProfileEditForm = () => {
     } catch (err) {
       console.error("Update error:", err);
       alert("Something went wrong while updating the profile.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,31 +112,37 @@ const ProfileEditForm = () => {
     <div className="flex">
       {/* Profile Image & Upload */}
       <div className="flex flex-col gap-2 p-2">
-        <div className="p-10 bg-[url('/src/assets/images/restaurant.jpg')] bg-cover bg-center h-[200px] w-[230px] rounded-xl" />
+        <img
+          src={
+            profilePicture
+              ? URL.createObjectURL(profilePicture)
+              : formData.profilePicture || "/default-avatar.jpg"
+          }
+          alt="Profile"
+          className="w-[230px] h-[200px] rounded-xl object-cover"
+        />
         <input
           className="border border-gray rounded-lg p-1 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-white hover:file:text-primary file:border-gray w-[230px]"
           type="file"
-          name="profileImage"
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              profileImage: e.target.files[0], // optional: handle FormData for images
-            }))
-          }
+          name="profilePicture"
+          onChange={handleImageChange}
         />
       </div>
 
       {/* Text Fields */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-sm justify-center p-5 w-full">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-5 text-sm justify-center p-5 w-full"
+      >
         <div>
           <label className="block text-l font-medium text-primary">Username</label>
           <input
             name="username"
             type="text"
             className="w-full border-[0.5px] border-gray p-2 rounded-lg"
-            value={formData?.username}
+            value={formData.username}
             onChange={handleChange}
-            
+            disabled // Not submitted to backend yet
           />
         </div>
 
@@ -154,7 +192,7 @@ const ProfileEditForm = () => {
               className="w-full border-[0.5px] border-gray p-2 rounded-lg"
               value={formData.restaurantName}
               onChange={handleChange}
-              
+              disabled // Not submitted to backend yet
             />
           </div>
           <div>
@@ -165,11 +203,11 @@ const ProfileEditForm = () => {
               className="w-full border-[0.5px] border-gray p-2 rounded-lg"
               value={formData.restaurantAddress}
               onChange={handleChange}
-              
+              disabled // Not submitted to backend yet
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary">Phone Number</label>
+            {/* <label className="block text-sm font-medium text-primary">Phone Number</label>
             <input
               name="phone"
               type="text"
@@ -177,7 +215,7 @@ const ProfileEditForm = () => {
               value={formData.phone}
               onChange={handleChange}
               required
-            />
+            /> */}
           </div>
         </div>
 

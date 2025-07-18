@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserId } from "../../contexts/userIdContext";
-import Loading from "../Loading/Loading";
+import {Loading , InlineLoadingDots} from "../Loading/Loading";
 
 const EditUser = () => {
   const navigate = useNavigate();

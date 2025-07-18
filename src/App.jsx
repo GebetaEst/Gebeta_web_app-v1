@@ -15,6 +15,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AdminNav from "./components/Sidebar/A-sidBarNav";
 import EditUser from "./components/UserForms/Edit-user";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Verify from "./pages/verify";
 function App() {
   const [count, setCount] = useState(0);
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassPage />} />
           <Route path="/otp" element={<OTPPage />} />
+          <Route path="/verify" element={<Verify />} />
 
           <Route
             path="/managerDashboard"

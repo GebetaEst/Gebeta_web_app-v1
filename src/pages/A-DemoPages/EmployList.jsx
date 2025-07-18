@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // import axios from "axios";
 import Card from "../../components/Cards/Cards";
 import UseHttp from "../../services/UseHttp";
-import Loading from "../../components/Loading/Loading";
+import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const { get, loading, error } = UseHttp();

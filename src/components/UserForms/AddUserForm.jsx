@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import Loading from "../Loading/Loading";
+import {Loading} from "../Loading/Loading";
 
 const AddUserForm = () => {
   const [formData, setFormData] = useState({

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserId } from "../../contexts/userIdContext";
 import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
-import Loading from "../../components/Loading/Loading";
+import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 import { Contact , X} from "lucide-react";
 import EditUser from "../../components/UserForms/Edit-user";
 import PopupCard from "../../components/Cards/PopupCard";

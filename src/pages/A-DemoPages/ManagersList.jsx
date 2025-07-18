@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
-import Loading from "../../components/Loading/Loading";
+import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 
 const ManagerList = () => {
   const [managers, setManagers] = useState([]);

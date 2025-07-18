@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -96,6 +97,7 @@ const Settings = () => {
 
       {/* Message */}
       {message && <p className="text-center text-green-700 mt-4">{message}</p>}
+      
     </div>
   );
 };

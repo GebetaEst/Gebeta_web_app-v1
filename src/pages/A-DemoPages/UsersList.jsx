@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
-import Loading from "../../components/Loading/Loading";
+import { Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 import { Pencil, Trash, Search } from "lucide-react";
 import ShowById from "./showById";
 import { useUserId } from "../../contexts/userIdContext";
