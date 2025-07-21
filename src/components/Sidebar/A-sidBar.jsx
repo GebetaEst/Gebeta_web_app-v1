@@ -41,6 +41,7 @@ const AdminSidebar = () => {
                 ? 'bg-gradient-to-r from-gray-200 to-gray-300  border-l-4 border-l-gray-600 border-gray-200 drop-shadow'
                 : 'text-primary '
             }`}
+            
             data-nav={item.label}
             onClick={() => setActiveNav(item.label)}
           >

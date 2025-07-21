@@ -4,6 +4,8 @@ import axios from "axios";
 const ManagerOrders = () => {
   const [orders, setOrders] = useState([]);
   const [expandedCard, setExpandedCard] = useState(null);
+  const [newOrderAlert, setNewOrderAlert] = useState(false);
+  const [latestOrderId, setLatestOrderId] = useState(null);
 
   const demoOrders = [
     {
@@ -137,6 +139,35 @@ const ManagerOrders = () => {
     };
     fetchOrders();
   }, []);
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get("https://your-api-url.com/orders", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const sorted = sortOrders(res.data.orders);
+        const latestFetchedId = sorted[0]?.id;
+
+        if (latestFetchedId && latestFetchedId !== latestOrderId) {
+          setNewOrderAlert(true);
+          setLatestOrderId(latestFetchedId);
+          setOrders(sorted);
+
+          // Auto-hide notification after 5 seconds
+          setTimeout(() => {
+            setNewOrderAlert(false);
+          }, 5000);
+        }
+      } catch (error) {
+        console.error("Polling error", error);
+      }
+    }, 10000); // every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [latestOrderId]);
 
   const toggleExpand = (id) => {
     setExpandedCard((prev) => (prev === id ? null : id));
@@ -168,83 +199,88 @@ const ManagerOrders = () => {
       >
         Sort Orders by Status
       </button>
+      {newOrderAlert && (
+        <div className="fixed top-20 right-6 bg-[#8b4513c4] text-white px-6 py-3 rounded shadow-lg z-50 animate-bounce-in">
+          🚨 New order received!
+        </div>
+      )}
 
       <h1 className="text-3xl font-bold text-center text-[#8B4513] mb-6">
         Orders Dashboard
       </h1>
       <div className="overflow-y-auto h-[69%] w-[80%] scrollbar-hide scroll-smooth border-primary  fixed p-2">
-        
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {orders.map((order) => (
+          {orders.map((order) => (
             <div
-                key={order.id}
-                onClick={() => toggleExpand(order.id)}
-                className={`bg-white border border-[#e2b96c] rounded-xl shadow-md hover:shadow-lg cursor-pointer transition-all duration-300 overflow-hidden flex flex-col justify-between motion-preset-slide-up  ${
+              key={order.id}
+              onClick={() => toggleExpand(order.id)}
+              className={`bg-white border border-[#e2b96c] rounded-xl shadow-md hover:shadow-lg cursor-pointer transition-all duration-300 overflow-hidden flex flex-col justify-between motion-preset-slide-up  ${
                 expandedCard === order.id ? "p-4 pb-6" : "p-4"
-                }`}
+              }`}
             >
-                <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-[#4b2e2e]">
-                    {order.customerName}
+                  {order.customerName}
                 </h2>
                 <span
-                    className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusColor(
+                  className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusColor(
                     order.status
-                    )}`}
+                  )}`}
                 >
-                    {order.status}
+                  {order.status}
                 </span>
-                </div>
+              </div>
 
-                <p className="text-[#5f4637] mt-2">
+              <p className="text-[#5f4637] mt-2">
                 <span className="font-medium">Order:</span>{" "}
                 {order.foodItems.join(", ")}
-                </p>
-                <p className="text-[#5f4637]">
+              </p>
+              <p className="text-[#5f4637]">
                 <span className="font-medium">Total:</span> {order.total}
-                </p>
-                <p className="text-sm text-[#a37c2c] italic">
+              </p>
+              <p className="text-sm text-[#a37c2c] italic">
                 Placed on: {order.createdAt}
-                </p>
+              </p>
 
-                {expandedCard === order.id && (
+              {expandedCard === order.id && (
                 <div className="mt-4 border-t pt-3 border-dashed border-[#caa954] text-sm text-[#3f2c1b]">
-                    <p>
+                  <p>
                     <span className="font-medium">Phone:</span> {order.phone}
-                    </p>
-                    <p>
-                    <span className="font-medium">Address:</span> {order.address}
-                    </p>
-                    <p className="mb-2">
+                  </p>
+                  <p>
+                    <span className="font-medium">Address:</span>{" "}
+                    {order.address}
+                  </p>
+                  <p className="mb-2">
                     <span className="font-medium">Items:</span>{" "}
                     {order.foodItems.map((item, idx) => (
-                        <span key={idx} className="inline-block mr-2">
+                      <span key={idx} className="inline-block mr-2">
                         {idx === 0 ? "🍽️" : ""} {item}
-                        </span>
+                      </span>
                     ))}
-                    </p>
+                  </p>
 
-                    <div className="mt-2">
+                  <div className="mt-2">
                     <label className="block text-sm font-semibold text-[#5a3b1a] mb-1">
-                        Update Status:
+                      Update Status:
                     </label>
                     <select
-                        value={order.status}
-                        onChange={(e) =>
+                      value={order.status}
+                      onChange={(e) =>
                         handleStatusChange(order.id, e.target.value)
-                        }
-                        className="w-full p-2 border border-[#caa954] rounded-md bg-[#fefcf7] focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                        onClick={(e) => e.stopPropagation()} // Prevent dropdown from collapsing card
+                      }
+                      className="w-full p-2 border border-[#caa954] rounded-md bg-[#fefcf7] focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                      onClick={(e) => e.stopPropagation()} // Prevent dropdown from collapsing card
                     >
-                        <option value="Pending">Pending</option>
-                        <option value="Cancelled">Cancelled</option>
-                        <option value="Delivered">Delivered</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Cancelled">Cancelled</option>
+                      <option value="Delivered">Delivered</option>
                     </select>
-                    </div>
+                  </div>
                 </div>
-                )}
+              )}
             </div>
-            ))}
+          ))}
         </div>
       </div>
     </div>
