@@ -89,20 +89,25 @@ const UsersList = () => {
           >
             <Card>
               <div className="flex items-center justify-between space-x-2 min-w-[400px]">
-                <div className="flex flex-col self-start items-center w-[150px]">
-                  <img
-                    className={`${
-                      user.profilePicture ? "" : "bg-gray"
-                    } w-[70px] h-[70px] flex justify-center items-center shadow-lg rounded-full`}
-                    src={user.profilePicture}
-                    alt=""
-                  />
-                  <h2 className="text-md font-semibold text-center">
-                    {user.firstName || "Unnamed"} {user.lastName || "Unnamed"}
-                  </h2>
-                  <p className="text-[10px]">{user.phone || "N/A"}</p>
-                  <p className="text-[10px]">{user.email || "N/A"}</p>
-                </div>
+                  
+                  <div className="flex justify-center items-center">
+
+                    <img
+                      className={`mx-2 ${
+                        user.profilePicture ? "" : "bg-gray"
+                      } w-[70px] h-[70px] flex justify-center items-center shadow-lg rounded-full`}
+                      src={user.profilePicture}
+                      alt=""
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <h2 className="text-md font-semibold text-center">
+                      {user.firstName || "Unnamed"} {user.lastName || "Unnamed"}
+                    </h2>
+                    <p className="text-[10px]">{user.phone || "N/A"}</p>
+                    <p className="text-[10px]">{user.email || "N/A"}</p>
+
+                  </div>
                 <p className="text-xs">
                   <span className="font-semibold text-[10px]">Enrolled on</span>{" "}
                   <br /> {formatDate(user.createdAt)}
