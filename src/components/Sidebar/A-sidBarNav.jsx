@@ -5,9 +5,9 @@ import Order from '../../pages/M-DemoPages/Order';
 import Menu from '../../pages/M-DemoPages/menus';
 import Analytics from '../../pages/M-DemoPages/Analytics';
 import Settings from '../../pages/M-DemoPages/Settings';
-import Customers from '../../pages/M-DemoPages/customers';
 import DashBoardPage from '../../pages/DashBoardPage';
 import AllList from '../../pages/A-DemoPages/AllList';
+import ACustomers from '../../pages/A-DemoPages/A-customers';
 const AdminNav = () => {
   const { activeNav } = useNavigation();
   // console.log(activeNav)
@@ -28,7 +28,7 @@ const AdminNav = () => {
         setActiveComponent(<Menu />);
         break;
       case 'Customers':
-        setActiveComponent(<Customers />);
+        setActiveComponent(<ACustomers />);
         break;
       case 'Analytics':
         setActiveComponent(<Analytics />);
