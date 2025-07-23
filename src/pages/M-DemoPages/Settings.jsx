@@ -1,11 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
+import EditRestaurantForm from "../../components/UserForms/EditRestaurantForm";
+import { Loading, InlineLoadingDots } from "../../components/Loading/Loading";
 
 const Settings = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showEditForm, setShowEditForm] = useState("");
+
   const token = localStorage.getItem("token");
 
   const logout = () => {
@@ -54,51 +57,79 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
-
-      {/* Demo Setting Options */}
-      <div className="space-y-2">
-        <div className="p-4 border border-gray rounded-lg shadow">
-          <h2 className="text-xl font-semibold">Notification Preferences</h2>
-          <p className="text-sm text-gray-600">Coming soon...</p>
-        </div>
-
-        <div className="p-4 border border-gray rounded-lg shadow">
-          <h2 className="text-xl font-semibold">Dark Mode</h2>
-          <p className="text-sm text-gray-600">Coming soon...</p>
-        </div>
-      </div>
-
-      {/* Logout Button */}
-      <div className="mt-4">
+    <>
+    <div className="motion-preset-focus motion-duration-300">
+      <div className="bg-[#f4f1e9] ">
         <button
-          className="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded "
-          onClick={logout}
+          onClick={()=>{setShowEditForm("Edit Restaurant")}}
+          className={`px-3 text-sm py-2 text-white font-semibold shadow-md bg-amber-900 ${showEditForm === "Edit Restaurant" ? "bg-amber-700" : ""}` }
         >
-          Log Out
+          Restaurant settings
+        </button>
+        <button
+          onClick={()=>{setShowEditForm("Account settings")}}
+          className={`px-3 text-sm py-2 text-white font-semibold shadow-md transition-all duration-300 bg-amber-900 ${showEditForm === "Account settings" ? "bg-amber-700" : ""}` }
+        >
+          Account settings
         </button>
       </div>
 
-      {/* Delete Account Section */}
-      <div className="mt-6 border-t pt-4">
-        <h2 className="text-xl font-bold text-red-600">Danger Zone</h2>
-        <p className="text-gray-600 text-sm mb-2">
-          Deleting your account is permanent and cannot be undone.
-        </p>
-        <button
-          className="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded"
-          onClick={deleteAccount}
-          disabled={loading}
-        >
-          {loading ? "Deleting..." : "Delete My Account"}
-        </button>
-      </div>
+      {showEditForm === "Edit Restaurant" ? (
+        <EditRestaurantForm />
+      ) : (
+        <div className="max-w-screen mx-auto p-4 space-y-6 h-[calc(100vh-110px)]  bg-[#f4f1e9] flex justify-center items-center">
+          <div>
+            <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
 
-      {/* Message */}
-      {message && <p className="text-center text-green-700 mt-4">{message}</p>}
-      
-    </div>
+            {/* Demo Setting Options */}
+            <div className="space-y-2">
+              <div className="p-4 border border-gray rounded-lg shadow">
+                <h2 className="text-xl font-semibold">
+                  Notification Preferences
+                </h2>
+                <p className="text-sm text-gray-600">Coming soon...</p>
+              </div>
+
+              <div className="p-4 border border-gray rounded-lg shadow">
+                <h2 className="text-xl font-semibold">Dark Mode</h2>
+                <p className="text-sm text-gray-600">Coming soon...</p>
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <div className="mt-4">
+              <button
+                className="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded "
+                onClick={logout}
+              >
+                Log Out
+              </button>
+            </div>
+
+            {/* Delete Account Section */}
+            <div className="mt-6 border-t pt-4">
+              <h2 className="text-xl font-bold text-red-600">Danger Zone</h2>
+              <p className="text-gray-600 text-sm mb-2">
+                Deleting your account is permanent and cannot be undone.
+              </p>
+              <button
+                className="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded"
+                onClick={deleteAccount}
+                disabled={loading}
+              >
+                {loading ? "Deleting..." : "Delete My Account"}
+              </button>
+            </div>
+
+            {/* Message */}
+            {message && (
+              <p className="text-center text-green-700 mt-4">{message}</p>
+            )}
+          </div>
+        </div>
+      )}
+      </div>
+    </>
   );
 };
 

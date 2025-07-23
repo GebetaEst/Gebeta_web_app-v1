@@ -100,7 +100,7 @@ const EditUser = () => {
   };
 
   return (
-    <div className=" p- bg-white w-[400px] rounded ">
+    <div className=" p- bg-[#f4f1e9] w-[400px] rounded ">
       <h1 className="text-2xl font-semibold mb-4 border-b pb-2">Edit User</h1>
       <div className="space-y-4">
         {["firstName", "lastName", "email", "phone"].map((field) => (

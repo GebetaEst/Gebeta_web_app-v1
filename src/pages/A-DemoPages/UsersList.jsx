@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
 import { Loading , InlineLoadingDots} from "../../components/Loading/Loading";
-import { Pencil, Trash, Search } from "lucide-react";
+import { Pencil, Trash, Search, RefreshCcw } from "lucide-react";
 import ShowById from "./showById";
 import { useUserId } from "../../contexts/userIdContext";
 
@@ -13,6 +13,7 @@ const UsersList = () => {
   const [loading, setLoading] = useState(true);
   const [errorMg, setErrorMg] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [refetch, setRefetch] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -49,7 +50,7 @@ const UsersList = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [refreshUsers]);
+  }, [refreshUsers, refetch]);
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -74,6 +75,21 @@ const UsersList = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className=" border px-2 py-1 mb-4 rounded-lg  shadow-sm w- max-w-md sticky top-0 z-50"
       />
+      <button
+              className="bg-[#e0cda9] p-2 rounded transition-all duration-500 mx-6 -translate-y-1 fixed "
+              onClick={() => {
+                setRefetch(!refetch);
+              }}
+            >
+              <span
+                className={`flex justify-center items-center  ${
+                  loading && "animate-spin transition duration-1500"
+                }`}
+              >
+                <RefreshCcw size={24} color="#4b382a" />
+              </span>
+            </button>
+            
 
       {errorMg && <p className="text-red-500">{errorMg}</p>}
       {loading ? (
@@ -82,12 +98,12 @@ const UsersList = () => {
         filteredUsers?.map((user) => (
           <div
             key={user._id}
-            className=" hover:-translate-y-1 transition-all duration-300"
+            className="  transition-all duration-300"
             onClick={() => {
               setGetId(user._id);
             }}
           >
-            <Card>
+            <div className=" w-fit p-4 bg-white border-[0.5px] border-gray rounded-lg font-noto m-2 shadow-lg hover:bg-gray-50">
               <div className="flex items-center justify-between space-x-2 min-w-[400px]">
                   
                   <div className="flex justify-center items-center">
@@ -116,10 +132,11 @@ const UsersList = () => {
                   <div className="flex gap-4 justify-end pr-5"></div>
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
         ))
       )}
+      
     </div>
   );
 };

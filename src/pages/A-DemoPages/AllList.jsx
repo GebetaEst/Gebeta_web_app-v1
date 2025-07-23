@@ -104,7 +104,7 @@ const AllList = () => {
                 add {list}
               </button>
             </div>
-            <div className="flex justify-between mt-4 mb-6">
+            <div className="flex justify-between mt- mb-6">
               <div className="flex flex-wrap gap-3">
                 {/* <button
                   className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray ${
