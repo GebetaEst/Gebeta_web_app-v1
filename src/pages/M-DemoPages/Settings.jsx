@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import EditRestaurantForm from "../../components/UserForms/EditRestaurantForm";
+import EditRestaurantForm from "../../components/UserForms/M-EditRestaurantForm";
 import { Loading, InlineLoadingDots } from "../../components/Loading/Loading";
 
 const Settings = () => {

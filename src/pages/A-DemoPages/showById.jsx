@@ -76,6 +76,7 @@ const ShowById = () => {
                     <p className="text-gray-600 font-semibold"> Phone: <span className="text- font-normal">{data?.data?.user?.phone}</span></p>
                     <p className="text-gray-600 font-semibold"> Role: <span className="text- font-normal">{data?.data?.user?.role}</span></p>
                     <p className="text-gray-600 font-semibold"> Created At: <span className="text-primary font-normal">{formatDate(data?.data?.user?.createdAt)}</span></p>
+                    <p className="text-gray-600 font-semibold"> ID: <span className="text- font-normal">{data?.data?.user?._id}</span></p>
                 </div>
                 <div className="flex gap-3 self-end pr-5 translate-y-20">
                     <button className=" bg-blue-200 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300" onClick={() =>setShowEditForm(true)}>
