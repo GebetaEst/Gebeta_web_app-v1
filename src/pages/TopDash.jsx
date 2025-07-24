@@ -17,7 +17,7 @@ const TopDash = () => {
   // console.log(storedUser.role);
   return (
     <>
-      <div className="pl-12 flex items-center justify-between bg-white h-[70px] w-[100%] px-28">
+      <div className="pl-12 flex items-center justify-between bg-[#e0cda9] h-[70px] w-[100%] px-28 border-b-2 border-[#e0cd99]">
         <p className="text-3xl font-bold ">{Title}</p>
         <div
           onClick={() => {

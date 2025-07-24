@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Trash, RefreshCcw ,CirclePlus ,X } from "lucide-react";
-import { Loading } from "../../components/Loading/Loading";
-import PopupCard from "../../components/Cards/PopupCard";
+import { Trash, RefreshCcw, CirclePlus, X } from "lucide-react";
 import AddRestaurantsForm from "../../components/UserForms/A-AddRestaurantsForm";
+import PopupCard from "../../components/Cards/PopupCard";
+import {Loading} from "../../components/Loading/Loading";
 
 const ACustomers = () => {
-  const [restaurants, setRestaurants] = useState([]); // Renamed for clarity
-  const [loading, setLoading] = useState(true); // Added for initial fetch
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [expandedRestaurant, setExpandedRestaurant] = useState(null);
   const [showAddRes, setShowAddRes] = useState(false);
   const [search, setSearch] = useState("");
   const [error, setError] = useState(null);
   const [refetch, setRefetch] = useState(false);
-  const [statusDropdownId, setStatusDropdownId] = useState(null); // State to manage which status dropdown is open
+  const [statusDropdownId, setStatusDropdownId] = useState(null);
 
-  // Fetch all restaurants on component mount
+  // State for custom modal dialogs
+  const [alertInfo, setAlertInfo] = useState({ show: false, message: "" });
+  const [confirmDeleteInfo, setConfirmDeleteInfo] = useState({ show: false, id: null });
+
+  // Fetch all restaurants on component mount or refetch
   useEffect(() => {
     const fetchRestaurants = async () => {
       setLoading(true);
@@ -24,17 +28,16 @@ const ACustomers = () => {
           "https://gebeta-delivery1.onrender.com/api/v1/restaurants",
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              // Using a placeholder token for demonstration as localStorage is not ideal in some environments
+              // Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
         );
-
+        
         const data = await res.json();
-        console.log(data);
+        console.log(data)
         if (res.ok && data.status === "success") {
-          // Check res.ok for HTTP success
-          setRestaurants(data.data.restaurants);
-          console.log();
+          setRestaurants(data.data.restaurants || []); // Ensure restaurants is always an array
         } else {
           throw new Error(data.message || "Failed to load restaurants.");
         }
@@ -49,10 +52,12 @@ const ACustomers = () => {
     fetchRestaurants();
   }, [refetch]);
 
+  // Toggles the expanded view for a restaurant row
   const toggleExpand = (id) => {
     setExpandedRestaurant((prev) => (prev === id ? null : id));
   };
 
+  // Handles changing the active status of a restaurant
   const handleStatusChange = async (id, newStatus) => {
     try {
       const res = await fetch(
@@ -66,8 +71,8 @@ const ACustomers = () => {
           body: JSON.stringify({ active: newStatus === "Active" }),
         }
       );
-      setRefetch(!refetch);
       const data = await res.json();
+      console.log(data)
       if (res.ok && data.status === "success") {
         setRestaurants((prev) =>
           prev.map((restaurant) =>
@@ -76,23 +81,27 @@ const ACustomers = () => {
               : restaurant
           )
         );
-        setStatusDropdownId(null);
+        setStatusDropdownId(null); // Close dropdown on success
       } else {
         throw new Error(data.message || "Failed to update status.");
       }
     } catch (error) {
       console.error("Status update failed:", error);
-      alert(`Failed to update status: ${error.message}`); // User feedback
+      // Use custom alert modal for user feedback
+      setAlertInfo({ show: true, message: `Failed to update status: ${error.message}` });
     }
   };
 
-  // Handle restaurant deletion
-  const handleDelete = async (e, id) => {
+  // Initiates the delete process by showing the confirmation modal
+  const handleDelete = (e, id) => {
     e.stopPropagation();
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this restaurant?"
-    );
-    if (!confirmDelete) return;
+    setConfirmDeleteInfo({ show: true, id: id });
+  };
+
+  // Performs the actual deletion after user confirmation
+  const confirmDeleteAction = async () => {
+    if (!confirmDeleteInfo.id) return;
+    const id = confirmDeleteInfo.id;
 
     try {
       const res = await fetch(
@@ -104,24 +113,27 @@ const ACustomers = () => {
           },
         }
       );
-
+     console.log(res)
       if (res.ok) {
-        // Check for successful HTTP status (200-299)
         setRestaurants((prev) =>
           prev.filter((restaurant) => restaurant._id !== id)
         );
         if (expandedRestaurant === id) {
-          // Close expanded row if deleted
           setExpandedRestaurant(null);
         }
-        alert("Restaurant deleted successfully!"); // User feedback
+        // Use custom alert modal for user feedback
+        setAlertInfo({ show: true, message: "Restaurant deleted successfully!" });
       } else {
         const errorData = await res.json();
         throw new Error(errorData.message || "Failed to delete restaurant.");
       }
     } catch (err) {
       console.error("Delete error:", err);
-      alert(`Failed to delete restaurant: ${err.message}`); // User feedback
+      // Use custom alert modal for user feedback
+      setAlertInfo({ show: true, message: `Failed to delete restaurant: ${err.message}` });
+    } finally {
+      // Hide the confirmation modal
+      setConfirmDeleteInfo({ show: false, id: null });
     }
   };
 
@@ -131,57 +143,106 @@ const ACustomers = () => {
         r.name.toLowerCase().includes(search.toLowerCase())
       )
     : [];
+    const formatDate = (isoString) => {
+      const date = new Date(isoString);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
 
   return (
     <div className="p-6 min-h-[calc(100vh-70px)] bg-[#f4f1e9] font-sans">
+      {/* Custom Alert Modal */}
+      {alertInfo.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-lg text-center w-11/12 max-w-sm">
+            <p className="mb-4 text-lg text-[#4b382a]">{alertInfo.message}</p>
+            <button
+              onClick={() => setAlertInfo({ show: false, message: '' })}
+              className="bg-[#4b382a] text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal */}
+      {confirmDeleteInfo.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-lg text-center w-11/12 max-w-sm">
+            <p className="mb-6 text-lg text-[#4b382a]">Are you sure you want to delete this restaurant?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setConfirmDeleteInfo({ show: false, id: null })}
+                className="bg-gray-300 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteAction}
+                className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <h1 className="text-3xl font-bold text-[#4b382a] mb-4">
         Restaurant Management
       </h1>
 
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search restaurants..."
-        className="mb-4 p-2 w-full sm:w-1/2 border border-[#bfa66a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa66a]"
-      />
-      <button
-        className="bg-[#e0cda9] p-2 rounded transition-all duration-500 mx-6 translate-y-1"
-        onClick={() => {
-          setRefetch(!refetch);
-        }}
-      >
-        <span
-          className={`flex justify-center items-center  ${
-            loading && "animate-spin transition duration-1500"
-          }`}
+      <div className="flex flex-wrap items-center gap-4 mb-4">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search restaurants..."
+          className="p-2 flex-grow sm:flex-grow-0 sm:w-1/2 border border-[#bfa66a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa66a]"
+        />
+        <button
+          className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 hover:scale-110"
+          onClick={() => setRefetch(!refetch)}
+          title="Refresh Data"
         >
-          <RefreshCcw size={24} color="#4b382a" />
-        </span>
-      </button>
-      <button
-        className="bg-[#e0cda9] p-2 rounded transition-all duration-500 mx-6 translate-y-1 "
-        onClick={() => {setShowAddRes(true)}}
-      >
-        <span className={`flex text-[#4b382a] font-semibold`}>
-        <CirclePlus strokeWidth={1.3} color="#4b382a"/> &nbsp; Add Restaurant
-        </span>
-      </button>
+          <span
+            className={`flex justify-center items-center ${
+              loading ? "animate-spin" : ""
+            }`}
+          >
+            <RefreshCcw size={24} color="#4b382a" />
+          </span>
+        </button>
+        <button
+          className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 hover:scale-110 flex items-center"
+          onClick={() => setShowAddRes(true)}
+        >
+          <span className="flex items-center text-[#4b382a] font-semibold">
+            <CirclePlus strokeWidth={1.5} color="#4b382a" className="mr-2" />
+            Add Restaurant
+          </span>
+        </button>
+      </div>
+
       {showAddRes && (
         <PopupCard>
-          <div className="flex justify-between">
-            <h1 className="text-2xl font-bold text-[#4b382a] border-b">Add Restaurant</h1>
-          <button onClick={() => setShowAddRes(false)}>
-            <X size={24} color="red" />
-          </button>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold text-[#4b382a] border-b-2 border-[#e0cda9]">Add Restaurant</h1>
+            <button onClick={() => setShowAddRes(false)} className="text-red-500 hover:text-red-700">
+              <X size={28} />
+            </button>
           </div>
           <AddRestaurantsForm />
         </PopupCard>
       )}
+
       {loading ? (
         <Loading />
       ) : error ? (
-        <p className="text-red-600 text-lg">
+        <p className="text-red-600 text-lg bg-red-100 p-4 rounded-md">
           Error: {error}. Please try again.
         </p>
       ) : (
@@ -193,10 +254,8 @@ const ACustomers = () => {
                 <th className="p-3 text-left">Restaurant Name</th>
                 <th className="p-3 text-left">Cuisine</th>
                 <th className="p-3 text-left">Location</th>
-                <th className="p-3 text-center">Status</th>{" "}
-                {/* Centered for button */}
-                <th className="p-3 text-center">Actions</th>{" "}
-                {/* Centered for buttons */}
+                <th className="p-3 text-center">Delivery</th>
+                <th className="p-3 text-center">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -209,8 +268,6 @@ const ACustomers = () => {
               ) : (
                 filteredRestaurants.map((restaurant, index) => (
                   <React.Fragment key={restaurant._id}>
-                    {" "}
-                    {/* Key applies here */}
                     <tr
                       className="border-b hover:bg-[#f9f4ea] cursor-pointer"
                       onClick={() => toggleExpand(restaurant._id)}
@@ -222,6 +279,10 @@ const ACustomers = () => {
                       </td>
                       <td className="p-3 text-gray-700">
                         {restaurant.location?.address || "N/A"}
+                      </td>
+
+                      <td className="p-3 space-x-2 text-center">
+                        <p>{restaurant.isDeliveryAvailable ? "Available" : "Not Available"}</p>
                       </td>
                       <td
                         className="p-3 relative text-center"
@@ -279,26 +340,6 @@ const ACustomers = () => {
                           </div>
                         )}
                       </td>
-
-                      <td className="p-3 space-x-2 text-center">
-                        {/* <button
-                          className="inline-flex items-center justify-center bg-blue-100 text-blue-700 px-3 py-1 rounded-md hover:shadow-lg hover:bg-blue-200 duration-300 transform hover:scale-105"
-                          title="Edit Restaurant"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent row expansion
-                            alert(`Edit ${restaurant.name}`); // Placeholder for edit logic
-                          }}
-                        >
-                          <Pencil strokeWidth={1.5} size={18} />
-                        </button> */}
-                        <button
-                          className="inline-flex items-center justify-center bg-red-100 text-red-700 px-3 py-1 rounded-md hover:shadow-lg hover:bg-red-200 duration-300 transform hover:scale-105"
-                          title="Delete Restaurant"
-                          onClick={(e) => handleDelete(e, restaurant._id)}
-                        >
-                          <Trash strokeWidth={1.5} size={18} />
-                        </button>
-                      </td>
                     </tr>
                     {expandedRestaurant === restaurant._id && (
                       <tr className="bg-[#f6efe0] text-sm">
@@ -308,7 +349,7 @@ const ACustomers = () => {
                               <span className="font-semibold text-[#4b382a]">
                                 Description:
                               </span>{" "}
-                              {restaurant.shortDescription || "N/A"}
+                              {restaurant.description || "N/A"}
                             </p>
                             <p>
                               <span className="font-semibold text-[#4b382a]">
@@ -342,14 +383,9 @@ const ACustomers = () => {
                             </p>
                             <p>
                               <span className="font-semibold text-[#4b382a]">
-                                Delivery Available:
+                                Created At:
                               </span>{" "}
-                              {typeof restaurant.isDeliveryAvailable ===
-                              "boolean"
-                                ? restaurant.isDeliveryAvailable
-                                  ? "Yes"
-                                  : "No"
-                                : "N/A"}
+                              {formatDate(restaurant.createdAt)}
                             </p>
                             {restaurant.managerId &&
                             typeof restaurant.managerId === "object" ? (
