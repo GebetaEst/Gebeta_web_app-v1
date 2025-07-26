@@ -217,7 +217,7 @@ const ACustomers = () => {
           </span>
         </button>
         <button
-          className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 hover:scale-110 flex items-center"
+          className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 active:-rotate-6 transform-all flex items-center"
           onClick={() => setShowAddRes(true)}
         >
           <span className="flex items-center text-[#4b382a] font-semibold">

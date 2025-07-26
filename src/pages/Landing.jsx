@@ -39,7 +39,7 @@ const Landing = () => {
       </header>
 
       <section className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-6 text-center">
-        <h1 className="text-white  md:text-8xl font-bold drop-shadow-[0_4px_20px_rgba(0,0,0,0.4)] animate-fade-in mb-8">
+        <h1 className="text-white   md:text-8xl font-bold drop-shadow-[0_4px_20px_rgba(0,0,0,0.4)] animate-fade-in mb-8">
           <span className="flex text-9xl mb-1">Craving?</span>
           <span className="bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 bg-clip-text text-transparent">
           Tap. Eat. Repeat.
