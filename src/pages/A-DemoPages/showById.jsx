@@ -22,7 +22,7 @@ const ShowById = () => {
       },
     }
   );
-  // console.log(data);
+  console.log(data);
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -42,6 +42,7 @@ const ShowById = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
   
       setGetId('');
       setRefreshUsers((prev) => !prev);

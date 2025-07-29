@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UseStore from "../../Store/UseStore";
+import UseUserStore from "../../Store/UseStore";
 import {Loading , InlineLoadingDots} from "../Loading/Loading";
 const LoginForm = () => {
   
@@ -10,7 +10,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
-  const {setUser } = UseStore();
+  const {setUser , restaurant, setRestaurant } = UseUserStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

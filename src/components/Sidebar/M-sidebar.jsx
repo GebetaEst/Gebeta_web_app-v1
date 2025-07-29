@@ -23,7 +23,7 @@ const ManagerSidebar = () => {
   const { activeNav, setActiveNav } = useNavigation("");
    
   return (
-    <aside className="w-60 min-h-screen bg-cardBackground shadow-md p-6 border-[0.5px] border-gray sticky top-0 left-0 motion-preset-slide-right motion-duration-1500 font-noto">
+    <aside className="w-60 min-h-screen  bg-[url('/src/assets/images/sidebar-bg3.png')] bg-cover bg-center  bg-cardBackground shadow-md p-6 border-[0.5px] border-gray sticky top-0 left-0 motion-preset-slide-right motion-duration-1500 font-noto">
       <div className="text-xl font-bold pb-8 flex items-center justify-center  space-x-1 border-b-[0.5px] border-gray mb-8">
         <UtensilsCrossed size={40} color="white" className="bg-primary rounded-md p-1"/>
         <span>Gbeታ Management</span>

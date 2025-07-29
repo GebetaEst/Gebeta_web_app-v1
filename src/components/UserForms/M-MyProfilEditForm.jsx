@@ -8,6 +8,9 @@ const ProfileEditForm = () => {
   const { userProfile, setUserProfile } = useUserProfile();
   const { setUser } = useStore();
 
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",
@@ -18,9 +21,6 @@ const ProfileEditForm = () => {
     restaurantAddress: "",
     profilePicture: "",
   });
-
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   // Load user data from sessionStorage
   useEffect(() => {

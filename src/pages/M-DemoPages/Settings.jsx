@@ -58,11 +58,14 @@ const Settings = () => {
 
   return (
     <>
-    <div className="motion-preset-focus motion-duration-300">
+    <div className="motion-preset-focus motion-duration-300 bg-[#f4f1e9] pb-[4px]">
       <div className="bg-[#f4f1e9] ">
         <button
           onClick={()=>{setShowEditForm("Edit Restaurant")}}
-          className={`px-3 text-sm py-2 text-white font-semibold shadow-md bg-amber-900 ${showEditForm === "Edit Restaurant" ? "bg-amber-700" : ""}` }
+          className={`px-3 text-sm py-2 text-white font-semibold shadow-md bg-amber-900 ${showEditForm === "Edit Restaurant" ? "bg-amber-700" : ""} 
+          ` 
+        }
+        // ${sessionStorage.getItem("user-data")?.role === "manager" ? "" : "hidden"}
         >
           Restaurant settings
         </button>
@@ -73,7 +76,7 @@ const Settings = () => {
           Account settings
         </button>
       </div>
-
+{/* && sessionStorage.getItem("user-data")?.role === "manager"  */}
       {showEditForm === "Edit Restaurant" ? (
         <EditRestaurantForm />
       ) : (

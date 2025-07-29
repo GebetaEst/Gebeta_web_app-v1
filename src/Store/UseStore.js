@@ -5,8 +5,13 @@ const useUserStore = create(
   persist(
     (set) => ({
       user: null,
+      restaurant: null,
+
       setUser: (userData) => set({ user: userData }),
       clearUser: () => set({ user: null }),
+
+      setRestaurant: (restaurantData) => set({ restaurant: restaurantData }),
+      clearRestaurant: () => set({ restaurant: null }),
     }),
     {
       name: "user-data", // key in sessionStorage
