@@ -35,7 +35,7 @@ const ACustomers = () => {
         );
         
         const data = await res.json();
-        console.log(data)
+        // console.log(data)
         if (res.ok && data.status === "success") {
           setRestaurants(data.data.restaurants || []); // Ensure restaurants is always an array
         } else {

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { MapPinCheckInside } from "lucide-react";
 import useUserStore from "../../Store/UseStore";
+import { Loading , InlineLoadingDots } from "../Loading/Loading";
 
 const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
   const { restaurant: restaurantFromStore, setRestaurant } = useUserStore();
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMSG, setErrorMSG] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -25,6 +26,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
   });
 
   useEffect(() => {
+    setLoading(true);
     if (restaurantFromStore) {
       setForm({
         name: restaurantFromStore.name || "",
@@ -43,7 +45,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
       });
       setLoading(false);
     } else {
-      setError("Restaurant data could not be loaded.");
+      setErrorMSG("Restaurant data could not be loaded.");
       setLoading(false);
     }
   }, [restaurantFromStore]);
@@ -69,37 +71,43 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("description", form.description);
     formData.append("openHours", form.openHours);
-    formData.append("deliveryRadiusMeters", form.deliveryRadiusMeters);
+    formData.append("deliveryRadiusMeters", Number(form.deliveryRadiusMeters)); // Convert to number
     formData.append("isDeliveryAvailable", form.isDeliveryAvailable);
     formData.append("isOpenNow", form.isOpenNow);
-
+    const cuisineTypesArray = form.cuisineTypes
+      .split(",")
+      .map(type => type.trim())
+      .filter(type => type);
+    
+    // Clear existing cuisineTypes if any
+    formData.delete("cuisineTypes");
+    // Append each cuisine type separately
+    cuisineTypesArray.forEach(type => {
+      formData.append("cuisineTypes", type);
+    });
     // Append location data
+    formData.append("description", form.description);
+    formData.append("name", form.name);
+
     formData.append("location[address]", form.location.address);
     formData.append("location[type]", "Point");
     if (form.location.coordinates.length === 2) {
       formData.append("location[coordinates][0]", form.location.coordinates[0]);
       formData.append("location[coordinates][1]", form.location.coordinates[1]);
     }
-
-    // Append cuisine types
-    form.cuisineTypes
-      .split(",")
-      .map(type => type.trim())
-      .filter(type => type)
-      .forEach(type => {
-        formData.append("cuisineTypes", type);
-      });
-
+  
+    // Properly format cuisine types as array
+    
+  
     if (form.imageCover) {
       formData.append("image", form.imageCover);
     }
-
+  
     try {
+      setLoading(true);
       const res = await fetch(
         `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantFromStore._id}`,
         {
@@ -110,20 +118,24 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
           body: formData,
         }
       );
-
+  
+      // console.log("Form data:", Object.fromEntries(formData.entries())); // Debug log
+  
       const result = await res.json();
       if (res.ok && result.status === "success") {
-        alert("Restaurant updated successfully!");
+        setMessage("Restaurant updated successfully!");
         const updatedRestaurant = result.data.restaurant;
         setRestaurant(updatedRestaurant);
         onSaveSuccess && onSaveSuccess(updatedRestaurant);
       } else {
         throw new Error(result.message || "Failed to update restaurant.");
+        setErrorMSG("Failed to update restaurant. try again!");
       }
     } catch (err) {
       console.error("Update error:", err);
-      alert(`Failed to update restaurant: ${err.message}`);
+      setErrorMSG("Failed to update restaurant. try again");
     }
+    setLoading(false);
   };
 
   const handleGeolocation = () => {
@@ -142,31 +154,14 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
             coordinates: [longitude, latitude]
           },
         }));
-        alert("Location captured! Click 'Save Changes' to apply.");
       },
       (error) => {
         console.error("Geolocation error:", error);
-        alert("Failed to capture location. Please ensure location services are enabled.");
+        setErrorMSG("Failed to capture location. Please ensure location services are enabled.");
       },
       { enableHighAccuracy: true }
     );
   };
-
-  if (loading) {
-    return (
-      <p className="p-6 text-center text-gray-600 text-lg h-[calc(100vh-110px)]">
-        Loading restaurant data...
-      </p>
-    );
-  }
-
-  if (error || !restaurantFromStore) {
-    return (
-      <p className="p-6 text-center text-red-600 text-lg h-[calc(100vh-110px)]">
-        {error || "Restaurant not found."}
-      </p>
-    );
-  }
 
   return (
     <div className="min-h-[calc(100vh-110px)] pt-2 bg-[#f4f1e9] font-noto flex justify-center motion-preset-fade motion-duration-700">
@@ -175,7 +170,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
           Edit Restaurant Details
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex flex-row gap-12 justify-around">
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -279,9 +274,9 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                 <button
                   type="button"
                   onClick={handleGeolocation}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200"
+                  className=" bg-blue-200 hover:bg-blue-400 active:bg-blue-200 focus:border-green-500 flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200"
                 >
-                  <MapPinCheckInside size={20} />
+                  <MapPinCheckInside size={20} color="green" />
                   Use Current Location
                 </button>
               </div>
@@ -299,10 +294,10 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   className="border rounded-lg w-[200px] h-[200px] object-cover shadow-md"
                 />
               </div>
-              <div className="flex w-fit h-fit space-y-2 sm:justify-around gap-2 mt-2 p-2 bg-[#f9f4ea] rounded-lg border border-[#e0cda9]">
+              <div className="flex items-center w-fit h-fit space-y-2 sm:justify-around gap-2 mt-2 p-2 bg-[#f9f4ea] rounded-lg border border-[#e0cda9]">
                 <label htmlFor="isOpenNow" className="flex flex-col items-center gap-3 text-[#4b382a] cursor-pointer">
                   <div
-                    className="relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out"
+                    className="relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out mt-2"
                     style={{ backgroundColor: form.isOpenNow ? "#46c265" : "#d1d5db" }}
                   >
                     <input
@@ -321,7 +316,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   </div>
                   <span className="ml-2 text-xs font-medium select-none">Open Now</span>
                 </label>
-                <label htmlFor="isDeliveryAvailable" className="flex flex-col items-center gap-3 text-[#4b382a] cursor-pointer">
+                <label htmlFor="isDeliveryAvailable" className="flex flex-col items-center gap-3 text-[#4b382a] cursor-pointer ">
                   <div
                     className="relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out"
                     style={{ backgroundColor: form.isDeliveryAvailable ? "#46c265" : "#d1d5db" }}
@@ -345,21 +340,18 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-end gap-4 mt-6">
-            {onCancel && (
-              <button
-                type="button"
-                onClick={onCancel}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                Cancel
-              </button>
+          <div className="flex justify-end items-center gap-44 mt-5">
+            {errorMSG !== "" && (
+              <p className="text-sm font-medium text-red-600">{errorMSG}</p>
+            )}
+            {message !== "" && (
+              <p className="text-sm font-medium text-green-600">{message}</p>
             )}
             <button
               type="submit"
               className="px-8 py-2 bg-[#894718] text-white font-semibold rounded-lg hover:bg-[#3a2f24] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#bfa66a]"
             >
-              Save Changes
+             {loading ? <InlineLoadingDots /> : "Save Changes"}
             </button>
           </div>
         </form>

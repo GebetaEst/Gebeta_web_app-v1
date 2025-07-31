@@ -33,11 +33,12 @@ const ManagerSidebar = () => {
         {navItems.map((item) => (
           <span
             key={item.path}
-            className={`flex items-center space-x-3 px-3 py-2 rounded-xl font-medium transition-all duration-100 scroll-smooth cursor-pointer motion-preset-expand motion-duration-700 ${
+            className={`flex items-center  space-x-3 px-3 py-2 rounded-xl font-medium transition-all duration-100 scroll-smooth cursor-pointer ${
               activeNav === item.label
-                ? 'bg-gradient-to-r from-gray-200 to-gray-300  border-l-4 border-l-gray-600 border-gray-200 drop-shadow'
-                : 'text-primary '
+                ? 'bg-gradient-to-r from-gray-50 to-gray-300   border-l-4 border-l-gray-600 border-gray-200 drop-shadow'
+                : 'motion-text-out-slate-100 '
             }`}
+            
             data-nav={item.label}
             onClick={() => setActiveNav(item.label)}
           >
