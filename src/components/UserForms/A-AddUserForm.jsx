@@ -211,7 +211,7 @@ const AddUserForm = () => {
         <div>
           <button
             type="submit"
-            className={`bg-primary text-white p-2 rounded-lg hover:bg-white hover:text-primary border border-gray transition-all duration-300 disabled:bg-gray-300 ${loading ? "cursor-not-allowed" : ""}`}
+            className={`bg-[#e0cda9] text-primary p-2 rounded-lg hover:bg-[#deb770] border border-gray transition-all duration-300 disabled:bg-gray-300 ${loading ? "cursor-not-allowed" : ""}`}
             disabled={loading}
           >
             {loading ? <InlineLoadingDots /> : "Add User"}

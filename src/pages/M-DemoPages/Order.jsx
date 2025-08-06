@@ -10,17 +10,21 @@ const ManagerOrders = () => {
   const API_URL =
     "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/6892fa71c22cb2251d1f8b34/orders";
 
-  const sortOrders = (orders) => {
+  const sortOrders = (ordersToSort) => {
     const statusPriority = {
       preparing: 1,
       cooked: 2,
       cancelled: 3,
       delivering: 4,
+      completed: 5
     };
-    return [...orders].sort((a, b) => {
-      const aPriority = statusPriority[a.orderStatus] || 99;
-      const bPriority = statusPriority[b.orderStatus] || 99;
-      return aPriority - bPriority;
+    
+    return [...ordersToSort].sort((a, b) => {
+      const statusA = a.orderStatus?.toLowerCase() || '';
+      const statusB = b.orderStatus?.toLowerCase() || '';
+      const priorityA = statusPriority[statusA] || 99;
+      const priorityB = statusPriority[statusB] || 99;
+      return priorityA - priorityB;
     });
   };
 
@@ -101,13 +105,15 @@ const ManagerOrders = () => {
 
   const getStatusColor = (status) => {
     if (status === "Delivering") return "bg-green-100 text-green-700";
-    if (status === "Cancelled") return "bg-red-100 text-red-700";
+    if (status === "Completed") return "bg-gray-200 text-gray-700";
     return "bg-yellow-100 text-yellow-800";
   };
 
   const handleSortByStatus = () => {
-    const sortedOrders = sortOrders([...orders]);
-    setOrders(sortedOrders);
+    setOrders(prevOrders => {
+      const sorted = sortOrders([...prevOrders]);
+      return sorted;
+    });
   };
 
   return (
@@ -156,10 +162,10 @@ const ManagerOrders = () => {
                 <span className="font-medium">Order:</span>{" "}
                 {order.orderItems
                   ?.map(
-                    (item) => `${item.foodId.foodName}`
+                    (item) => `${item.foodId.foodName}` + `  x${item.quantity}`
                   )
                   .join(", ") || "N/A"}
-                  <br/><span className="font-medium">Quantity:</span>{order.orderItems
+                  <br/><span className="font-medium">Total Order:</span>{order.orderItems
                   ?.map(
                     (item) => `${item.quantity}`
                   )

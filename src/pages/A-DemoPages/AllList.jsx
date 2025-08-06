@@ -114,24 +114,24 @@ const AllList = () => {
                   Managers
                 </button> */}
                 <button
-                  className={`bg-primary  px-4 py-2 rounded-lg hover:bg-primary text-white    ${
-                    list === "Users" ? "translate-y-2 bg-primary" : ""
+                  className={`bg-[#e0cda9]  px-4 py-2 rounded-lg hover:bg-[#deb770] text-primary    ${
+                    list === "Users" ? "translate-y-2 bg-[#deb770]" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Users")}
                 >
                   Users
                 </button>
                 <button
-                  className={`bg-primary  text-white px-4 py-2 rounded-lg hover:bg-primary   ${
-                    list === "Delivery Person" ? "translate-y-2 bg-primary" : ""
+                  className={`bg-[#e0cda9]  text-primary px-4 py-2 rounded-lg hover:bg-[#daa33e]   ${
+                    list === "Delivery Person" ? "translate-y-2 bg-[#deb770]" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Delivery Person")}
                 >
                   Delivery Person
                 </button>
                 <button
-                  className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary ${
-                    list === "Demonstration" ? "translate-y-2 bg-primary" : ""
+                  className={`bg-[#e0cda9]  text-primary px-4 py-2 rounded-lg hover:bg-[#deaa4a] ${
+                    list === "Demonstration" ? "translate-y-2 bg-[#deb770]" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Demonstration")}
                 >
