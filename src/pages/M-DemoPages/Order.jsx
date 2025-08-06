@@ -8,7 +8,7 @@ const ManagerOrders = () => {
   const [latestOrderId, setLatestOrderId] = useState(null);
 
   const API_URL =
-    "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/686fbe00a431a431154ec99b/orders";
+    "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/6892fa71c22cb2251d1f8b34/orders";
 
   const sortOrders = (orders) => {
     const statusPriority = {
@@ -17,11 +17,11 @@ const ManagerOrders = () => {
       cancelled: 3,
       delivering: 4,
     };
-    return [...orders].sort(
-      (a, b) =>
-        (statusPriority[a.orderStatus] || 99) -
-        (statusPriority[b.orderStatus] || 99)
-    );
+    return [...orders].sort((a, b) => {
+      const aPriority = statusPriority[a.orderStatus] || 99;
+      const bPriority = statusPriority[b.orderStatus] || 99;
+      return aPriority - bPriority;
+    });
   };
 
   useEffect(() => {
@@ -156,7 +156,12 @@ const ManagerOrders = () => {
                 <span className="font-medium">Order:</span>{" "}
                 {order.orderItems
                   ?.map(
-                    (item) => `${item.foodId.foodName} x${item.quantity}`
+                    (item) => `${item.foodId.foodName}`
+                  )
+                  .join(", ") || "N/A"}
+                  <br/><span className="font-medium">Quantity:</span>{order.orderItems
+                  ?.map(
+                    (item) => `${item.quantity}`
                   )
                   .join(", ") || "N/A"}
               </p>
@@ -196,7 +201,7 @@ const ManagerOrders = () => {
                       <option value="Cooked">Cooked</option>
                       <option value="Delivering">Delivering</option>
                       <option value="Completed">Completed</option>
-                      <option value="Cancelled">Cancelled</option>
+                      {/* <option value="Cancelled">Cancelled</option> */}
                     </select>
                   </div>
                 </div>

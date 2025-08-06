@@ -30,7 +30,7 @@ const DashBoardPage = () => {
         
         const data = await res.json();
         if (res.ok && data.status === "success") {
-          console.log(data.data.restaurants[0])
+          // console.log(data.data.restaurants[0])
           setResData(data.data.restaurants || []);
           setRestaurant(data.data.restaurants[0]); 
         } else {
@@ -44,7 +44,7 @@ const DashBoardPage = () => {
     //   fetchRestaurants();
     // }
     setRestaurant(resData);
-    console.log(resData)
+    // console.log(resData)
 
     fetchRestaurants();
   } ,[]);

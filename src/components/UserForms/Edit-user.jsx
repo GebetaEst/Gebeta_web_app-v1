@@ -100,8 +100,8 @@ const EditUser = () => {
   };
 
   return (
-    <div className=" p- bg-[#f4f1e9] w-[400px] rounded ">
-      <h1 className="text-2xl font-semibold mb-4 border-b pb-2">Edit User</h1>
+    <div className=" p- bg-[#f4f1e9] w-[400px] rounded-lg ">
+      <h1 className="text-2xl font-semibold mb-4 border-b pb-2 border-[#f0d5b9]">Edit User</h1>
       <div className="space-y-4">
         {["firstName", "lastName", "email", "phone"].map((field) => (
           <div key={field}>
@@ -111,7 +111,7 @@ const EditUser = () => {
               name={field}
               value={formData[field]}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-[#f0d5b9] rounded-lg px-3 py-2"
             />
           </div>
         ))}
@@ -124,7 +124,7 @@ const EditUser = () => {
 
       <button
         onClick={handleSubmit}
-        className="mt-4 bg-primary text-white px-6 py-2 rounded hover:bg-opacity-80"
+        className={`mt-4 bg-primary text-white px-6 py-2 rounded-lg flex justify-self-end hover:bg-white hover:text-primary border border-gray transition-all duration-300 disabled:bg-gray-300 ${loading ? "cursor-not-allowed" : ""}`}
         disabled={loading}
       >
         {loading ? <InlineLoadingDots /> : "Update"}

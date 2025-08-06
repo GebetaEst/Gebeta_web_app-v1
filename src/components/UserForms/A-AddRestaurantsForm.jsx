@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const AddRestaurantsForm = () => {
   const [formData, setFormData] = useState({
@@ -15,12 +15,45 @@ const AddRestaurantsForm = () => {
     isOpenNow: true,
     openHours: "",
     description: "",
-    manager: "",
+    manager: "+251", // Good to keep the prefix
   });
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
+  const [managerList, setManagerList] = useState([]);
+  const [showManList, setShowManList] = useState([]);
+
+  // --- NEW: useEffect to fetch managers on component mount ---
+  useEffect(() => {
+    const getManagerList = async () => {
+      // Don't run if there's no token
+      // if (!token) return;
+      try {
+        const response = await fetch(
+          "https://gebeta-delivery1.onrender.com/api/v1/users",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          // Filter for users with role 'manager' if possible, otherwise map all phones
+          setManagerList(data.data.users.map((user) => user.phone));
+        } else {
+          console.error("Failed to fetch manager list:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching manager list:", error);
+      }
+    };
+
+    getManagerList();
+  }, [token]); // Dependency array ensures this runs when the token is available
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,11 +63,35 @@ const AddRestaurantsForm = () => {
     }));
   };
 
+  // --- CORRECTED: The handler for the manager input ---
+  const handleManagerInputChange = (value) => {
+    // First, update the form data
+    setFormData({ ...formData, manager: value });
+
+    // Then, handle the suggestion list logic
+    if (value && value.trim().length > 4) { // e.g., longer than "+251"
+      const filteredList = managerList.filter((manager) =>
+        manager.includes(value) // Use the direct 'value' here, not state
+      );
+      setShowManList(filteredList);
+    } else {
+      // Hide the list if the input is too short
+      setShowManList([]);
+    }
+  };
+
+  // --- NEW: Handler for selecting a manager from the list ---
+  const handleSelectManager = (managerPhone) => {
+    setFormData({ ...formData, manager: managerPhone });
+    setShowManList([]); // Hide the list after selection
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
-  
+
     try {
       const response = await fetch(
         "https://gebeta-delivery1.onrender.com/api/v1/restaurants",
@@ -55,13 +112,13 @@ const AddRestaurantsForm = () => {
             openHours: formData.openHours,
             description: formData.description,
             isDeliveryAvailable: formData.isDeliveryAvailable,
-            isOpenNow: formData.isOpenNow
+            isOpenNow: formData.isOpenNow,
           }),
         }
       );
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setMessage("✅ Restaurant added successfully!");
         setFormData({
@@ -78,12 +135,13 @@ const AddRestaurantsForm = () => {
           isOpenNow: true,
           openHours: "",
           description: "",
-          manager: "",
+          manager: "+251", // Reset to prefix
         });
       } else {
         setMessage(`❌ ${data.message || "Something went wrong."}`);
       }
     } catch (error) {
+      console.error("Error submitting the form:", error);
       setMessage("❌ Error submitting the form.");
     } finally {
       setLoading(false);
@@ -92,191 +150,169 @@ const AddRestaurantsForm = () => {
 
   return (
     <>
-    <form onSubmit={handleSubmit} className="space-y-2">
-      {/* Basic Info */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Restaurant Name
-        </label>
-        <input
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-        />
-      </div>
-
-      <div className="flex gap-4">
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          License Number
-        </label>
-        <input
-          name="license"
-          value={formData.license}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-        />
-      </div>
-
-      {/* Assign a Manager */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Assign a Manager
-        </label>
-        <input
-          name="manager"
-          value={formData.manager}
-          onChange={handleChange}
-          placeholder="Id of the manager"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-        />
-      </div>
-      </div>
-
-      {/* Location */}
-      {/* <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Address
-        </label>
-        <input
-          name="locationAddress"
-          value={formData.locationAddress}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-        />
-      </div> */}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-2">
+        {/* Basic Info */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Cuisine Types (comma-separated)
+            Restaurant Name
           </label>
           <input
-            name="cuisineTypes"
-            value={formData.cuisineTypes}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
+            required
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
           />
         </div>
 
-        <div className="space-y-2 ">
-          <label className="block text-sm font-medium text-gray-700">
-            Delivery Radius (meters)
-          </label>
-          <input
-            type="number"
-            name="deliveryRadiusMeters"
-            value={formData.deliveryRadiusMeters}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-          />
-        </div>
-        <div>
+        <div className="flex gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Open Hours
+              License Number
             </label>
             <input
-              name="openHours"
-              value={formData.openHours}
+              name="license"
+              value={formData.license}
               onChange={handleChange}
-              placeholder="e.g. 8:00 AM - 10:00 PM"
+              required
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
-        </div>
 
-        {/* Switches */}
-        {/* Toggle Switches */}
-        <div className="flex flex-col gap-6 mt-4  items-center justify-center">
-          {/* Delivery Available Switch */}
-          <div className="flex items-center space-x-3 justify-between ">
-            <span className="text-sm text-gray-700">Delivery Available</span>
-            <button
-              type="button"
-              onClick={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  isDeliveryAvailable: !prev.isDeliveryAvailable,
-                }))
-              }
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                formData.isDeliveryAvailable ? "bg-amber-600" : "bg-gray-300"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  formData.isDeliveryAvailable
-                    ? "translate-x-6"
-                    : "translate-x-1"
-                }`}
-              />
-            </button>
+          {/* Assign a Manager */}
+          {/* --- CORRECTED JSX with new handlers --- */}
+          <div className="space-y-2 relative"> {/* Added relative for positioning list */}
+            <label className="block text-sm font-medium text-gray-700">
+              Assign a Manager
+            </label>
+            <input
+              name="manager"
+              value={formData.manager}
+              onChange={(e) => handleManagerInputChange(e.target.value)}
+              placeholder="Search manager phone..."
+              autoComplete="off" // Good for custom dropdowns
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+            />
+            {/* Manager Suggestion List */}
+            {showManList.length > 0 && (
+              <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                {showManList.map((managerPhone) => (
+                  <li
+                    key={managerPhone}
+                    className="px-3 py-2 cursor-pointer hover:bg-amber-100"
+                    onClick={() => handleSelectManager(managerPhone)}
+                  >
+                    {managerPhone}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Cuisine Types (comma-separated)
+            </label>
+            <input
+              name="cuisineTypes"
+              value={formData.cuisineTypes}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+            />
           </div>
 
-          {/* Open Now Switch */}
-          {/* <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-700">Open Now</span>
-            <button
-              type="button"
-              onClick={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  isOpenNow: !prev.isOpenNow,
-                }))
-              }
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                formData.isOpenNow ? "bg-amber-600" : "bg-gray-300"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  formData.isOpenNow ? "translate-x-6" : "translate-x-1"
-                }`}
+          <div className="space-y-2 ">
+            <label className="block text-sm font-medium text-gray-700">
+              Delivery Radius (meters)
+            </label>
+            <input
+              type="number"
+              name="deliveryRadiusMeters"
+              value={formData.deliveryRadiusMeters}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+            />
+          </div>
+          <div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Open Hours
+              </label>
+              <input
+                name="openHours"
+                value={formData.openHours}
+                onChange={handleChange}
+                placeholder="e.g. 8:00 AM - 10:00 PM"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
               />
-            </button>
-          </div> */}
+            </div>
+          </div>
+
+          {/* Toggle Switches */}
+          <div className="flex flex-col gap-6 mt-4 items-center justify-center">
+            {/* Delivery Available Switch */}
+            <div className="flex items-center space-x-3 justify-between ">
+              <span className="text-sm text-gray-700">Delivery Available</span>
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isDeliveryAvailable: !prev.isDeliveryAvailable,
+                  }))
+                }
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  formData.isDeliveryAvailable ? "bg-amber-600" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    formData.isDeliveryAvailable
+                      ? "translate-x-6"
+                      : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Description */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Short Description
-        </label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-        />
-      </div>
+        {/* Description */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Short Description
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+          />
+        </div>
 
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-fit flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {loading ? "Submitting..." : "Add Restaurant"}
-      </button>
-
-      {/* Message */}
-      {message && (
-        <p
-          className={`mt-3 text-sm font-medium ${
-            message.includes("✅") ? "text-green-700" : "text-red-600"
-          }`}
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-fit flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {message}
-        </p>
-      )}
-    </form>
-  </>
+          {loading ? "Submitting..." : "Add Restaurant"}
+        </button>
+
+        {/* Message */}
+        {message && (
+          <p
+            className={`mt-3 text-sm font-medium ${
+              message.includes("✅") ? "text-green-700" : "text-red-600"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+      </form>
+    </>
   );
 };
 

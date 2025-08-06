@@ -4,7 +4,7 @@ import UserList from "./UsersList";
 import ManagerList from "./ManagersList";
 import Card from "../../components/Cards/Cards";
 import { Pencil, Trash, Contact, UserRoundPen, Plus, X } from "lucide-react";
-import AddUserForm from "../../components/UserForms/AddUserForm";
+import AddUserForm from "../../components/UserForms/A-AddUserForm";
 import PopupCard from "../../components/Cards/PopupCard";
 import ShowById from "./showById";
 const AllList = () => {
@@ -83,7 +83,6 @@ const AllList = () => {
     },
   ];
 
-  const [show, setShow] = useState(0);
   const [list, setList] = useState("Demonstration");
   const [showAddBtn, setShowAddBtn] = useState(false);
 
@@ -124,11 +123,11 @@ const AllList = () => {
                 </button>
                 <button
                   className={`bg-primary  text-white px-4 py-2 rounded-lg hover:bg-primary   ${
-                    list === "Employee" ? "translate-y-2 bg-primary" : ""
+                    list === "Delivery Person" ? "translate-y-2 bg-primary" : ""
                   } transition-all duration-300`}
-                  onClick={() => setList("Employee")}
+                  onClick={() => setList("Delivery Person")}
                 >
-                  Employees
+                  Delivery Person
                 </button>
                 <button
                   className={`bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary ${
@@ -141,7 +140,7 @@ const AllList = () => {
               </div>
             </div>
 
-            <div className="flex flex-col space-y-2 max-h-[430px] overflow-y-auto scrollbar-hide pt-2">
+            <div className="flex flex-col space-y-2 max-h-[430px] overflow-y-auto scrollbar-hide pt-2 ">
               {list === "Managers" ? (
                 <ManagerList />
               ) : list === "Users" ? (
@@ -189,8 +188,8 @@ const AllList = () => {
       </div>
       {showAddBtn && (
         <div className="fixed top-0 left-0 w-[100%] h-[100%] bg-black/50 z-50 flex items-center justify-center font-noto ">
-          <div className="w-[30%] h-[65%] bg-white transition-all ease-out rounded-lg p-8 motion-scale-in-[0.13] motion-translate-x-in-[-36%] motion-translate-y-in-[-10%] motion-opacity-in-[0%] motion-rotate-in-[7deg] motion-blur-in-[5px] motion-duration-[0.35s] motion-duration-[0.53s]/scale motion-duration-[0.53s]/translate motion-duration-[0.63s]/rotate">
-            <div className="flex justify-between border-b pb-2 border-gray">
+          <div className="w-[30%] h-[65%] bg-[#f4f1e9] transition-all ease-out rounded-lg p-8 motion-scale-in-[0.13] motion-translate-x-in-[-36%] motion-translate-y-in-[-10%] motion-opacity-in-[0%] motion-rotate-in-[7deg] motion-blur-in-[5px] motion-duration-[0.35s] motion-duration-[0.53s]/scale motion-duration-[0.53s]/translate motion-duration-[0.63s]/rotate">
+            <div className="flex justify-between border-b pb-2 border-[#f0d5b9]">
               <h1 className="text-xl font-semibold">Add {list}</h1>
               <button
                 onClick={() => setShowAddBtn(false)}
@@ -199,7 +198,7 @@ const AllList = () => {
                 <X strokeWidth={2} size={30} color="red" />
               </button>
             </div>
-            <div className="p-2">
+            <div className="p-2 ">
               <AddUserForm />
             </div>
           </div>

@@ -103,34 +103,36 @@ const UsersList = () => {
               setGetId(user._id);
             }}
           >
-            <div className=" w-fit p-4 bg-white border-[0.5px] border-gray rounded-lg font-noto m-2 shadow-lg hover:bg-gray-50">
-              <div className="flex items-center justify-between space-x-2 min-w-[400px]">
+            <div className=" w-fit p-4 bg-white border  rounded-lg font-noto m-2 shadow-lg hover:bg-gray-50 ">
+              <div className="flex items-center justify-between min-w-[400px] px-5 pl-2">
                   
-                  <div className="flex justify-center items-center">
+                  <div className="flex justify-center items-center ">
 
                     <img
-                      className={`mx-2 ${
+                      className={`mx- ${
                         user.profilePicture ? "" : "bg-gray"
                       } w-[70px] h-[70px] flex justify-center items-center shadow-lg rounded-full`}
                       src={user.profilePicture}
                       alt=""
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <h2 className="text-md font-semibold text-center">
+                  <div className="flex flex-col w-[150px]">
+                    <h2 className="text-md font-semibold ">
                       {user.firstName || "Unnamed"} {user.lastName || "Unnamed"}
                     </h2>
-                    <p className="text-[10px]">{user.phone || "N/A"}</p>
-                    <p className="text-[10px]">{user.email || "N/A"}</p>
+                    <p className="text-[10px] pl-1">{user.phone || "N/A"}</p>
+                    <p className="text-[10px] pl-1">{user.email || "N/A"}</p>
 
                   </div>
+                <div className="flex flex-col items-start justify-end ">
                 <p className="text-xs">
                   <span className="font-semibold text-[10px]">Enrolled on</span>{" "}
                   <br /> {formatDate(user.createdAt)}
                 </p>
-                <div className="flex flex-col text-xs text-center gap-2">
-                  <div className="flex gap-4 justify-end pr-5"></div>
-                </div>
+                <p className={`text-[12px] font- mt-3 ${user.role === "Admin" ? "bg-red-100" : user.role === "Customer" ? "bg-blue-100" : user.role === "Manager" ? "bg-green-100" : "bg-yellow-100"} rounded-full px-2 py-1 flex justify-center items-center`}>{user.role === "Delivery_Person" ? "Delivery" : `${user.role}`}</p>
+                  </div>
+
+                
               </div>
             </div>
           </div>

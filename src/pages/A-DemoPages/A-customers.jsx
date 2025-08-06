@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Trash, RefreshCcw, CirclePlus, X } from "lucide-react";
 import AddRestaurantsForm from "../../components/UserForms/A-AddRestaurantsForm";
 import PopupCard from "../../components/Cards/PopupCard";
-import {Loading} from "../../components/Loading/Loading";
+import { Loading } from "../../components/Loading/Loading";
 
 const ACustomers = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -13,10 +13,14 @@ const ACustomers = () => {
   const [error, setError] = useState(null);
   const [refetch, setRefetch] = useState(false);
   const [statusDropdownId, setStatusDropdownId] = useState(null);
+  const [managerInputs, setManagerInputs] = useState({});
 
   // State for custom modal dialogs
   const [alertInfo, setAlertInfo] = useState({ show: false, message: "" });
-  const [confirmDeleteInfo, setConfirmDeleteInfo] = useState({ show: false, id: null });
+  const [confirmDeleteInfo, setConfirmDeleteInfo] = useState({
+    show: false,
+    id: null,
+  });
 
   // Fetch all restaurants on component mount or refetch
   useEffect(() => {
@@ -28,16 +32,15 @@ const ACustomers = () => {
           "https://gebeta-delivery1.onrender.com/api/v1/restaurants",
           {
             headers: {
-              // Using a placeholder token for demonstration as localStorage is not ideal in some environments
-              // Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
         );
-        
+
         const data = await res.json();
-        // console.log(data)
+        console.log(data)
         if (res.ok && data.status === "success") {
-          setRestaurants(data.data.restaurants || []); // Ensure restaurants is always an array
+          setRestaurants(data.data.restaurants || []);
         } else {
           throw new Error(data.message || "Failed to load restaurants.");
         }
@@ -72,7 +75,6 @@ const ACustomers = () => {
         }
       );
       const data = await res.json();
-      console.log(data)
       if (res.ok && data.status === "success") {
         setRestaurants((prev) =>
           prev.map((restaurant) =>
@@ -81,59 +83,16 @@ const ACustomers = () => {
               : restaurant
           )
         );
-        setStatusDropdownId(null); // Close dropdown on success
+        setStatusDropdownId(null);
       } else {
         throw new Error(data.message || "Failed to update status.");
       }
     } catch (error) {
       console.error("Status update failed:", error);
-      // Use custom alert modal for user feedback
-      setAlertInfo({ show: true, message: `Failed to update status: ${error.message}` });
-    }
-  };
-
-  // Initiates the delete process by showing the confirmation modal
-  const handleDelete = (e, id) => {
-    e.stopPropagation();
-    setConfirmDeleteInfo({ show: true, id: id });
-  };
-
-  // Performs the actual deletion after user confirmation
-  const confirmDeleteAction = async () => {
-    if (!confirmDeleteInfo.id) return;
-    const id = confirmDeleteInfo.id;
-
-    try {
-      const res = await fetch(
-        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-     console.log(res)
-      if (res.ok) {
-        setRestaurants((prev) =>
-          prev.filter((restaurant) => restaurant._id !== id)
-        );
-        if (expandedRestaurant === id) {
-          setExpandedRestaurant(null);
-        }
-        // Use custom alert modal for user feedback
-        setAlertInfo({ show: true, message: "Restaurant deleted successfully!" });
-      } else {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to delete restaurant.");
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-      // Use custom alert modal for user feedback
-      setAlertInfo({ show: true, message: `Failed to delete restaurant: ${err.message}` });
-    } finally {
-      // Hide the confirmation modal
-      setConfirmDeleteInfo({ show: false, id: null });
+      setAlertInfo({
+        show: true,
+        message: `Failed to update status: ${error.message}`,
+      });
     }
   };
 
@@ -143,54 +102,73 @@ const ACustomers = () => {
         r.name.toLowerCase().includes(search.toLowerCase())
       )
     : [];
-    const formatDate = (isoString) => {
-      const date = new Date(isoString);
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const handleManagerInputChange = (id, value) => {
+    setManagerInputs((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleAssignManager = (id) => {
+    const phone = managerInputs[id] || "";
+    if (!phone) {
+      setAlertInfo({ show: true, message: "Please enter a phone number" });
+      return;
+    }
+
+    const assignManager = async () => {
+      try {
+        const res = await fetch(
+          `https://gebeta-delivery1.onrender.com/api/v1/restaurants/assign-manager`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              phone:phone,
+              restaurantId:id,
+            }),
+          }
+        );
+
+        const data = await res.json();
+        if (res.ok) {
+          setAlertInfo({
+            show: true,
+            message: "",
+          });
+          setTimeout(() => {
+            setAlertInfo({ show: false, message: "" });
+          }, 3000);
+          setRefetch((prev) => !prev);
+          setManagerInputs((prev) => ({ ...prev, [id]: "" }));
+        } else {
+          throw new Error(data.message || "Failed to assign manager");
+        }
+      } catch (err) {
+        console.error("Assign manager error:", err);
+        setAlertInfo({
+          show: true,
+          message: `Failed to assign manager: ${err.message}`,
+        });
+      }
     };
+    assignManager();
+  };
 
   return (
     <div className="p-6 min-h-[calc(100vh-70px)] bg-[#f4f1e9] font-sans">
-      {/* Custom Alert Modal */}
-      {alertInfo.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md shadow-lg text-center w-11/12 max-w-sm">
-            <p className="mb-4 text-lg text-[#4b382a]">{alertInfo.message}</p>
-            <button
-              onClick={() => setAlertInfo({ show: false, message: '' })}
-              className="bg-[#4b382a] text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Custom Confirmation Modal */}
-      {confirmDeleteInfo.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md shadow-lg text-center w-11/12 max-w-sm">
-            <p className="mb-6 text-lg text-[#4b382a]">Are you sure you want to delete this restaurant?</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => setConfirmDeleteInfo({ show: false, id: null })}
-                className="bg-gray-300 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-400 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteAction}
-                className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <h1 className="text-3xl font-bold text-[#4b382a] mb-4">
         Restaurant Management
       </h1>
@@ -230,13 +208,26 @@ const ACustomers = () => {
       {showAddRes && (
         <PopupCard>
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-[#4b382a] border-b-2 border-[#e0cda9]">Add Restaurant</h1>
-            <button onClick={() => setShowAddRes(false)} className="text-red-500 hover:text-red-700">
+            <h1 className="text-2xl font-bold text-[#4b382a] border-b-2 border-[#e0cda9]">
+              Add Restaurant
+            </h1>
+            <button
+              onClick={() => setShowAddRes(false)}
+              className="text-red-500 hover:text-red-700"
+            >
               <X size={28} />
             </button>
           </div>
           <AddRestaurantsForm />
         </PopupCard>
+      )}
+
+      {alertInfo.show && (
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs flex items-center justify-center absolute top-28 right-10 motion-preset-confetti motion-duration-700">
+            <p className="text-green-600 text-lg">successfully assigned manager</p>
+           
+            
+          </div>
       )}
 
       {loading ? (
@@ -280,9 +271,12 @@ const ACustomers = () => {
                       <td className="p-3 text-gray-700">
                         {restaurant.location?.address || "N/A"}
                       </td>
-
                       <td className="p-3 space-x-2 text-center">
-                        <p>{restaurant.isDeliveryAvailable ? "Available" : "Not Available"}</p>
+                        <p>
+                          {restaurant.isDeliveryAvailable
+                            ? "Available"
+                            : "Not Available"}
+                        </p>
                       </td>
                       <td
                         className="p-3 relative text-center"
@@ -412,10 +406,38 @@ const ACustomers = () => {
                                 </p>
                               </>
                             ) : (
-                              <p className="font-semibold text-gray-500">
-                                Manager Details: N/A
-                              </p>
+                              <div className=" ">
+                                <p className="font-semibold text-gray-500 mb-2">
+                                  Manager Details: N/A
+                                </p>
+                              </div>
                             )}
+                            <div>
+                              <label className="font-semibold text-[#4b382a]">
+                                Reassign Manager
+                              </label>
+                              <div className="flex gap-2">
+                                <input
+                                  className="w-[150px] border border-[#e0cda9] rounded-md p-1 mt-1"
+                                  value={managerInputs[restaurant._id] || ""}
+                                  onChange={(e) =>
+                                    handleManagerInputChange(
+                                      restaurant._id,
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="+251..."
+                                />
+                                <button
+                                  className="bg-[#e0cda9] border-[#b88c69] border text-[#4b382a] px-2 py-1 rounded-md mt-1 cursor-pointer"
+                                  onClick={() =>
+                                    handleAssignManager(restaurant._id)
+                                  }
+                                >
+                                  Assign
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import {Loading} from "../Loading/Loading";
+import {Loading, InlineLoadingDots } from "../Loading/Loading";
 
 const AddUserForm = () => {
   const [formData, setFormData] = useState({
@@ -93,14 +93,14 @@ const AddUserForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="font-noto">
+    <form onSubmit={handleSubmit} className="font-noto bg-[#f4f1e9] ">
       <div className="flex gap-4">
         <div className="flex flex-col">
           <label>First Name</label>
           <input
             type="text"
             name="firstName"
-            className="w-full p-2 border border-gray rounded-lg h-[35px]"
+            className="w-full p-2 border border-[#f0d5b9] rounded-lg h-[35px]"
             value={formData.firstName}
             onChange={(e) =>
               setFormData({ ...formData, firstName: e.target.value.trim() })
@@ -114,7 +114,7 @@ const AddUserForm = () => {
           <input
             type="text"
             name="lastName"
-            className="w-full p-2 border border-gray rounded-lg h-[35px]"
+            className="w-full p-2 border border-[#f0d5b9] rounded-lg h-[35px] "
             value={formData.lastName}
             onChange={(e) =>
               setFormData({ ...formData, lastName: e.target.value.trim() })
@@ -130,7 +130,7 @@ const AddUserForm = () => {
           <input
             type="email"
             name="email"
-            className="w-full p-2 border border-gray rounded-lg h-[35px]"
+            className="w-full p-2 border border-[#f0d5b9] rounded-lg h-[35px]"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value.trim() })
@@ -144,7 +144,7 @@ const AddUserForm = () => {
           <input
             type="tel"
             name="phone"
-            className="w-full p-2 border border-gray rounded-lg h-[35px]"
+            className="w-full p-2 border border-[#f0d5b9] rounded-lg h-[35px]"
             value={formData.phone}
             onChange={(e) =>
               setFormData({ ...formData, phone: e.target.value.trim() })
@@ -160,7 +160,7 @@ const AddUserForm = () => {
           <input
             type="password"
             name="password"
-            className="w-full p-2 border border-gray rounded-lg h-[35px]"
+            className="w-full p-2 border border-[#f0d5b9] rounded-lg h-[35px]"
             value={formData.password}
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value.trim() })
@@ -175,7 +175,7 @@ const AddUserForm = () => {
           <input
             type="password"
             name="passwordConfirm"
-            className="w-full p-2 border border-gray rounded-lg h-[35px]"
+            className="w-full p-2 border border-[#f0d5b9] rounded-lg h-[35px]"
             value={formData.passwordConfirm}
             onChange={(e) =>
               setFormData({
@@ -193,28 +193,28 @@ const AddUserForm = () => {
         <label className="mr-2 self-center">Role:</label>
         <select
           name="role"
-          className="w-fit p-2 border border-gray rounded-lg"
+          className="w-fit p-2 border border-[#f0d5b9] rounded-lg"
           value={formData.role}
           onChange={(e) => setFormData({ ...formData, role: e.target.value })}
           required
         >
           <option value="Customer">Customer</option>
           <option value="Manager">Manager</option>
-          <option value="Employee">Employee</option>
+          <option value="Delivery_Person">Delivery Person</option>
         </select>
       </div>
 
       <div className="flex justify-end mt-6 items-center gap-[100px]">
-        {loading && <Loading />}
+        
         {error && <p className="text-red-500 mt-2 mr-4">{error}</p>}
 
         <div>
           <button
             type="submit"
-            className="bg-primary text-white p-2 rounded-lg hover:bg-white hover:text-primary border border-gray transition-all duration-300 disabled:opacity-50"
+            className={`bg-primary text-white p-2 rounded-lg hover:bg-white hover:text-primary border border-gray transition-all duration-300 disabled:bg-gray-300 ${loading ? "cursor-not-allowed" : ""}`}
             disabled={loading}
           >
-            {loading ? "Adding..." : "Add User"}
+            {loading ? <InlineLoadingDots /> : "Add User"}
           </button>
         </div>
       </div>

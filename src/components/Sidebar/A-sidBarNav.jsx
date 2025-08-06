@@ -18,7 +18,7 @@ const AdminNav = () => {
       case 'Dashboard':
         setActiveComponent(<DashBoardPage />);
         break;
-      case 'Lists':
+      case 'Users':
         setActiveComponent(<AllList/>);
         break;
       case 'Orders':

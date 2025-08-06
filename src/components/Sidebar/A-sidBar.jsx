@@ -14,10 +14,10 @@ import {
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={18} /> },
-  { label: 'Lists', path: '/lists', icon: <ScrollText size={18} /> },
+  { label: 'Users', path: '/lists', icon:<Users size={18} />  },
   // { label: 'Orders', path: '/orders', icon: <ShoppingCart size={18} /> },
   // { label: 'Menu', path: '/menu', icon: <Utensils size={18} /> },
-  { label: 'Customers', path: '/customers', icon: <Users size={18} /> },
+  { label: 'Customers', path: '/customers', icon:<ScrollText size={18} />  },
   { label: 'Settings', path: '/settings', icon: <Settings size={18} /> },
   { label: 'Analytics', path: '/analytics', icon: <BarChart2 size={18} /> },
 ];

@@ -123,7 +123,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
   
       const result = await res.json();
       if (res.ok && result.status === "success") {
-        setMessage("Restaurant updated successfully!");
+          setMessage("Restaurant updated successfully!");
         const updatedRestaurant = result.data.restaurant;
         setRestaurant(updatedRestaurant);
         onSaveSuccess && onSaveSuccess(updatedRestaurant);
@@ -349,7 +349,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
             )}
             <button
               type="submit"
-              className="px-8 py-2 bg-[#894718] text-white font-semibold rounded-lg hover:bg-[#3a2f24] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#bfa66a]"
+              className={`px-8 py-2 bg-[#894718] text-white font-semibold rounded-lg hover:bg-[#3a2f24] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#bfa66a] ${loading ? "cursor-not-allowed opacity-50" : ""}`}
             >
              {loading ? <InlineLoadingDots /> : "Save Changes"}
             </button>

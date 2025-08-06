@@ -20,7 +20,7 @@ const Landing = () => {
       {/* Header */}
       <header className="relative z-10 flex justify-between items-center px-8 py-6 md:px-14 md:py-8">
         <Link to="/" className="flex items-center gap-2 p-2 font-logo text-4xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition duration-300">
-          Gbeታ
+          Gebeታ
         </Link>
         <div className="flex gap-4 md:gap-6">
           <button
@@ -76,6 +76,7 @@ const Landing = () => {
           />
         </Link>
       </div>
+
     </div>
   );
 };
