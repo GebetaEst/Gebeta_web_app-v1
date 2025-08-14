@@ -10,9 +10,15 @@ import AllList from '../../pages/A-DemoPages/AllList';
 import ACustomers from '../../pages/A-DemoPages/A-customers';
 const AdminNav = () => {
   const { activeNav } = useNavigation();
-  // console.log(activeNav)
   const [activeComponent, setActiveComponent] = useState(null);
-
+  // console.log(activeNav)
+  // const [activeNav01, setActiveNav01] = useState(null);
+  // useEffect(() => {
+  //   const activeNav01 = localStorage.getItem("activeNav")
+  //   console.log(activeNav01)
+  //   setActiveNav01(activeNav)
+  // }, [activeNav])
+  
   useEffect(() => {
     switch (activeNav) {
       case 'Dashboard':

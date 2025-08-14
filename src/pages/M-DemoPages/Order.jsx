@@ -141,7 +141,7 @@ const ManagerOrders = () => {
             <div
               key={order._id}
               onClick={() => toggleExpand(order._id)}
-              className={`bg-white border border-[#e2b96c] rounded-xl shadow-md hover:shadow-lg cursor-pointer transition-all duration-300 overflow-hidden flex flex-col justify-between ${
+              className={`bg-white border border-[#e2b96c] rounded-xl shadow-md hover:shadow-lg cursor-pointer motion-preset-confetti  transition-all duration-300 overflow-hidden flex flex-col justify-between ${
                 expandedCard === order._id ? "p-4 pb-6" : "p-4"
               }`}
             >

@@ -52,7 +52,7 @@ const DashBoardPage = () => {
     <>
       <div className="w-[100%] h-fit pb-[15px] p-2 pl-12 flex flex-col justify-center bg-[#f4f1e9]">
         <InfoCards />
-        <div className="flex justify-around items-center mt-5 bg-[#f4f1e9]">
+        <div className="flex justify-around items-center mt-2 bg-[#f4f1e9]">
           <Chart />
           <RecentOrdersTB />
         </div>
