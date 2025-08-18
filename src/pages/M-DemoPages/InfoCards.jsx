@@ -4,12 +4,14 @@ import {
   Utensils,
   Users,
   BarChart2,
-  Settings,
+  Timer,
   UtensilsCrossed,
 } from "lucide-react";
 import Card from "../../components/Cards/Cards";
+import TimerToggle from "../../components/timer";
 
 const InfoCards = () => {
+  const openHours = JSON.parse(sessionStorage.getItem("user-data"))?.state?.restaurant ? JSON.parse(sessionStorage.getItem("user-data"))?.state?.restaurant.openHours : null;
   const CardInfo = [
     {
       label: "Total Revenue",
@@ -36,10 +38,10 @@ const InfoCards = () => {
       progress: "35% from last month",
     },
     {
-      label: "Growth",
-      num: "+234",
-      icon: <BarChart2 size={18} />,
-      progress: "35% from last month",
+      label: "Working hours",
+      num: openHours ? <TimerToggle /> : "24/7",
+      icon: <Timer size={18} />,
+      progress: openHours,
     },
 
   ];

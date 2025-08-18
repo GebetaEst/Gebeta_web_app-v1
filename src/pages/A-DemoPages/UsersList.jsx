@@ -76,13 +76,13 @@ const UsersList = () => {
         className=" border px-2 py-1 mb-4 rounded-lg  shadow-sm w- max-w-md sticky top-0 z-50"
       />
       <button
-              className="bg-[#e0cda9] p-2 rounded transition-all duration-500 mx-6 -translate-y-1 fixed "
+              className="bg-[#e0cda9] p-2 rounded transition-all duration-500 mx-6 absolute "
               onClick={() => {
                 setRefetch(!refetch);
               }}
             >
               <span
-                className={`flex justify-center items-center  ${
+                className={` flex justify-center items-center  ${
                   loading && "animate-spin transition duration-1500"
                 }`}
               >

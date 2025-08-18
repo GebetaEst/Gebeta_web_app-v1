@@ -168,8 +168,8 @@ const ACustomers = () => {
   };
 
   return (
-    <div className="p-6 min-h-[calc(100vh-70px)] bg-[#f4f1e9] font-sans">
-      <h1 className="text-3xl font-bold text-[#4b382a] mb-4">
+    <div className="p-6 min-h-[calc(100vh-62px)] bg-[#f4f1e9] font-sans">
+      <h1 className="text-3xl font-bold text-[#4b382a] mb-4 pl-6">
         Restaurant Management
       </h1>
 

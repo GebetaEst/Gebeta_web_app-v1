@@ -244,6 +244,7 @@ const AddRestaurantsForm = () => {
                 value={formData.openHours}
                 onChange={handleChange}
                 placeholder="e.g. 8:00 AM - 10:00 PM"
+                pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)\s-\s(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
               />
             </div>

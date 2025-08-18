@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }) => {
         </div>
       )}
       <button
-        className={` fixed top-[77px] -left-1 bg-[#e0cda9] p-2 border border-[#ceb07a] rounded-r-lg transition-all duration-300 z-20 ${sidebarOpen ? "" : "pl-3"}`}
+        className={`fixed top-[77px] -left-1 bg-[#e0cda9] p-2 border border-[#ceb07a] rounded-r-lg transition-all duration-300 z-20 ${sidebarOpen ? "" : "pl-3"}`}
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         {sidebarOpen ? (

@@ -25,7 +25,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
-          {/* <Route path="/signup" element={<SignupPage/>} /> */}
+          <Route path="/signup" element={<SignupPage/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassPage />} />
           <Route path="/otp" element={<OTPPage />} />

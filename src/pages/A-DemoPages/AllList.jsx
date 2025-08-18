@@ -88,11 +88,11 @@ const AllList = () => {
 
   return (
     <>
-      <div className="p-8 flex gap-2 items-center justify-center  h-[calc(100vh-70px)] bg-[#f4f1e9] font-noto">
+      <div className="p-8 flex gap-2 items-center justify-center h-[calc(100vh-62px)] bg-[#f4f1e9] font-noto">
         <Card>
-          <div className="w-[450px] h-[550px]">
+          <div className="w-[450px] h-[500px]">
             <div className="flex justify-between ">
-              <h2 className="text-xl font-semibold">{list}</h2>
+              <h2 className="text-xl my-1 font-semibold">{list}</h2>
               <button
                 onClick={() => setShowAddBtn(true)}
                 className="flex items-center text-xs border rounded-xl px-1 border-blue-200 hover:scale-105 transition-all duration-300 active:scale-95 active:rotate-3 bg-blue-50"
@@ -114,7 +114,7 @@ const AllList = () => {
                   Managers
                 </button> */}
                 <button
-                  className={`bg-[#e0cda9]  px-4 py-2 rounded-lg hover:bg-[#deb770] text-primary    ${
+                  className={`bg-[#e0cda9] text-sm  px-3 py-2 rounded-lg hover:bg-[#deb770] text-primary    ${
                     list === "Users" ? "translate-y-2 bg-[#deb770]" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Users")}
@@ -122,7 +122,7 @@ const AllList = () => {
                   Users
                 </button>
                 <button
-                  className={`bg-[#e0cda9]  text-primary px-4 py-2 rounded-lg hover:bg-[#daa33e]   ${
+                  className={`bg-[#e0cda9]  text-sm px-3 py-2 rounded-lg hover:bg-[#daa33e]   ${
                     list === "Delivery Person" ? "translate-y-2 bg-[#deb770]" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Delivery Person")}
@@ -130,7 +130,7 @@ const AllList = () => {
                   Delivery Person
                 </button>
                 <button
-                  className={`bg-[#e0cda9]  text-primary px-4 py-2 rounded-lg hover:bg-[#deaa4a] ${
+                  className={`bg-[#e0cda9]  text-sm px-3 py-2 rounded-lg hover:bg-[#deaa4a] ${
                     list === "Demonstration" ? "translate-y-2 bg-[#deb770]" : ""
                   } transition-all duration-300`}
                   onClick={() => setList("Demonstration")}
@@ -140,12 +140,10 @@ const AllList = () => {
               </div>
             </div>
 
-            <div className="flex flex-col space-y-2 max-h-[430px] overflow-y-auto scrollbar-hide pt-2 ">
-              {list === "Managers" ? (
-                <ManagerList />
-              ) : list === "Users" ? (
+            <div className="flex flex-col max-h-[425px] overflow-y-auto scrollbar-hide -translate-y-2  ">
+              {list === "Users" ? (
                 <UserList />
-              ) : list === "Employee" ? (
+              ) : list === "Delivery Person" ? (
                 <EmployeeList />
               ) : list === "Demonstration" ? (
                 demoManagerList.map((manager, index) => (
@@ -188,7 +186,7 @@ const AllList = () => {
       </div>
       {showAddBtn && (
         <div className="fixed top-0 left-0 w-[100%] h-[100%] bg-black/50 z-50 flex items-center justify-center font-noto ">
-          <div className="w-[30%] h-[65%] bg-[#f4f1e9] transition-all ease-out rounded-lg p-8 motion-scale-in-[0.13] motion-translate-x-in-[-36%] motion-translate-y-in-[-10%] motion-opacity-in-[0%] motion-rotate-in-[7deg] motion-blur-in-[5px] motion-duration-[0.35s] motion-duration-[0.53s]/scale motion-duration-[0.53s]/translate motion-duration-[0.63s]/rotate">
+          <div className="w-[450px] h-[450px] bg-[#f4f1e9] transition-all ease-out rounded-lg p-8 motion-scale-in-[0.13] motion-translate-x-in-[-36%] motion-translate-y-in-[-10%] motion-opacity-in-[0%] motion-rotate-in-[7deg] motion-blur-in-[5px] motion-duration-[0.35s] motion-duration-[0.53s]/scale motion-duration-[0.53s]/translate motion-duration-[0.63s]/rotate">
             <div className="flex justify-between border-b pb-2 border-[#f0d5b9]">
               <h1 className="text-xl font-semibold">Add {list}</h1>
               <button
@@ -198,7 +196,7 @@ const AllList = () => {
                 <X strokeWidth={2} size={30} color="red" />
               </button>
             </div>
-            <div className="p-2 ">
+            <div className="p-4">
               <AddUserForm />
             </div>
           </div>

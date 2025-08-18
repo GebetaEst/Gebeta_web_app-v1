@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {Loading , InlineLoadingDots} from "../Loading/Loading";
+import { InlineLoadingDots} from "../Loading/Loading";
 import useStore from "../../Store/UseStore";
 import { useUserProfile } from "../../contexts/UserProfileContext";
 
@@ -220,13 +220,12 @@ const ProfileEditForm = () => {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end items-center gap-10 mt-4">
-          {loading && <Loading />}
+        <div className="flex justify-end items-center">
           <button
             type="submit"
-            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray transition-all duration-300"
+            className={`bg-primary text-white px-6 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray transition-all duration-300 ${loading ? "cursor-not-allowed bg-white" : ""}`}
           >
-            Save Changes
+            {loading ? <InlineLoadingDots /> : "Save Changes"}
           </button>
         </div>
       </form>

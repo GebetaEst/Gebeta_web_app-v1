@@ -3,6 +3,7 @@ import { useEffect , useState } from "react";
 import InfoCards from "./M-DemoPages/InfoCards";
 import RecentOrdersTB from "./M-DemoPages/RecentOrdersTB";
 import useUserStore  from "../Store/UseStore";
+import Timer from "../components/timer";
 
 
 const DashBoardPage = () => {
@@ -19,7 +20,7 @@ const DashBoardPage = () => {
       try {
         // ${storedUser._id}
         const res = await fetch(
-          `https://gebeta-delivery1.onrender.com/api/v1/restaurants/by-manager/${demoId}`,
+          `https://gebeta-delivery1.onrender.com/api/v1/restaurants/by-manager/${storedUser._id}`,
           {
             headers: {
               // Using a placeholder token for demonstration as localStorage is not ideal in some environments
@@ -50,11 +51,12 @@ const DashBoardPage = () => {
   } ,[]);
   return (
     <>
-      <div className="w-[100%] h-fit pb-[15px] p-2 pl-12 flex flex-col justify-center bg-[#f4f1e9]">
+      <div className="w-[100%] h-fit p-1 pl-12 flex flex-col justify-center bg-[#f4f1e9]">
         <InfoCards />
-        <div className="flex justify-around items-center mt-2 bg-[#f4f1e9]">
+        <div className="flex justify-around items-center mt-1 bg-[#f4f1e9]">
           <Chart />
           <RecentOrdersTB />
+          {/* <Timer /> */}
         </div>
       </div>
     </>

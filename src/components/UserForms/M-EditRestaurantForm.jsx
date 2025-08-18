@@ -164,14 +164,14 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-110px)] pt-2 bg-[#f4f1e9] font-noto flex justify-center motion-preset-fade motion-duration-700">
+    <div className="min-h-[calc(100vh-102px)] pt-1 bg-[#f4f1e9] font-noto flex justify-center motion-preset-fade motion-duration-700">
       <div className="w-fit h-fit bg-white px-6 py-2 rounded-xl shadow-lg border border-gray-200 overflow-auto">
-        <h2 className="text-3xl font-bold text-[#4b382a] mb-8 text-center">
+        <h2 className="text-3xl font-bold text-[#4b382a] mb-2 text-center">
           Edit Restaurant Details
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col">
-          <div className="flex flex-row gap-12 justify-around">
+          <div className="flex flex-row gap-6 justify-around">
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -222,6 +222,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   <input
                     type="text"
                     id="openHours"
+                    pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)\s-\s(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
                     name="openHours"
                     value={form.openHours}
                     onChange={handleChange}

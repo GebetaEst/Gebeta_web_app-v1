@@ -80,7 +80,7 @@ const Settings = () => {
       {showEditForm === "Edit Restaurant" ? (
         <EditRestaurantForm />
       ) : (
-        <div className="max-w-screen mx-auto p-4 space-y-6 h-[calc(100vh-110px)]  bg-[#f4f1e9] flex justify-center items-center">
+        <div className="max-w-screen mx-auto p-4 space-y-6 h-[calc(100vh-102px)]  bg-[#f4f1e9] flex justify-center items-center">
           <div>
             <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
 
