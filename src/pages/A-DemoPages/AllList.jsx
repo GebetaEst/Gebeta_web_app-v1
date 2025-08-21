@@ -88,7 +88,7 @@ const AllList = () => {
 
   return (
     <>
-      <div className="p-8 flex gap-2 items-center justify-center h-[calc(100vh-62px)] bg-[#f4f1e9] font-noto">
+      <div className="p-8 flex gap-2 items-center justify-center h-[calc(100vh-65px)] bg-[#f4f1e9] font-noto">
         <Card>
           <div className="w-[450px] h-[500px]">
             <div className="flex justify-between ">

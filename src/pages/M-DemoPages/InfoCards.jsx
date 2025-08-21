@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard,
+  ChartNoAxesCombined ,
   ShoppingCart,
   Utensils,
   Users,
@@ -16,7 +16,7 @@ const InfoCards = () => {
     {
       label: "Total Revenue",
       num: "$45,231.89",
-      icon: <LayoutDashboard size={18} />,
+      icon: <ChartNoAxesCombined size={18} />,
       progress: "12.8% from last month",
     },
     {
@@ -28,13 +28,13 @@ const InfoCards = () => {
     {
       label: "Customers",
       num: "1278",
-      icon: <Utensils size={18} />,
+      icon: <Users size={18} />,
       progress: "12% from last month",
     },
     {
       label: "Growth",
       num: "+234",
-      icon: <Users size={18} />,
+      icon: <Utensils size={18} />,
       progress: "35% from last month",
     },
     {

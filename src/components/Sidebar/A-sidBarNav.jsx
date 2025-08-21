@@ -8,6 +8,7 @@ import Settings from '../../pages/M-DemoPages/Settings';
 import DashBoardPage from '../../pages/DashBoardPage';
 import AllList from '../../pages/A-DemoPages/AllList';
 import ACustomers from '../../pages/A-DemoPages/A-customers';
+import DeliveryGuys from '../../pages/A-DemoPages/deliveryGuys';
 const AdminNav = () => {
   const { activeNav } = useNavigation();
   const [activeComponent, setActiveComponent] = useState(null);
@@ -33,7 +34,7 @@ const AdminNav = () => {
       case 'Menu':
         setActiveComponent(<Menu />);
         break;
-      case 'Customers':
+      case 'Restaurants':
         setActiveComponent(<ACustomers />);
         break;
       case 'Analytics':
@@ -41,6 +42,9 @@ const AdminNav = () => {
         break;
       case 'Settings':
         setActiveComponent(<Settings />);
+        break;
+      case 'Delivery Guys':
+        setActiveComponent(<DeliveryGuys />);
         break;
       default:
         setActiveComponent(null);

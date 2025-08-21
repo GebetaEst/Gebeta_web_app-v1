@@ -8,7 +8,7 @@ const ManagerOrders = () => {
   const [latestOrderId, setLatestOrderId] = useState(null);
 
   const API_URL =
-    "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/6892fa71c22cb2251d1f8b34/orders";
+    "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/689dd0dfa804b9df25acb672/orders";
 
   const sortOrders = (ordersToSort) => {
     const statusPriority = {
@@ -117,10 +117,10 @@ const ManagerOrders = () => {
   };
 
   return (
-    <div className="min-h-[89vh] bg-[#f9f5f0] p-6">
+    <div className="h-[calc(100vh-65px)] bg-[#f9f5f0] p-6 ">
       <button
         onClick={handleSortByStatus}
-        className="mt-4 bg-[#8B4513] text-white px-4 py-2 rounded-md hover:bg-[#a05c2c] transition-colors duration-200"
+        className="mt-4 ml-5   bg-[#8B4513] text-white px-4 py-2 rounded-md hover:bg-[#a05c2c] transition-colors duration-200"
       >
         Sort Orders by Status
       </button>
@@ -135,7 +135,7 @@ const ManagerOrders = () => {
         Orders Dashboard
       </h1>
 
-      <div className="overflow-y-auto h-[69%] w-[80%] scrollbar-hide scroll-smooth fixed p-2">
+      <div className="overflow-y-auto h-[69%] w-[80%] scrollbar-hide scroll-smooth fixed p-2 ">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {orders.map((order) => (
             <div

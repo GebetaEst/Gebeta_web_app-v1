@@ -17,7 +17,7 @@ const TopDash = () => {
   // console.log(storedUser.role);
   return (
     <>
-      <div className="pl-12 flex items-center justify-between bg-[#e0cda9] h-[62px] w-[100%] px-28 border-[#e0cd99]">
+      <div className="pl-12 flex items-center justify-between bg-[#e0cda9] h-[65px] w-[100%] px-28 border-[#e0cd99]">
         <p className="text-3xl font-bold ">{Title}</p>
         <div className="flex items-center gap-6 pt-1 justify-center">
           <div>

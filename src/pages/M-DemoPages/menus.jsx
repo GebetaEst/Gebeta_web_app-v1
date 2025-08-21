@@ -960,7 +960,7 @@ const Menus = () => {
 
   return (
     <div
-      className='rounded-lg shadow-2xl bg-white w-full my-8 mx-auto p-6'
+      className='rounded-lg shadow-2xl bg-white w-full h-[calc(100vh-65px)] my-8 mx-auto p-6 overflow-y-auto'
       style={{ maxWidth: '110rem' }}
     >
       {/* Accordion Container */}

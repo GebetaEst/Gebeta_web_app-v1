@@ -168,9 +168,9 @@ const ACustomers = () => {
   };
 
   return (
-    <div className="p-6 min-h-[calc(100vh-62px)] bg-[#f4f1e9] font-sans">
+    <div className="p-6 min-h-[calc(100vh-62px)] bg-[#f4f1e9] font-sans overflow-y-auto">
       <h1 className="text-3xl font-bold text-[#4b382a] mb-4 pl-6">
-        Restaurant Management
+        List of Management
       </h1>
 
       <div className="flex flex-wrap items-center gap-4 mb-4">

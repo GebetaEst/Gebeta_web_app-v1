@@ -9,18 +9,20 @@ import {
   Settings,
   UtensilsCrossed,
   ScrollText,
-  IdCard
+  IdCard,
+  Truck 
 } from 'lucide-react';
 
 
 const navItems = [
-  { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={18} /> },
-  { label: 'Users', path: '/lists', icon:<Users size={18} />  },
+  { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
+  { label: 'Users', path: '/lists', icon:<Users size={20} />  },
   // { label: 'Orders', path: '/orders', icon: <ShoppingCart size={18} /> },
   // { label: 'Menu', path: '/menu', icon: <Utensils size={18} /> },
-  { label: 'Customers', path: '/customers', icon:<ScrollText size={18} />  },
-  { label: 'Settings', path: '/settings', icon: <Settings size={18} /> },
-  { label: 'Analytics', path: '/analytics', icon: <BarChart2 size={18} /> },
+  { label: 'Restaurants', path: '/customers', icon:<ScrollText size={20} />  },
+  { label: 'Delivery Guys', path: '/delivery-guys', icon: <Truck size={20} /> },
+  { label: 'Analytics', path: '/analytics', icon: <BarChart2 size={20} /> },
+  { label: 'Settings', path: '/settings', icon: <Settings size={20} /> },
 ];
 
 const AdminSidebar = () => {
@@ -43,9 +45,9 @@ const AdminSidebar = () => {
         {navItems.map((item) => (
           <span
             key={item.path}
-            className={`flex items-center  space-x-3 px-3 py-2 rounded-xl font-medium transition-all duration-100 scroll-smooth cursor-pointer ${
+            className={`flex items-center  text-[#000000] space-x-3 px-3 py-2 rounded-xl font-medium transition-all duration-100 scroll-smooth cursor-pointer ${
               activeNav === item.label
-                ? 'bg-gradient-to-r from-gray-50 to-gray-300   border-l-4 border-l-gray-600 border-gray-200 drop-shadow'
+                ? 'bg-gradient-to-r backdrop-blur-lg bg-black/5 border-[#0a0602] border-l-4 border-l-[#c94435] drop-shadow'
                 : 'motion-text-out-slate-100 '
             }`}
             
