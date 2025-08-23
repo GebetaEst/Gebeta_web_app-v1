@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef} from "react";
 import axios from "axios";
 
 const ManagerOrders = () => {
@@ -6,17 +6,18 @@ const ManagerOrders = () => {
   const [expandedCard, setExpandedCard] = useState(null);
   const [newOrderAlert, setNewOrderAlert] = useState(false);
   const [latestOrderId, setLatestOrderId] = useState(null);
+  const latestOrderIdRef = useRef(null);
 
   const API_URL =
     "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/689dd0dfa804b9df25acb672/orders";
 
   const sortOrders = (ordersToSort) => {
     const statusPriority = {
-      preparing: 1,
-      cooked: 2,
-      cancelled: 3,
-      delivering: 4,
-      completed: 5
+      pending: 1,
+      preparing: 2,
+      cooked: 3,
+      // cancelled: 4,
+      delivering: 5,
     };
     
     return [...ordersToSort].sort((a, b) => {
@@ -36,19 +37,20 @@ const ManagerOrders = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+  
         const sorted = sortOrders(res.data.data);
         setOrders(sorted);
-        console.log(sorted);
-        setLatestOrderId(sorted[0]?.id);
+        setLatestOrderId(sorted[0]?.orderId || null);
+        latestOrderIdRef.current = sorted[0]?.orderId || null;
       } catch (error) {
         console.error("Failed to fetch orders:", error);
       }
     };
-
+  
+    // initial fetch
     fetchOrders();
-  }, []);
-
-  useEffect(() => {
+  
+    // polling
     const interval = setInterval(async () => {
       try {
         const res = await axios.get(API_URL, {
@@ -56,26 +58,25 @@ const ManagerOrders = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
+  
         const sorted = sortOrders(res.data.data);
-        const latestFetchedId = sorted[0]?.id;
-
-        if (latestFetchedId && latestFetchedId !== latestOrderId) {
+        const latestFetchedId = sorted[0]?.orderId;
+  
+        if (latestFetchedId && latestFetchedId !== latestOrderIdRef.current) {
           setNewOrderAlert(true);
           setLatestOrderId(latestFetchedId);
+          latestOrderIdRef.current = latestFetchedId;
           setOrders(sorted);
-
+  
           setTimeout(() => setNewOrderAlert(false), 5000);
         }
-        // console.log("interval", interval);
-
       } catch (error) {
         console.error("Polling error", error);
       }
-    }, 1000);
-    
+    }, 5000);
+  
     return () => clearInterval(interval);
-  }, [latestOrderId]);
+  }, []);
 
   const toggleExpand = (id) => {
     setExpandedCard((prev) => (prev === id ? null : id));
@@ -83,21 +84,27 @@ const ManagerOrders = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     const updatedOrders = orders.map((order) =>
-      order._id === id ? { ...order, orderStatus: newStatus } : order
+      order.orderId === id ? { ...order, orderStatus: newStatus } : order
     );
+    // console.log("updatedOrders",updatedOrders);
+    // console.log("id",id);
+    // console.log("newStatus",newStatus);
     setOrders(updatedOrders);
 
     try {
       const res = await axios.patch(
         `https://gebeta-delivery1.onrender.com/api/v1/orders/${id}/status`,
-        { newStatus: newStatus },
+        {
+          orderId: id,
+          status: newStatus
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      console.log("res",res);
+      // console.log("res",res);
     } catch (err) {
       console.error("Failed to update status", err);
     }
@@ -139,15 +146,15 @@ const ManagerOrders = () => {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {orders.map((order) => (
             <div
-              key={order._id}
-              onClick={() => toggleExpand(order._id)}
+              key={order.orderId}
+              onClick={() => toggleExpand(order.orderId)}
               className={`bg-white border border-[#e2b96c] rounded-xl shadow-md hover:shadow-lg cursor-pointer motion-preset-confetti  transition-all duration-300 overflow-hidden flex flex-col justify-between ${
-                expandedCard === order._id ? "p-4 pb-6" : "p-4"
+                expandedCard === order.orderId ? "p-4 pb-6" : "p-4"
               }`}
             >
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-[#4b2e2e]">
-                  {order.userId?.firstName} {order.userId?.lastName}
+                  {order.userName}
                 </h2>
                 <span
                   className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusColor(
@@ -160,33 +167,33 @@ const ManagerOrders = () => {
 
               <p className="text-[#5f4637] mt-2">
                 <span className="font-medium">Order:</span>{" "}
-                {order.orderItems
+                {order.items
                   ?.map(
-                    (item) => `${item.foodId.foodName}` + `  x${item.quantity}`
+                    (item) => `${item.foodName}` + `  (x${item.quantity})`
                   )
                   .join(", ") || "N/A"}
-                  <br/><span className="font-medium">Total Order:</span>{order.orderItems
+                  <br/><span className="font-medium">Total Order:</span>{order.items
                   ?.map(
                     (item) => `${item.quantity}`
                   )
                   .join(", ") || "N/A"}
               </p>
               <p className="text-[#5f4637]">
-                <span className="font-medium">Total:</span> {order.totalPrice} ETB
+                <span className="font-medium">Total:</span> {order.totalFoodPrice} ETB
               </p>
               <p className="text-sm text-[#a37c2c] italic">
-                Placed on: {new Date(order.createdAt).toLocaleString()}
+                Placed on: {new Date(order.orderDate).toLocaleString()}
               </p>
 
-              {expandedCard === order._id && (
+              {expandedCard === order.orderId && (
                 <div className="mt-4 space-y-2 border-t pt-3 border-dashed border-[#caa954] text-sm text-[#3f2c1b]">
                   <p>
                     <span className="font-medium">Phone:</span>{" "}
-                    {order.userId?.phone || "N/A"}
+                    {order.phone || "N/A"}
                   </p>
                   <p>
                     <span className="font-medium">Type of Order:</span>{" "}
-                    {order.typeOfOrder}
+                    {order.orderType}
                   </p>
 
                   <div className="mt-2">
@@ -196,9 +203,9 @@ const ManagerOrders = () => {
                     <select
                       value={order.orderStatus}
                       onChange={(e) =>{
-                        handleStatusChange(order._id, e.target.value)
-                        console.log(order._id);}
-                      }
+                        handleStatusChange(order.orderId, e.target.value)
+                        // console.log(order.orderId);}
+                      }}
                       className="w-full p-2 border border-[#caa954] rounded-md bg-[#fefcf7] focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                       onClick={(e) => e.stopPropagation()}
                     >

@@ -50,25 +50,17 @@ const Customers = () => {
         }
     ]);
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    };
     const restaurantInfo = JSON.parse(sessionStorage.getItem("user-data"));
     const restaurantName = restaurantInfo.state.restaurant.name;
-    // console.log(restaurantName);
 
     return (
         <div className="p-6 bg-[#f4f1e9] h-[calc(100vh-65px)] overflow-y-auto">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-8">
-                        <div className=" bg-[#8B4513] bg-opacity-10 rounded-lg">
-                            {/* <Users className="w-8 h-8 text-[#8B4513]" /> */}
-                            <img src={restaurantInfo.state.restaurant.imageCover} alt="Restaurant Logo" className="w-16 h-16 rounded-lg object-cover border-2 border-white/20" />
-                        </div>
+                    <div className="bg-[#8B4513] bg-opacity-10 rounded-lg">
+                        <img src={restaurantInfo.state.restaurant.imageCover} alt="Restaurant Logo" className="w-16 h-16 rounded-lg object-cover border-2 border-white/20" />
+                    </div>
                     <div>
                         <h1 className="text-3xl font-bold text-[#4b2e2e]">{restaurantName}</h1>
                         <p className="text-[#5f4637] mt-1">Manage your customer database</p>
@@ -108,7 +100,7 @@ const Customers = () => {
                             <div>
                                 <p className="text-[#5f4637] text-sm">Total Revenue</p>
                                 <p className="text-2xl font-bold text-[#4b2e2e]">
-                                    {formatCurrency(customers.reduce((sum, customer) => sum + customer.totalSpent, 0))}
+                                    ${customers.reduce((sum, customer) => sum + customer.totalSpent, 0).toFixed(2)}
                                 </p>
                             </div>
                             <div className="p-3 bg-[#8B4513] bg-opacity-10 rounded-lg">
@@ -166,7 +158,7 @@ const Customers = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="font-medium text-[#4b2e2e]">
-                                                {formatCurrency(customer.totalSpent)}
+                                                ${customer.totalSpent.toFixed(2)}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
