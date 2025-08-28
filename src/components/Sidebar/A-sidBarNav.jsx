@@ -7,7 +7,7 @@ import Analytics from '../../pages/M-DemoPages/Analytics';
 import Settings from '../../pages/M-DemoPages/Settings';
 import DashBoardPage from '../../pages/DashBoardPage';
 import AllList from '../../pages/A-DemoPages/AllList';
-import ACustomers from '../../pages/A-DemoPages/A-customers';
+import ACustomers from '../../pages/A-DemoPages/A-Restaurants';
 import DeliveryGuys from '../../pages/A-DemoPages/deliveryGuys';
 const AdminNav = () => {
   const { activeNav } = useNavigation();

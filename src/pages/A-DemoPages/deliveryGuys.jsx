@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import verifiedIcon from '../../assets/images/blueCar.png';
 
 // Default marker icons
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -12,6 +13,15 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 const deliveryIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/744/744465.png',
   iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15],
+  shadowUrl: markerShadow,
+  shadowSize: [30, 30]
+});
+
+const verifiedDeliveryIcon = new L.Icon({
+  iconUrl: verifiedIcon,
+  iconSize: [33, 33],
   iconAnchor: [15, 15],
   popupAnchor: [0, -15],
   shadowUrl: markerShadow,
@@ -131,7 +141,8 @@ const DeliveryGuys = () => {
 
   return (
     <div className="h-[calc(100vh-65px)] w-full bg-[#f9f5f0] p-2 overflow-auto">
-      <div className="mb-4">
+      
+      <div className="mb-4 pl-10">
         <h1 className="text-xl font-bold text-gray-800 mb-1">Delivery Personnel Map</h1>
         <p className="text-sm text-gray-600">View all delivery personnel locations on the map</p>
       </div>
@@ -181,7 +192,7 @@ const DeliveryGuys = () => {
                     <Marker
                       key={user._id || user.id || index}
                       position={coords}
-                      icon={deliveryIcon}
+                      icon={user.isPhoneVerified ? verifiedDeliveryIcon : deliveryIcon}
                     >
                       <Popup>
                         <div className="p-2">

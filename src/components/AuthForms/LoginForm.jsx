@@ -2,12 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UseUserStore from "../../Store/UseStore";
 import {Loading , InlineLoadingDots} from "../Loading/Loading";
+import { Eye, EyeOff } from "lucide-react";
+
 const LoginForm = () => {
   
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [errorMg, setErrorMg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
   const {setUser , restaurant, setRestaurant } = UseUserStore();
@@ -59,7 +62,7 @@ const LoginForm = () => {
       
     } catch (error) {
       console.error("Login error:", error.message);
-      setErrorMg("Something went wrong. Please try again. try again later");
+      setErrorMg("Incorrect phone number or password");
     }finally{
       setLoading(false);
     }
@@ -93,15 +96,25 @@ const LoginForm = () => {
 
       <div className="w-full space-y-1">
         <label htmlFor="password">Password:</label>
+        <div className="relative">
         <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-          className="bg-white border-[0.5px] border-gray p-2 rounded-md w-full text-black"
-        />
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            autoComplete="new-password"
+            required
+            className="bg-white border-[0.5px] border-gray p-2 rounded-md w-full text-black pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
       </div>
       
       <Link

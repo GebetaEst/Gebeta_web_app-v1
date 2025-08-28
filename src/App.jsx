@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -16,11 +16,33 @@ import AdminNav from "./components/Sidebar/A-sidBarNav";
 import EditUser from "./components/UserForms/Edit-user";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Verify from "./pages/verify";
+import GlobalNotifications from "./components/GlobalNotifications";
+import orderPollingService from "./services/OrderPollingService";
+import useUserStore from "./Store/UseStore";
+
 function App() {
   const [count, setCount] = useState(0);
+  const { user } = useUserStore();
+
+  // Start order polling when user is logged in
+  useEffect(() => {
+    if (user) {
+      orderPollingService.startPolling();
+    } else {
+      orderPollingService.stopPolling();
+    }
+
+    // Cleanup on unmount
+    return () => {
+      orderPollingService.stopPolling();
+    };
+  }, [user]);
 
   return (
     <>
+      {/* Global notifications that work everywhere */}
+      <GlobalNotifications />
+      
       {/* <Sidebar/>   */}
       <Router>
         <Routes>

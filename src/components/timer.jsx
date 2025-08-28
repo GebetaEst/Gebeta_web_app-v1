@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const TimerToggle = () => {
   const [status, setStatus] = useState("CLOSED");
+  const lastStatusRef = useRef(null);
+  const didMountRef = useRef(false); // track if component has already mounted
 
-  // Safely parse sessionStorage
-  const storedData = sessionStorage.getItem("user-data");
+  // Parse sessionStorage
+  const storedData = sessionStorage?.getItem("user-data");
   let data = null;
   try {
     data = storedData ? JSON.parse(storedData) : null;
@@ -16,81 +18,98 @@ const TimerToggle = () => {
   const restaurantId = data?.state?.restaurant?._id;
   const input = data?.state?.restaurant?.openHours || null;
 
-  // Default values in case input is missing
-  let openingDate = null;
-  let closingDate = null;
-
-  if (input) {
-    const [openingTime, closingTime] = input.split(" - ");
-
-    function parseTime(timeStr) {
-      const today = new Date();
-      return new Date(`${today.toDateString()} ${timeStr}`);
-    }
-
-    openingDate = parseTime(openingTime);
-    closingDate = parseTime(closingTime);
-  }
-
-  function isShopOpen(openingDate, closingDate) {
-    if (!openingDate || !closingDate) return false;
+  // Parse "hh:mm AM - hh:mm PM" into Date objects
+  function parseTimeToDate(timeStr) {
     const now = new Date();
-    if (closingDate < openingDate) {
-      return now >= openingDate || now <= closingDate; // overnight
+    const [time, period] = timeStr.trim().split(/\s+/);
+    let [hours, minutes] = time.split(":").map(Number);
+    if (!minutes) minutes = 0;
+
+    if (period.toLowerCase() === "pm" && hours !== 12) {
+      hours += 12;
+    } else if (period.toLowerCase() === "am" && hours === 12) {
+      hours = 0;
     }
-    return now >= openingDate && now <= closingDate;
+
+    const d = new Date(now);
+    d.setHours(hours, minutes, 0, 0);
+    return d;
   }
 
-  // Update status every second
+  function isShopOpen(openHours) {
+    if (!openHours) return false;
+
+    const [openStr, closeStr] = openHours.split(" - ");
+    const openTime = parseTimeToDate(openStr);
+    let closeTime = parseTimeToDate(closeStr);
+
+    const now = new Date();
+
+    // Handle overnight (e.g. 8PM - 2AM)
+    if (closeTime <= openTime) {
+      closeTime.setDate(closeTime.getDate() + 1);
+    }
+
+    return now >= openTime && now <= closeTime;
+  }
+
+  // Update status every 2 minutes
   useEffect(() => {
-    if (!openingDate || !closingDate) return;
+    if (!input) return;
 
     function updateDisplay() {
-      const shopStatus = isShopOpen(openingDate, closingDate)
-        ? "OPEN"
-        : "CLOSED";
+      const shopStatus = isShopOpen(input) ? "OPEN" : "CLOSED";
       setStatus(shopStatus);
     }
 
     updateDisplay();
-    const interval = setInterval(updateDisplay, 1000);
+    const interval = setInterval(updateDisplay, 120000);
     return () => clearInterval(interval);
-  }, [openingDate, closingDate]);
+  }, [input]);
 
-  // Update backend whenever status changes
-  useEffect(() => {
-    if (!restaurantId) return;
+  // Update backend only after initial status check
+  // useEffect(() => {
+  //   if (!restaurantId || !input) return;
 
-    async function updateOpeningStatus() {
-      try {
-        const res = await fetch(
-          `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantId}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              isOpenNow: status === "OPEN",
-            }),
-          }
-        );
+  //   // skip the first render (before status is settled)
+  //   if (!didMountRef.current) {
+  //     didMountRef.current = true;
+  //     return;
+  //   }
 
-        if (!res.ok) {
-          console.error("Failed to update restaurant status");
-        } else {
-          console.log("Restaurant status updated:", status);
-        }
-      } catch (error) {
-        console.error("Error updating restaurant status:", error);
-      }
-    }
+  //   if (lastStatusRef.current === status) return; // no duplicate calls
+  //   lastStatusRef.current = status;
 
-    updateOpeningStatus();
-  }, [status, restaurantId]);
+  //   async function updateOpeningStatus() {
+  //     try {
+  //       const res = await fetch(
+  //         `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantId}`,
+  //         {
+  //           method: "PATCH",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //           body: JSON.stringify({
+  //             isOpenNow: status === "OPEN",
+  //           }),
+  //         }
+  //       );
 
-  // Render conditions AFTER hooks
+  //       if (!res.ok) {
+  //         console.error("Failed to update restaurant status");
+  //       } else {
+  //         console.log("Restaurant status updated:", status);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating restaurant status:", error);
+  //     }
+  //   }
+
+  //   updateOpeningStatus();
+  // }, [status, restaurantId, input]);
+
+  // Render
   if (role === "Manager" && !input) {
     return <p className="text-xs">Please set opening hours</p>;
   }
@@ -102,7 +121,9 @@ const TimerToggle = () => {
   return (
     <p
       className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-        status === "OPEN" ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
+        status === "OPEN"
+          ? "bg-green-200 text-green-800"
+          : "bg-red-200 text-red-800"
       }`}
     >
       {status}

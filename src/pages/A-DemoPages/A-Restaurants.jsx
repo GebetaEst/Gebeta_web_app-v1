@@ -3,7 +3,7 @@ import { Trash, RefreshCcw, CirclePlus, X } from "lucide-react";
 import AddRestaurantsForm from "../../components/UserForms/A-AddRestaurantsForm";
 import PopupCard from "../../components/Cards/PopupCard";
 import { Loading } from "../../components/Loading/Loading";
-
+import AResOrders from "../../components/A-ResOrdersDetails"
 const ACustomers = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,8 @@ const ACustomers = () => {
   const [refetch, setRefetch] = useState(false);
   const [statusDropdownId, setStatusDropdownId] = useState(null);
   const [managerInputs, setManagerInputs] = useState({});
-
+  const [showOrders, setShowOrders] = useState(false);
+  const [restaurantId, setRestaurantId] = useState(null);
   // State for custom modal dialogs
   const [alertInfo, setAlertInfo] = useState({ show: false, message: "" });
   const [confirmDeleteInfo, setConfirmDeleteInfo] = useState({
@@ -167,8 +168,34 @@ const ACustomers = () => {
     assignManager();
   };
 
+  const handelShowOrders = (restaurantId) => {
+    setShowOrders(prev => !prev);
+    setRestaurantId(restaurantId);
+  }
+
   return (
-    <div className="p-6 min-h-[calc(100vh-65px)] bg-[#f4f1e9] font-sans overflow-y-auto">
+    <>
+    {showOrders && (
+      <PopupCard>
+        <div className="w-[1150px]">
+        <div className="flex justify-between items-center mb-4 ">
+          <h1 className="text-2xl font-bold text-[#4b382a] border-b-2 border-[#e0cda9]">
+            Restaurant Orders
+          </h1>
+          <button
+            onClick={() => setShowOrders(false)}
+            className="text-red-500 hover:text-red-700"
+          >
+            <X size={28} />
+          </button>
+        </div>
+        <div className="max-h-[70vh] overflow-y-auto">
+          <AResOrders restaurantId={restaurantId}/>
+        </div>
+        </div>
+      </PopupCard>
+    )}
+    <div className="p-6 h-[calc(100vh-65px)] bg-[#f4f1e9] font-sans overflow-y-auto">
       <h1 className="text-3xl font-bold text-[#4b382a] mb-4 pl-6">
         List of Management
       </h1>
@@ -381,29 +408,42 @@ const ACustomers = () => {
                               </span>{" "}
                               {formatDate(restaurant.createdAt)}
                             </p>
+                            <div>
+                              
+                            <button className="bg-[#e0cda9] border-[#b88c69] border text-[#4b382a] p-2  rounded-md mt-1 cursor-pointer" 
+                            onClick={() => handelShowOrders(restaurant._id)}>
+                              See Orders details
+                              </button>
+                            </div>
                             {restaurant.managerId &&
                             typeof restaurant.managerId === "object" ? (
                               <>
-                                <p>
-                                  <span className="font-semibold text-[#4b382a]">
-                                    Manager Name:
-                                  </span>{" "}
-                                  {`${restaurant.managerId.firstName || ""} ${
-                                    restaurant.managerId.lastName || ""
-                                  }`.trim() || "N/A"}
-                                </p>
-                                <p>
-                                  <span className="font-semibold text-[#4b382a]">
-                                    Manager Email:
-                                  </span>{" "}
-                                  {restaurant.managerId.email || "N/A"}
-                                </p>
-                                <p>
-                                  <span className="font-semibold text-[#4b382a]">
-                                    Manager Phone:
-                                  </span>{" "}
-                                  {restaurant.managerId.phone || "N/A"}
-                                </p>
+                                <div className="relative group">
+                                  <p className="cursor-pointer">
+                                    <span className="font-semibold text-[#4b382a]">
+                                      Manager Name:
+                                    </span>{" "}
+                                    {`${restaurant.managerId.firstName || ""} ${
+                                      restaurant.managerId.lastName || ""
+                                    }`.trim() || "N/A"}
+                                  </p>
+                                  
+                                  {/* Hover tooltip with manager details - positioned to the right */}
+                                  <div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white border border-[#e0cda9] rounded-lg shadow-lg p-3 bottom-14 left-100 ml-2 min-w-[200px]">
+                                    <div className="space-y-1 text-xs">
+                                      <p><span className="font-semibold">Full Name:</span> {`${restaurant.managerId.firstName || ""} ${restaurant.managerId.lastName || ""}`.trim() || "N/A"}</p>
+                                      <p><span className="font-semibold">Email:</span> {restaurant.managerId.email || "N/A"}</p>
+                                      <p><span className="font-semibold">Phone:</span> {restaurant.managerId.phone || "N/A"}</p>
+                                      <p><span className="font-semibold">ID:</span> {restaurant.managerId._id || "N/A"}</p>
+                                      <p><span className="font-semibold">Role:</span> {restaurant.managerId.role || "N/A"}</p>
+                                      <p><span className="font-semibold">Verified:</span> {restaurant.managerId.isPhoneVerified ? <span className="text-green-500">✓</span> : <span className="text-red-500">✗</span>}</p>
+                                      {restaurant.managerId.createdAt && (
+                                        <p><span className="font-semibold">Joined:</span> {new Date(restaurant.managerId.createdAt).toLocaleDateString()}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                
                               </>
                             ) : (
                               <div className=" ">
@@ -450,6 +490,7 @@ const ACustomers = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
