@@ -53,7 +53,7 @@ const InfoCards = () => {
             <div className="flex flex-col items-start  md:w-[150px]">
             <div>{item.icon}</div>
             <h1 className="font-semibold">{item.label}</h1>
-            <p>{item.num}</p>
+            <div>{item.num}</div>
             <p className="text-xs text-placeholderText">{item.progress}</p>
             </div>
           </Card>

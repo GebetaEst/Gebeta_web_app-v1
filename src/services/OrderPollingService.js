@@ -123,7 +123,7 @@ class OrderPollingService {
           id: Date.now().toString(),
           type: 'error',
           title: 'Connection Error',
-          message: 'Failed to fetch orders. Please check your connection.',
+          message: 'Failed to get orders. Please check your connection.',
           timestamp: Date.now(),
         });
       }

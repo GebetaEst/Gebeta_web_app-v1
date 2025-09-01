@@ -37,11 +37,16 @@ const ManagerOrders = () => {
     });
   };
 
-  const filteredOrders = orders.filter(
-    (order) =>
-      order.orderCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.orderId?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredOrders = orders
+    .filter((order) => {
+      const allowedStatuses = ["pending", "cooked", "canceled", "preparing"];
+      return allowedStatuses.includes(order.orderStatus?.toLowerCase());
+    })
+    .filter(
+      (order) =>
+        order.orderCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.orderId?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -66,7 +71,7 @@ const ManagerOrders = () => {
     // Refresh orders every 5 seconds (but don't duplicate the polling logic)
     const interval = setInterval(() => {
       fetchOrders();
-    }, 5000);
+    }, 500000);
 
     return () => clearInterval(interval);
   }, [refresh]);
@@ -102,8 +107,10 @@ const ManagerOrders = () => {
   };
 
   const getStatusColor = (status) => {
-    if (status === "Delivering") return "bg-green-100 text-green-700";
-    if (status === "Completed") return "bg-gray-200 text-gray-700";
+    if (status === "Cooked") return "bg-green-100 text-green-700";
+    if (status === "Canceled") return "bg-red-100 text-red-700";
+    // if (status === "Preparing") return "bg-yellow-100 text-yellow-800";
+    if (status === "Pending") return "bg-yellow-100 text-yellow-700";
     return "bg-yellow-100 text-yellow-800";
   };
 
@@ -191,6 +198,12 @@ const ManagerOrders = () => {
                     <span className="font-medium">Total:</span>{" "}
                     {order.totalFoodPrice} ETB
                   </p>
+                  {order.description && (
+                    <p className="text-[#5f4637] border p-1 rounded-lg bg-[#faf8f3]">
+                      <span className="font-bold">Description:</span>{" "}
+                      {order.description}
+                    </p>
+                  )}
                   <p className="text-sm text-[#a37c2c] italic">
                     Placed on: {new Date(order.orderDate).toLocaleString()}
                   </p>
@@ -230,9 +243,11 @@ const ManagerOrders = () => {
                       >
                         <option value="Pending">Pending</option>
                         <option value="Preparing">Preparing</option>
-                        {/* <option value="Delivering">Delivering</option> */}
                         <option value="Cooked">Cooked</option>
+                        {/* <option value="Delivering">Delivering</option> */}
                         {/* <option value="Completed">Completed</option> */}
+                        {/* <option value="Canceled">Canceled</option> */}
+
                       </select>
                       <div className="flex gap-3 p-2 px-0">
                         <input

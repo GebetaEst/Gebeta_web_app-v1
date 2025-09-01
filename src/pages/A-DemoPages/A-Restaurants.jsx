@@ -16,6 +16,7 @@ const ACustomers = () => {
   const [managerInputs, setManagerInputs] = useState({});
   const [showOrders, setShowOrders] = useState(false);
   const [restaurantId, setRestaurantId] = useState(null);
+  const [restaurantName, setRestaurantName] = useState(null);
   // State for custom modal dialogs
   const [alertInfo, setAlertInfo] = useState({ show: false, message: "" });
   const [confirmDeleteInfo, setConfirmDeleteInfo] = useState({
@@ -168,17 +169,18 @@ const ACustomers = () => {
     assignManager();
   };
 
-  const handelShowOrders = (restaurantId) => {
+  const handelShowOrders = (restaurantId , restaurantName) => {
     setShowOrders(prev => !prev);
     setRestaurantId(restaurantId);
+    setRestaurantName(restaurantName);
   }
 
   return (
     <>
     {showOrders && (
       <PopupCard>
-        <div className="w-[1150px]">
-        <div className="flex justify-between items-center mb-4 ">
+        <div className="w-[1200px]">
+        <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-[#4b382a] border-b-2 border-[#e0cda9]">
             Restaurant Orders
           </h1>
@@ -189,8 +191,8 @@ const ACustomers = () => {
             <X size={28} />
           </button>
         </div>
-        <div className="max-h-[70vh] overflow-y-auto">
-          <AResOrders restaurantId={restaurantId}/>
+        <div className="max-h-[75vh]">
+          <AResOrders restaurantId={restaurantId} restaurantName={restaurantName}/>
         </div>
         </div>
       </PopupCard>
@@ -411,7 +413,7 @@ const ACustomers = () => {
                             <div>
                               
                             <button className="bg-[#e0cda9] border-[#b88c69] border text-[#4b382a] p-2  rounded-md mt-1 cursor-pointer" 
-                            onClick={() => handelShowOrders(restaurant._id)}>
+                            onClick={() => handelShowOrders(restaurant._id , restaurant.name)}>
                               See Orders details
                               </button>
                             </div>

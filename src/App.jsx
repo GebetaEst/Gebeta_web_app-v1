@@ -13,7 +13,7 @@ import Settings from "./pages/M-DemoPages/Settings";
 import Landing from "./pages/Landing";
 import NotFoundPage from "./pages/NotFoundPage";
 import AdminNav from "./components/Sidebar/A-sidBarNav";
-import EditUser from "./components/UserForms/Edit-user";
+import EditUser from "./components/UserForms/A-EditUser";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Verify from "./pages/verify";
 import GlobalNotifications from "./components/GlobalNotifications";

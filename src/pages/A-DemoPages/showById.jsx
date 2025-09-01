@@ -6,7 +6,7 @@ import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
 import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 import { Contact , X} from "lucide-react";
-import EditUser from "../../components/UserForms/Edit-user";
+import EditUser from "../../components/UserForms/A-EditUser";
 import PopupCard from "../../components/Cards/PopupCard";
 const ShowById = () => {
   const navigate = useNavigate();
