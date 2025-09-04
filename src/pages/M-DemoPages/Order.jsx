@@ -6,7 +6,6 @@ import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 import { addSuccessNotification, addErrorNotification } from "../../utils/notifications";
 
 const ManagerOrders = () => {
-  const [orders, setOrders] = useState([]);
   const [expandedCards, setExpandedCards] = useState([]); // ✅ multiple expanded cards
   const [refresh, setRefresh] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,8 +13,19 @@ const ManagerOrders = () => {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   
-  // Get notification state from global store
-  const { newOrderAlert, latestOrderId, setNewOrderAlert } = useUserStore();
+  // Get orders and actions from Zustand store
+  const { 
+    orders, 
+    ordersLoading, 
+    ordersError,
+    setOrders, 
+    setOrdersLoading, 
+    setOrdersError,
+    updateOrderStatus,
+    newOrderAlert, 
+    latestOrderId, 
+    setNewOrderAlert 
+  } = useUserStore();
   
   const API_URL =
     "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/689dd0dfa804b9df25acb672/orders";
@@ -50,6 +60,7 @@ const ManagerOrders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setOrdersLoading(true);
       try {
         const res = await axios.get(API_URL, {
           headers: {
@@ -59,9 +70,12 @@ const ManagerOrders = () => {
         const sorted = sortOrders(res.data.data);
         console.log(sorted);
         setOrders(sorted);
+        setOrdersError(null);
       } catch (error) {
         console.error("Failed to fetch orders:", error);
-      }finally{
+        setOrdersError("Failed to fetch orders");
+      } finally {
+        setOrdersLoading(false);
       }
     };
 
@@ -71,10 +85,10 @@ const ManagerOrders = () => {
     // Refresh orders every 5 seconds (but don't duplicate the polling logic)
     const interval = setInterval(() => {
       fetchOrders();
-    }, 500000);
+    }, 5000)
 
     return () => clearInterval(interval);
-  }, [refresh]);
+  }, [refresh, setOrders, setOrdersLoading, setOrdersError]);
 
   const toggleExpand = (id) => {
     setExpandedCards((prev) =>
@@ -83,10 +97,8 @@ const ManagerOrders = () => {
   };
 
   const handleStatusChange = async (id, newStatus) => {
-    const updatedOrders = orders.map((order) =>
-      order.orderId === id ? { ...order, orderStatus: newStatus } : order
-    );
-    setOrders(updatedOrders);
+    // Update local state immediately
+    updateOrderStatus(id, newStatus);
 
     try {
       await axios.patch(
@@ -103,13 +115,14 @@ const ManagerOrders = () => {
       );
     } catch (err) {
       console.error("Failed to update status", err);
+      // Revert the change if API call fails
+      updateOrderStatus(id, orders.find(order => order.orderId === id)?.orderStatus || "Pending");
     }
   };
 
   const getStatusColor = (status) => {
     if (status === "Cooked") return "bg-green-100 text-green-700";
     if (status === "Canceled") return "bg-red-100 text-red-700";
-    // if (status === "Preparing") return "bg-yellow-100 text-yellow-800";
     if (status === "Pending") return "bg-yellow-100 text-yellow-700";
     return "bg-yellow-100 text-yellow-800";
   };
@@ -241,7 +254,7 @@ const ManagerOrders = () => {
                         className="w-full p-2 border border-[#caa954] rounded-md bg-[#fefcf7] focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <option value="Pending">Pending</option>
+                        {/* <option value="Pending">Pending</option> */}
                         <option value="Preparing">Preparing</option>
                         <option value="Cooked">Cooked</option>
                         {/* <option value="Delivering">Delivering</option> */}

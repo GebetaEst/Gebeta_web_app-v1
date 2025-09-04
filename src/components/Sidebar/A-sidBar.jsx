@@ -1,5 +1,6 @@
 import {useNavigation}  from '../../contexts/NavigationContext';
 import { useEffect } from 'react';
+import New from '../../assets/new.png';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -37,7 +38,8 @@ const AdminSidebar = () => {
     <aside className="w-60 min-h-screen bg-gray-50 border-r bg-[url('/src/assets/images/sidebar-bg3.png')] bg-cover bg-center  shadow-lg p-6  sticky top-0 left-0 motion-preset-slide-right motion-duration-1500 font-noto">
      
       <div className="text-xl font-bold pb-8 flex items-center justify-center  space-x-1 border-b-[0.5px] border-[#e0cda9] mb-8 ">
-        <UtensilsCrossed size={40} color="white" className="bg-primary rounded-md p-1"/>
+        {/* <UtensilsCrossed size={40} color="white" className="bg-primary rounded-md p-1"/> */}
+        <img src={New} alt="logo" className="w-10 h-10 bg-amber-800 rounded-md" />
         <span>Gbeታ Admin</span>
       </div>
 

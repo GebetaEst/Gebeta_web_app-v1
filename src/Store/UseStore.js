@@ -12,6 +12,11 @@ const useUserStore = create(
       newOrderAlert: false,
       latestOrderId: null,
 
+      // Orders state
+      orders: [],
+      ordersLoading: false,
+      ordersError: null,
+
       setUser: (userData) => set({ user: userData }),
       clearUser: () => set({ user: null }),
 
@@ -31,6 +36,19 @@ const useUserStore = create(
       
       setNewOrderAlert: (alert) => set({ newOrderAlert: alert }),
       setLatestOrderId: (id) => set({ latestOrderId: id }),
+      
+      // Orders actions
+      setOrders: (orders) => set({ orders }),
+      setOrdersLoading: (loading) => set({ ordersLoading: loading }),
+      setOrdersError: (error) => set({ ordersError: error }),
+      
+      updateOrderStatus: (orderId, newStatus) => set((state) => ({
+        orders: state.orders.map(order => 
+          order.orderId === orderId 
+            ? { ...order, orderStatus: newStatus }
+            : order
+        )
+      })),
       
       // Auto-remove old notifications (keep only last 10)
       cleanupNotifications: () => set((state) => ({

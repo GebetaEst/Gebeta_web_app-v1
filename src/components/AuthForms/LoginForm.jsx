@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UseUserStore from "../../Store/UseStore";
 import {Loading , InlineLoadingDots} from "../Loading/Loading";
@@ -11,6 +11,7 @@ const LoginForm = () => {
   const [errorMg, setErrorMg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [results , setResults] = useState([]);
   
   const navigate = useNavigate();
   const {setUser , restaurant, setRestaurant } = UseUserStore();
@@ -48,6 +49,7 @@ const LoginForm = () => {
         throw new Error(data.message || "Login failed");
       }
         setUser(data.data.user); 
+        setResults(data.data.user);
       
       localStorage.setItem("token", data.token);
       // navigate("/adminDashboard");
@@ -66,7 +68,47 @@ const LoginForm = () => {
     }finally{
       setLoading(false);
     }
-  };
+  }; 
+  const [resData , setResData] = useState([]);
+
+  // useEffect(() => {
+  //   const demoId = "687f8356ba35b7d99e36f647"
+  //   const fetchRestaurants = async () => {
+  //   const storedUser = JSON.parse(sessionStorage.getItem("user-data"))?.state?.user;
+  //   const role = storedUser.role;
+  //   // console.log(role)
+  //     try {
+  //       // ${storedUser._id}
+  //       const res = await fetch(
+  //         `https://gebeta-delivery1.onrender.com/api/v1/restaurants/by-manager/${results._id}`,
+  //         {
+  //           headers: {
+  //             // Using a placeholder token for demonstration as localStorage is not ideal in some environments
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //         }
+  //       );
+        
+  //       const data = await res.json();
+  //       if (res.ok && data.status === "success") {
+  //         // console.log(data.data.restaurants[0])
+  //         setResData(data.data.restaurants || []);
+  //         setRestaurant(data.data.restaurants[0]); 
+  //       } else {
+  //         throw new Error(data.message || "Failed to load restaurants.");
+  //       }
+  //     } catch (err) {
+  //       console.error("Fetch error:", err);
+  //     }
+  //   };
+  //   // if(role === "Manager"){
+  //   //   fetchRestaurants();
+  //   // }
+  //   setRestaurant(resData);
+  //   // console.log(resData)
+
+  //   fetchRestaurants();
+  // } ,[]);
 
   return (
     <form

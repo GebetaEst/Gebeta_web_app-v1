@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownToDot, Search, Star } from "lucide-react";
+import { useViewport } from "../components/VPLocation/ViewPort";
+
+
 
 // This is the main Landing page component for your food delivery app.
 const Landing = () => {
@@ -15,37 +18,47 @@ const Landing = () => {
       navigate(`/restaurants?q=${encodeURIComponent(searchTerm.trim())}`);
     }
   };
+  const { width, height, scrollX, scrollY } = useViewport();
+  console.log(
+    // "width", width, 
+    // "height", height, 
+    // "scrollX", scrollX, 
+    "scrollY", scrollY
+  );
 
   return (
     // The main container with a full-screen background image and a dark overlay.
-    <div className="relative min-h-screen bg-cover font-sans text-gray-900 bg-[url('src/assets/images/landing.jpg')] bg-no-repeat bg-center">
-      <div className="absolute inset-0 bg-black/60 z-0" />
+    <div className="relative min-h-screen bg-cover font-sans text-gray-900 bg-parallax bg-no-repeat bg-center ">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/70 to-black/50 z-0" />
 
       {/* Header section with branding and navigation buttons. */}
-      <header className="relative z-10 flex justify-between items-center px-6 py-4 md:px-12 md:py-6">
-        <Link to="/" className="flex items-center gap-2 p-2 font-logo text-3xl md:text-4xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition-colors duration-300 transform hover:scale-105">
-          Gebeታ
-        </Link>
-        <div className="flex gap-4">
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-white text-gray-900 px-5 py-2 md:px-6 md:py-3 rounded-full shadow-lg font-semibold transition-all duration-300 hover:bg-yellow-400 hover:text-white"
-          >
-            Login
-          </button>
-          {/* <button
+      <header >
+        <nav className={` z-10 flex justify-between items-center px-6 md:px-8 md:py-1 w-full top-0 left-0 fixed ${scrollY >= 101.20816040039062 ? " bg-black/20 backdrop-blur-sm z-50" : ""}`}>
+
+          <Link to="/" className=" flex items-center gap-2 p-2 font-logo text-3xl md:text-4xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition-colors duration-300 transform hover:scale-105">
+            Gebeታ
+          </Link>
+          <div className="flex gap-4">
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-white  text-gray-900 px-5 py-2 md:px-6 md:py-3 rounded-full shadow-lg font-semibold transition-all duration-300 hover:bg-yellow-400 hover:text-white"
+            >
+              Login
+            </button>
+            {/* <button
             onClick={() => navigate("/signup")}
             className="border-2 border-white text-white font-semibold px-5 py-2 md:px-6 md:py-3 rounded-full shadow-lg transition-all duration-300 hover:bg-white hover:text-gray-900 transform hover:scale-105"
-          >
+            >
             Sign Up
-          </button> */}
-        </div>
+            </button> */}
+          </div>
+        </nav>
       </header>
 
       {/* Main hero section with a compelling headline and search bar. */}
-      <section className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-4 text-center">
+      <section className="relative z-10 flex flex-col items-center justify-center px-4 text-center min-h-[90vh]">
         <h1 className="text-white text-4xl md:text-7xl font-bold tracking-tight drop-shadow-xl animate-fade-in-down mb-6">
-          <span className="block mb-2 md:mb-4">Craving?</span>
+          <span className="block mb-2 md:mb-4 text-start">Craving?</span>
           <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-500 bg-clip-text text-transparent">
             Tap. Eat. Repeat.
           </span>
@@ -90,14 +103,14 @@ const Landing = () => {
       </div>
 
       {/* This new section is a placeholder to show the "explore" part of the page. */}
-      <section id="explore" className="relative z-10 py-20 px-6 bg-[#f4f1e9] backdrop-blur-md rounded-t-3xl mt-12">
-        <div className="max-w-6xl mx-auto">
+      <section id="explore" className="relative z-10 py-20 px-6 bg-[#f4f1e9] backdrop-blur-md rounded-t-3xl mt-12 overflow-y-auto scrollbar-hide">
+        <div className="max-w-6xl mx-auto min-h-screen">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
             Featured Restaurants
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
             {/* Placeholder cards for featured restaurants */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2">
+            <div className={`animate-pin ease-in bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 scroll-hidden ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[-69%] motion-translate-y-in-[-57%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"}`}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+1" alt="Placeholder for Restaurant 1" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Gourmet Grills</h3>
@@ -110,7 +123,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2">
+            <div className="absolute left-[550px] bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2">
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+2" alt="Placeholder for Restaurant 2" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Spicy Spoon</h3>
@@ -123,7 +136,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2">
+            <div className={`absolute right-[110px] animate-pin ease-in bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"}`}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+3" alt="Placeholder for Restaurant 3" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">The Vegan Corner</h3>
@@ -140,9 +153,9 @@ const Landing = () => {
       </section>
 
       {/* Optional: Add a simple footer */}
-      <footer className="relative z-10 text-center py-8 bg-gray-900 text-white">
+      {/* <footer className="relative z-10 text-center py-8 bg-gray-900 text-white">
         <p>&copy; 2025 Gebeታ. All rights reserved.</p>
-      </footer>
+      </footer> */}
 
     </div>
   );

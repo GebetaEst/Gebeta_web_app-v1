@@ -1,86 +1,126 @@
+import { useEffect, useState } from "react";
 import Card from "../../components/Cards/Cards";
+import useUserStore from "../../Store/UseStore";
 
 const RecentOrdersTB = () => {
-  const demoOrders = [
-    {
-      name: "John Doe",
-      price: 120,
-      foodType: "Pizza",
-      quantity: 2,
-      status: "Pending",
-    },
-    {
-      name: "Sarah Lee",
-      price: 80,
-      foodType: "Burger",
-      quantity: 1,
-      status: "Delivered",
-    },
-    {
-      name: "Mike Brown",
-      price: 150,
-      foodType: "Pasta",
-      quantity: 3,
-      status: "Processing",
-    },
-    {
-      name: "Anna Smith",
-      price: 60,
-      foodType: "Salad",
-      quantity: 1,
-      status: "Delivered",
-    },
-    {
-      name: "David Kim",
-      price: 200,
-      foodType: "Sushi",
-      quantity: 4,
-      status: "Delivered",
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  
+  // Get orders from the store which updates in real-time
+  const storeOrders = useUserStore((state) => state.orders);
+  const role = JSON.parse(sessionStorage.getItem("user-data"))?.state?.user?.role;
+  console.log(role);
+
+  useEffect(() => {
+    // Get initial orders from session storage
+    try {
+      const userData = sessionStorage.getItem("user-data");
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        const ordersFromSession = parsedData.state?.orders || [];
+        setOrders(ordersFromSession);
+      }
+    } catch (error) {
+      console.error("Error loading orders from session storage:", error);
+      setOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  }, []);
+
+  // Update orders whenever store orders change
+  useEffect(() => {
+    if (storeOrders && storeOrders.length > 0) {
+      setOrders(storeOrders);
+      setOrdersLoading(false);
+    }
+  }, [storeOrders]);
+
+  // Get recent orders (last 5 orders)
+  const recentOrders = orders
+    .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
+    .slice(0, 5);
+
+  // Count new orders (pending status)
+  const newOrdersCount = orders.filter(order => 
+    order.orderStatus?.toLowerCase() === "pending"
+  ).length;
+
+  const getStatusColor = (status) => {
+    const statusLower = status?.toLowerCase();
+    if (statusLower === "pending") return "bg-yellow-100 text-yellow-700";
+    if (statusLower === "delivered" ) return "bg-green-100 text-green-700";
+    if (statusLower === "preparing") return "bg-blue-100 text-blue-700";
+    if (status === "Canceled") return "bg-red-100 text-red-700";
+    if (status === "Cooked") return "bg-green-100 text-green-700";
+
+    return "bg-green-100 text-green-700";
+  };
+
+  const getTotalQuantity = (items) => {
+    return items?.reduce((total, item) => total + (item.quantity || 0), 0) || 0;
+  };
+
+  const getMainFoodItem = (items) => {
+    if (!items || items.length === 0) return "N/A";
+    const firstItem = items[0];
+    return `${firstItem.foodName}${items.length > 1 ? ` +${items.length - 1} more` : ''}`;
+  };
+
   return (
     <>
       <Card>
         <h2 className="text-xl font-bold">Recent Orders</h2>
         <p className="text-sm text-placeholderText">
-          you have <span className="text-primary font-semibold">2</span> new
+          you have <span className="text-primary font-semibold">{newOrdersCount}</span> new
           orders
         </p>
-        {demoOrders.map((order, index) => (
-          <Card
-            key={index}
-            className="px-5 py-2 border-b border-gray flex items-center justify-between gap-5"
-          >
-            <div className="motion-preset-bounce motion-duration-300 text-left flex gap-2 px-1">
-              <div>
-                <div className="p-6 max-w-[50px] border-gray border  rounded-full bg-cardBackground motion-preset-bounce motion-duration-300 "></div>
+        {role === "Admin" ? (
+          <div className="text-center py-4">
+            <p className="text-placeholderText">Admin view - orders managed centrally</p>
+          </div>
+        ) : (
+          <>
+            {ordersLoading ? (
+              <div className="text-center py-4">
+                <p className="text-placeholderText">Loading orders...</p>
               </div>
-              <div>
-                <p>{order.name}</p>
-                <p className="text-sm text-placeholderText">
-                  {" "}
-                  x{order.quantity}&nbsp;{order.foodType}{" "}
-                </p>
+            ) : recentOrders.length === 0 ? (
+              <div className="text-center py-4">
+                <p className="text-placeholderText">No recent orders</p>
               </div>
-            </div>
-            <div className="">
-              <span
-                className={` font-semibold text-xs flex place-self-end text-[#333] p-1 px-2  rounded-full ml-8 motion-preset-bounce  ${
-                  order.status === "Pending"
-                    ? "bg-[rgba(255,193,7,0.4)]"
-                    : order.status === "Delivered"
-                    ? "bg-[rgba(52,199,89,0.4)]"
-                    : "bg-[rgba(79,128,188,0.4)]"
-                }`}
-              >
-                {order.status}
-              </span>
-              <p className="font-noto font-semibold pr-3 text-end">
-                ${order.price}
-              </p>
-            </div>
-          </Card>
-        ))}
+            ) : (
+              recentOrders.map((order, index) => (
+                <Card
+                  key={order.orderId || index}
+                  className="px- py-2 border-b border-gray flex items-center justify-between gap-5"
+                >
+                  <div className="motion-preset-bounce motion-duration-300 text-left flex gap-2 px-1">
+                    <div>
+                      <div className="p-6 max-w-[50px] border-gray border rounded-full bg-cardBackground motion-preset-bounce motion-duration-300"></div>
+                    </div>
+                    <div>
+                      <p>{order.userName || "Unknown User"}</p>
+                      <p className="text-sm text-placeholderText">
+                        x{getTotalQuantity(order.items)}&nbsp;{getMainFoodItem(order.items)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="">
+                    <span
+                      className={`font-semibold text-xs flex place-self-end text-[#333] p-1 px-2 rounded-full ml-8 motion-preset-bounce ${getStatusColor(order.orderStatus)}`}
+                    >
+                      {order.orderStatus || "Pending"}
+                    </span>
+                    <p className="font-noto font-normal pr-1 text-end text-sm">
+                      {order.totalFoodPrice || 0} ETB
+                    </p>
+                  </div>
+                </Card>
+              ))
+            )}
+          </>
+        )}
       </Card>
     </>
   );

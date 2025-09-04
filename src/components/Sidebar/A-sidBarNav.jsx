@@ -3,7 +3,7 @@ import { useNavigation } from '../../contexts/NavigationContext';
 import AdminDashboardLayout from '../../Layouts/A-dashboardLayout';
 import Order from '../../pages/M-DemoPages/Order';
 import Menu from '../../pages/M-DemoPages/menus';
-import Analytics from '../../pages/M-DemoPages/Analytics';
+import Analytics from '../../pages/A-DemoPages/A-analytics';
 import Settings from '../../pages/M-DemoPages/Settings';
 import DashBoardPage from '../../pages/DashBoardPage';
 import AllList from '../../pages/A-DemoPages/AllList';

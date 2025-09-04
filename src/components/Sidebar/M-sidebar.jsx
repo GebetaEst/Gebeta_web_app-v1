@@ -1,5 +1,6 @@
 import {useNavigation}  from '../../contexts/NavigationContext';
 import useUserStore from '../../Store/UseStore';
+import New from '../../assets/new.png';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -27,8 +28,8 @@ const ManagerSidebar = () => {
   return (
     <aside className="w-60 min-h-screen  bg-[url('/src/assets/images/sidebar-bg3.png')] bg-cover bg-center  bg-cardBackground shadow-md p-6 border-[0.5px] border-gray sticky top-0 left-0 motion-preset-slide-right motion-duration-1500 font-noto">
       <div className="text-lg font-bold pb-5 flex items-center justify-center  space-x-1 border-b border-[#e2b96c] mb-8">
-        <UtensilsCrossed size={45} color="white" className="bg-primary rounded-md p-1"/>
-        <span>Gebeታ Management</span>
+      <img src={New} alt="logo" className="w-10 h-10 bg-amber-800 rounded-md" />
+      <span>Gebeታ Management</span>
       </div>
 
       <nav className="space-y-3" >
