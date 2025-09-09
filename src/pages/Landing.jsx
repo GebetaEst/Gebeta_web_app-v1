@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownToDot, Search, Star } from "lucide-react";
 import { useViewport } from "../components/VPLocation/ViewPort";
+import {ParallaxBackground} from "../components/VPLocation/OffsetView";
 
 
 
@@ -20,9 +21,9 @@ const Landing = () => {
   };
   const { width, height, scrollX, scrollY } = useViewport();
   console.log(
-    // "width", width, 
-    // "height", height, 
-    // "scrollX", scrollX, 
+  //   // "width", width, 
+  //   // "height", height, 
+  //   // "scrollX", scrollX, 
     "scrollY", scrollY
   );
 
@@ -33,15 +34,15 @@ const Landing = () => {
 
       {/* Header section with branding and navigation buttons. */}
       <header >
-        <nav className={` z-10 flex justify-between items-center px-6 md:px-8 md:py-1 w-full top-0 left-0 fixed ${scrollY >= 101.20816040039062 ? " bg-black/20 backdrop-blur-sm z-50" : ""}`}>
+        <nav className={`flex justify-between items-center px-6 md:px-8 md:py-1 w-full top-0 left-0  mt-0 rounded-b-3xl fixed z-50  ${scrollY >= 101.20816040039062 ? " bg-black/10 backdrop-blur-sm " : ""}`}>
 
-          <Link to="/" className=" flex items-center gap-2 p-2 font-logo text-3xl md:text-4xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition-colors duration-300 transform hover:scale-105">
+          <Link to="/" className=" flex items-center gap-2 p-2 font-logo text-3xl md:text-2xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition-colors duration-300 transform hover:scale-105">
             Gebeታ
           </Link>
           <div className="flex gap-4">
             <button
               onClick={() => navigate("/login")}
-              className="bg-white  text-gray-900 px-5 py-2 md:px-6 md:py-3 rounded-full shadow-lg font-semibold transition-all duration-300 hover:bg-yellow-400 hover:text-white"
+              className="bg-white z-30 text-gray-900 px-5 py-2 md:px-6 md:py-3 rounded-full shadow-lg font-semibold transition-all duration-300 hover:bg-yellow-400 hover:text-white cursor-pointer"
             >
               Login
             </button>
@@ -56,7 +57,7 @@ const Landing = () => {
       </header>
 
       {/* Main hero section with a compelling headline and search bar. */}
-      <section className="relative z-10 flex flex-col items-center justify-center px-4 text-center min-h-[90vh]">
+      <section className="relative z-10 flex flex-col items-center justify-center h-[630px]">
         <h1 className="text-white text-4xl md:text-7xl font-bold tracking-tight drop-shadow-xl animate-fade-in-down mb-6">
           <span className="block mb-2 md:mb-4 text-start">Craving?</span>
           <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-500 bg-clip-text text-transparent">
@@ -92,7 +93,7 @@ const Landing = () => {
       </section>
 
       {/* "Scroll to Explore" arrow. */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
         <Link to="#explore" aria-label="Explore restaurants">
           <ArrowDownToDot
             color="white"
@@ -103,14 +104,14 @@ const Landing = () => {
       </div>
 
       {/* This new section is a placeholder to show the "explore" part of the page. */}
-      <section id="explore" className="relative z-10 py-20 px-6 bg-[#f4f1e9] backdrop-blur-md rounded-t-3xl mt-12 overflow-y-auto scrollbar-hide">
-        <div className="max-w-6xl mx-auto min-h-screen">
+      <section id="explore" className={` py-20  bg-[#f4f1e9] backdrop-blur-md rounded-t-3xl h-[700px]  `}>
+      <div className="max-w-6xl mx-auto overflow-x-hidden overflow-y-hidden">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
             Featured Restaurants
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8">
             {/* Placeholder cards for featured restaurants */}
-            <div className={`animate-pin ease-in bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 scroll-hidden ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[-69%] motion-translate-y-in-[-57%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"}`}>
+            <div className={` bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 scroll-hidden ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[-69%] motion-translate-y-in-[-57%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+1" alt="Placeholder for Restaurant 1" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Gourmet Grills</h3>
@@ -123,7 +124,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="absolute left-[550px] bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2">
+            <div className={` bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-800 ${scrollY >=  399.6614074707031 ? "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+2" alt="Placeholder for Restaurant 2" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Spicy Spoon</h3>
@@ -136,7 +137,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className={`absolute right-[110px] animate-pin ease-in bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"}`}>
+            <div className={` bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"} ${scrollY >= 402 ? "scale-105" : ""}`}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+3" alt="Placeholder for Restaurant 3" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">The Vegan Corner</h3>
@@ -151,6 +152,10 @@ const Landing = () => {
           </div>
         </div>
       </section>
+        <div className="h-[100vh]">
+        <ParallaxBackground backgroundImage="src/assets/images/p.png" />
+
+        </div>
 
       {/* Optional: Add a simple footer */}
       {/* <footer className="relative z-10 text-center py-8 bg-gray-900 text-white">

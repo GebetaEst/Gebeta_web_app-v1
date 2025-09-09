@@ -36,13 +36,19 @@ const RecentOrdersTB = () => {
     }
   }, [storeOrders]);
 
+  // Filter orders to exclude delivering and completed statuses
+  const filteredOrders = orders.filter(order => {
+    const statusLower = order.orderStatus?.toLowerCase();
+    return statusLower !== "delivering" && statusLower !== "completed" && statusLower !== "delivered";
+  });
+
   // Get recent orders (last 5 orders)
-  const recentOrders = orders
+  const recentOrders = filteredOrders
     .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
     .slice(0, 5);
 
   // Count new orders (pending status)
-  const newOrdersCount = orders.filter(order => 
+  const newOrdersCount = filteredOrders.filter(order => 
     order.orderStatus?.toLowerCase() === "pending"
   ).length;
 

@@ -54,8 +54,9 @@ const ManagerOrders = () => {
     })
     .filter(
       (order) =>
-        order.orderCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.orderId?.toLowerCase().includes(searchQuery.toLowerCase())
+        order.orderCode?.toLowerCase().includes(searchQuery.toLowerCase()) 
+      // ||
+        // order.orderId?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
   useEffect(() => {
