@@ -152,15 +152,43 @@ const Landing = () => {
           </div>
         </div>
       </section>
-        <div className="h-[100vh]">
+        <div className="h-[]">
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
         </div>
+       {/* <div className="relative">
+       <img src="src/assets/images/fewa.png" alt="Parallax Background" className="hover:z-50 h-[450px] w-[450px] object-cover flex justify-end items-end absolute transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
+      <h1 className="absolute transition-all lg:right-[140px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
+        Owr bast restaurant 
+      </h1>
+      <ul className="absolute p-5 mt-6 transition-all lg:right-[140px] lg:top-[190px] bg-gradient-to-r text-white bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
+        <li>Premium Quality Ingredients</li>
+        <li>Authentic Traditional Recipes</li>
+        <li>Outstanding Customer Service</li>
+      </ul>
+      </div> */}
+      <div className="relative">
+      <img src="src/assets/images/fewa.png" alt="Parallax Background" className="hover:-z-50 h-[450px] w-[450px] object-cover flex justify-end items-end  transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
+      <h1 className=" absolute transition-all lg:left-[80px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
+        Owr bast restaurant 
+      </h1>
+      <ul className=" absolute p-5 mt-6 transition-all lg:left-[80px] lg:top-[190px] bg-gradient-to-r text-white bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
+        <li>Premium Quality Ingredients</li>
+        <li>Authentic Traditional Recipes</li>
+        <li>Outstanding Customer Service</li>
+      </ul>
+      </div>u
+      <div className="h-[]">
+        <ParallaxBackground backgroundImage="src/assets/images/p.png" />
+
+        </div>
+      
 
       {/* Optional: Add a simple footer */}
       {/* <footer className="relative z-10 text-center py-8 bg-gray-900 text-white">
         <p>&copy; 2025 Gebeታ. All rights reserved.</p>
       </footer> */}
+      
 
     </div>
   );

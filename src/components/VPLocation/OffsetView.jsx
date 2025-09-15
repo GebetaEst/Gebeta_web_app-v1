@@ -13,21 +13,21 @@ export function ParallaxBackground({ backgroundImage }) {
   return (
     <div
       style={{
-        height: "70vh", // Make page scrollable
+        height: "15vh", // Make page scrollable
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         
         // backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed", // optional: smooth parallax effect
-        backgroundPosition: `center ${offset * 0.4}px`, // Moves slower than scroll
+        backgroundPosition: `center ${offset * 0.5}px`, // Moves slower than scroll
         
       }}
       className="relative"
     >
-      <img src="src/assets/images/fewa.png" alt="Parallax Background" className="h-[400px] w-[400px] object-cover flex justify-end items-end absolute right-[100px] top-[100px]" />
-      <h1 className="text-[#ef6836] text-5xl font-bold">
+      
+      {/* <h1 className="text-[#ef6836] text-5xl font-bold">
         Parallax Background
-      </h1>
+      </h1> */}
     </div>
   );
 }
