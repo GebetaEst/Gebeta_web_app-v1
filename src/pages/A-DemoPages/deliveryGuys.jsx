@@ -44,6 +44,7 @@ const DeliveryGuys = () => {
   const [refreshUsers, setRefreshUsers] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [mapCenter, setMapCenter] = useState([8.9394, 38.8204]); // Default center (Addis Ababa)
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -137,6 +138,19 @@ const DeliveryGuys = () => {
     return null;
   };
 
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => {
+    const fullName = user.firstName && user.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user.name || user.username || '';
+    return fullName.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const downloadDeliveryHistory = (user) => {
+    alert(`Downloading delivery history for ${user.firstName || user.name || user.username}... (API call placeholder)`);
+    // In a real application, you would call an API endpoint to fetch the history
+    // For example: fetch(`/api/delivery-history/${user._id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } })
+  };
 
 
   return (
@@ -177,7 +191,7 @@ const DeliveryGuys = () => {
                 />
 
                 {/* Display delivery users on map */}
-                {users.map((user, index) => {
+                {filteredUsers.map((user, index) => {
                   let coords;
                   let isDemoLocation = false;
 
@@ -222,13 +236,22 @@ const DeliveryGuys = () => {
 
         {/* Users List Section */}
         <div className="lg:col-span-1 h-full">
-          <div className="bg-white rounded-lg shadow-lg p-3 h-full flex flex-col">
+          <div className="relative bg-white rounded-lg shadow-lg p-2 h- flex flex-col">
             <h2 className="text-lg font-semibold mb-2">Delivery Personnel List</h2>
-            <div className="flex-1 space-y-2 overflow-y-auto min-h-0">
-              {users.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No delivery personnel found</p>
+            <div className="  flex-1 space-y-2 overflow-y-auto min-h-0 max-h-96 mt-5">
+              <input
+                type="text"
+                placeholder="Search delivery personnel by name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-3/4 px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 m-2 text-sm absolute top-8 left-0 "
+              />
+              {filteredUsers.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">
+                  {searchTerm ? 'No delivery personnel found matching your search' : 'No delivery personnel found'}
+                </p>
               ) : (
-                users.map((user, index) => (
+                filteredUsers.map((user, index) => (
                   <div key={user._id || user.id || index} className="border rounded-lg p-2 hover:bg-gray-50">
                     <div className="flex items-center space-x-2">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -243,9 +266,19 @@ const DeliveryGuys = () => {
                         <h3 className="font-medium text-gray-900 text-sm truncate">
                           {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.name || user.username || `Delivery Person ${index + 1}`}
                         </h3>
-                        <p className="text-xs text-gray-500 truncate">{user.phone || 'No email'}</p>
-                        <p className="text-xs text-blue-600">{user.role}</p>
+                        <p className="text-xs text-gray-500 truncate">{user.phone || 'No phone'}</p>
+                        {/* <p className="text-xs text-blue-600">{user.role}</p> */}
                       </div>
+                      <button
+                        onClick={() => downloadDeliveryHistory(user)}
+                        className="flex-shrink-0 px-2 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-md transition-colors duration-200 flex items-center space-x-1"
+                        title="Download delivery history"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>History</span>
+                      </button>
                     </div>
                   </div>
                 ))
@@ -254,7 +287,8 @@ const DeliveryGuys = () => {
 
             <div className="mt-2 pt-2 border-t flex-shrink-0">
               <p className="text-sm text-gray-600">
-                Total: {users.length} delivery personnel
+                Total: {filteredUsers.length} delivery personnel
+                {searchTerm && ` (filtered from ${users.length})`}
               </p>
             </div>
           </div>

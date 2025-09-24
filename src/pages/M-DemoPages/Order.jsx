@@ -1,51 +1,28 @@
-import { useEffect, useState, useRef } from "react";
-import { RefreshCcw, ChevronDown } from "lucide-react";
 import axios from "axios";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import useUserStore from "../../Store/UseStore";
-import {Loading , InlineLoadingDots} from "../../components/Loading/Loading";
-import { addSuccessNotification, addErrorNotification } from "../../utils/notifications";
+import { InlineLoadingDots , Loading } from "../../components/Loading/Loading";
+import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 
 const ManagerOrders = () => {
   const [expandedCards, setExpandedCards] = useState([]); // ✅ multiple expanded cards
-  const [refresh, setRefresh] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [deliveryCode, setDeliveryCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loading1, setLoading1] = useState(false);
   
   // Get orders and actions from Zustand store
   const { 
     orders, 
     ordersLoading, 
     ordersError,
-    setOrders, 
-    setOrdersLoading, 
-    setOrdersError,
     updateOrderStatus,
     newOrderAlert, 
     latestOrderId, 
     setNewOrderAlert 
   } = useUserStore();
-  
-  const API_URL =
-    "https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/689dd0dfa804b9df25acb672/orders";
 
-  const sortOrders = (ordersToSort) => {
-    const statusPriority = {
-      pending: 1,
-      preparing: 2,
-      cooked: 3,
-      delivering: 5,
-    };
-
-    return [...ordersToSort].sort((a, b) => {
-      const statusA = a.orderStatus?.toLowerCase() || "";
-      const statusB = b.orderStatus?.toLowerCase() || "";
-      const priorityA = statusPriority[statusA] || 99;
-      const priorityB = statusPriority[statusB] || 99;
-      return priorityA - priorityB;
-    });
-  };
+  // Orders are already sorted by OrderPollingService
 
   const filteredOrders = orders
     .filter((order) => {
@@ -59,37 +36,8 @@ const ManagerOrders = () => {
         // order.orderId?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setOrdersLoading(true);
-      try {
-        const res = await axios.get(API_URL, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const sorted = sortOrders(res.data.data);
-        console.log(sorted);
-        setOrders(sorted);
-        setOrdersError(null);
-      } catch (error) {
-        console.error("Failed to fetch orders:", error);
-        setOrdersError("Failed to fetch orders");
-      } finally {
-        setOrdersLoading(false);
-      }
-    };
-
-    // initial fetch
-    fetchOrders();
-
-    // Refresh orders every 5 seconds (but don't duplicate the polling logic)
-    const interval = setInterval(() => {
-      fetchOrders();
-    }, 5000)
-
-    return () => clearInterval(interval);
-  }, [refresh, setOrders, setOrdersLoading, setOrdersError]);
+  // Orders are now fetched centrally by OrderPollingService and stored in Zustand
+  // No need for local fetching logic here
 
   const toggleExpand = (id) => {
     setExpandedCards((prev) =>
@@ -166,7 +114,20 @@ const ManagerOrders = () => {
         Orders Dashboard
       </h1>
 
-      { <div className="overflow-y-auto h-[69%] w-[80%] scrollbar-hide scroll-smooth fixed p-2 ">
+      {ordersLoading && (
+        <div className="text-center py-4">
+          <Loading />
+        </div>
+      )}
+
+      {ordersError && (
+        <div className="text-center py-4">
+          <p className="text-red-600">Error: {ordersError}</p>
+        </div>
+      )}
+
+      {!ordersLoading && !ordersError && (
+        <div className="overflow-y-auto h-[69%] w-[80%] scrollbar-hide scroll-smooth fixed p-2 ">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
           {filteredOrders
             .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
@@ -282,7 +243,8 @@ const ManagerOrders = () => {
               </div>
             ))}
         </div>
-      </div>}
+        </div>
+      )}
     </div>
     </>
   );

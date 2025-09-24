@@ -19,7 +19,7 @@ export function ParallaxBackground({ backgroundImage }) {
         
         // backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed", // optional: smooth parallax effect
-        backgroundPosition: `center ${offset * 0.5}px`, // Moves slower than scroll
+        backgroundPosition: `center ${offset * 0.4}px`, // Moves slower than scroll
         
       }}
       className="relative"

@@ -14,9 +14,9 @@ const GlobalNotifications = () => {
 
   // Auto-cleanup notifications every 30 seconds
   useEffect(() => {
-    const cleanupInterval = setInterval(() => {
+    const cleanupTimeout = setTimeout(() => {
       cleanupNotifications();
-    }, 30000);
+    }, 3000);
 
     return () => clearInterval(cleanupInterval);
   }, [cleanupNotifications]);
@@ -24,6 +24,12 @@ const GlobalNotifications = () => {
   // Auto-hide new order alert after 5 seconds
   useEffect(() => {
     if (newOrderAlert) {
+      // Play bell sound for new order
+      const audio = new Audio(bellSound);
+      audio.play().catch(error => {
+        console.log('Could not play notification sound:', error);
+      });
+      
       const timer = setTimeout(() => {
         setNewOrderAlert(false);
       }, 5000);

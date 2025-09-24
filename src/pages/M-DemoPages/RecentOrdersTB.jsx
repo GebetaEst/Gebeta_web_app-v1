@@ -1,40 +1,10 @@
-import { useEffect, useState } from "react";
 import Card from "../../components/Cards/Cards";
 import useUserStore from "../../Store/UseStore";
 
 const RecentOrdersTB = () => {
-  const [orders, setOrders] = useState([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
-  
-  // Get orders from the store which updates in real-time
-  const storeOrders = useUserStore((state) => state.orders);
+  // Get orders directly from Zustand store - no local state needed
+  const { orders, ordersLoading } = useUserStore();
   const role = JSON.parse(sessionStorage.getItem("user-data"))?.state?.user?.role;
-  console.log(role);
-
-  useEffect(() => {
-    // Get initial orders from session storage
-    try {
-      const userData = sessionStorage.getItem("user-data");
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        const ordersFromSession = parsedData.state?.orders || [];
-        setOrders(ordersFromSession);
-      }
-    } catch (error) {
-      console.error("Error loading orders from session storage:", error);
-      setOrders([]);
-    } finally {
-      setOrdersLoading(false);
-    }
-  }, []);
-
-  // Update orders whenever store orders change
-  useEffect(() => {
-    if (storeOrders && storeOrders.length > 0) {
-      setOrders(storeOrders);
-      setOrdersLoading(false);
-    }
-  }, [storeOrders]);
 
   // Filter orders to exclude delivering and completed statuses
   const filteredOrders = orders.filter(order => {
@@ -99,7 +69,7 @@ const RecentOrdersTB = () => {
               recentOrders.map((order, index) => (
                 <Card
                   key={order.orderId || index}
-                  className="px- py-2 border-b border-gray flex items-center justify-between gap-5"
+                  className="px- py-[2px] border-b border-gray flex items-center justify-between gap-5"
                 >
                   <div className="motion-preset-bounce motion-duration-300 text-left flex gap-2 px-1">
                     <div>
@@ -107,7 +77,7 @@ const RecentOrdersTB = () => {
                     </div>
                     <div>
                       <p>{order.userName || "Unknown User"}</p>
-                      <p className="text-sm text-placeholderText">
+                      <p className="text-xs text-placeholderText">
                         x{getTotalQuantity(order.items)}&nbsp;{getMainFoodItem(order.items)}
                       </p>
                     </div>

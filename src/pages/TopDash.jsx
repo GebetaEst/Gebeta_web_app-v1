@@ -44,7 +44,7 @@ const TopDash = () => {
           </div>
         </div>
       </div>
-      {userProfile  && <UserProfile />}
+      {userProfile   && <UserProfile />}
 {/* && storedUser?.role === "Manager"  */}
     </>
   );

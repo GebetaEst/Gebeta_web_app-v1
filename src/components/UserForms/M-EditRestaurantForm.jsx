@@ -10,7 +10,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
   const [errorMSG, setErrorMSG] = useState(null);
   
   const [form, setForm] = useState({
-    name: "",
+    // name: "",
     cuisineTypes: "",
     description: "",
     openHours: "",
@@ -29,7 +29,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
     setLoading(true);
     if (restaurantFromStore) {
       setForm({
-        name: restaurantFromStore.name || "",
+        // name: restaurantFromStore.name || "",
         cuisineTypes: restaurantFromStore.cuisineTypes?.join(", ") || "",
         description: restaurantFromStore.description || "",
         openHours: restaurantFromStore.openHours || "",
@@ -90,14 +90,15 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
     });
     // Append location data
     formData.append("description", form.description);
-    formData.append("name", form.name);
+    // formData.append("name", form.name);
 
     formData.append("location[address]", form.location.address);
     formData.append("location[type]", "Point");
-    if (form.location.coordinates.length === 2) {
-      formData.append("location[coordinates][0]", form.location.coordinates[0]);
-      formData.append("location[coordinates][1]", form.location.coordinates[1]);
-    }
+    // location coordinates
+    // if (form.location.coordinates.length === 2) {
+    //   formData.append("location[coordinates][0]", form.location.coordinates[0]);
+    //   formData.append("location[coordinates][1]", form.location.coordinates[1]);
+    // }
   
     // Properly format cuisine types as array
     
@@ -174,7 +175,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
           <div className="flex flex-row gap-6 justify-around">
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                {/* <div>
                   <label htmlFor="name" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Restaurant Name
                   </label>
@@ -184,9 +185,9 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                     value={form.name}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200 placeholder-gray-400"
-                  />
-                </div>
-                <div>
+                  /> 
+                </div>*/}
+                <div className="flex flex-col justify-center border ">
                   <label htmlFor="cuisineTypes" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Cuisine Types <span className="text-gray-500 text-xs">(comma separated)</span>
                   </label>
@@ -270,8 +271,8 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   />
                 </div>
               </div>
-
-              <div className="flex items-center justify-start mt-5">
+                  {/* location button */}
+              {/* <div className="flex items-center justify-start mt-5">
                 <button
                   type="button"
                   onClick={handleGeolocation}
@@ -280,7 +281,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   <MapPinCheckInside size={20} color="green" />
                   Use Current Location
                 </button>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex flex-col items-center space-y-10">

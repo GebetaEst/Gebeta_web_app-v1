@@ -420,7 +420,7 @@ const ACustomers = () => {
                             {restaurant.managerId &&
                             typeof restaurant.managerId === "object" ? (
                               <>
-                                <div className="relative group">
+                                <div className="relative group border h-fit w-fit">
                                   <p className="cursor-pointer">
                                     <span className="font-semibold text-[#4b382a]">
                                       Manager Name:
@@ -431,7 +431,7 @@ const ACustomers = () => {
                                   </p>
                                   
                                   {/* Hover tooltip with manager details - positioned to the right */}
-                                  <div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white border border-[#e0cda9] rounded-lg shadow-lg p-3 bottom-14 left-100 ml-2 min-w-[200px]">
+                                  <div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white border border-[#e0cda9] rounded-lg shadow-lg p-3 bottom-5 left-100 ml-2 min-w-[200px]">
                                     <div className="space-y-1 text-xs">
                                       <p><span className="font-semibold">Full Name:</span> {`${restaurant.managerId.firstName || ""} ${restaurant.managerId.lastName || ""}`.trim() || "N/A"}</p>
                                       <p><span className="font-semibold">Email:</span> {restaurant.managerId.email || "N/A"}</p>

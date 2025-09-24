@@ -62,7 +62,8 @@ const UsersList = () => {
 
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
+    const userId = user._id ? user._id.toLowerCase() : '';
+    return fullName.includes(searchTerm.toLowerCase()) || userId.includes(searchTerm.toLowerCase());
   });
 
   return (

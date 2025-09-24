@@ -51,9 +51,10 @@ const DashBoardPage = () => {
   } ,[]);
   return (
     <>
-      <div className="w-[100%] h-[calc(100vh-65px)] p-1 pl-12 flex flex-col justify-center bg-[#f4f1e9]">
+      <div className="w-[100%] h-[calc(100vh-65px)] p- pl-12 flex flex-col justify-center bg-[#f4f1e9]">
         <InfoCards />
         <div className="flex justify-around items-center bg-opacity-0">
+
           <Chart />
           <RecentOrdersTB />
           {/* <Timer /> */}

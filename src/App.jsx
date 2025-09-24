@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// App.jsx
+import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -17,46 +18,35 @@ import EditUser from "./components/UserForms/A-EditUser";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Verify from "./pages/verify";
 import GlobalNotifications from "./components/GlobalNotifications";
-import orderPollingService from "./services/OrderPollingService";
 import useUserStore from "./Store/UseStore";
+import MoneyFlow from "./pages/A-DemoPages/A-analytics";
+import { useOrderFetcher } from "./services/OrderPollingService"; // Correct import
 
 function App() {
-  const [count, setCount] = useState(0);
   const { user } = useUserStore();
 
-  // Start order polling when user is logged in
-  useEffect(() => {
-    if (user) {
-      orderPollingService.startPolling();
-    } else {
-      orderPollingService.stopPolling();
-    }
-
-    // Cleanup on unmount
-    return () => {
-      orderPollingService.stopPolling();
-    };
-  }, [user]);
+  // Call the custom hook to handle order fetching
+  // This hook encapsulates the polling and WebSocket logic.
+  // The 'user' dependency will automatically handle starting/stopping.
+  useOrderFetcher();
 
   return (
     <>
-      {/* Global notifications that work everywhere */}
       <GlobalNotifications />
-      
-      {/* <Sidebar/>   */}
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/signup" element={<SignupPage/>} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassPage />} />
           <Route path="/otp" element={<OTPPage />} />
           <Route path="/verify" element={<Verify />} />
+          <Route path="/money-flow" element={<MoneyFlow />} />
 
           <Route
             path="/managerDashboard"
             element={
-                <ManagerNav />
+              <ManagerNav />
             }
           />
           <Route

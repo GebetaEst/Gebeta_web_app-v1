@@ -247,23 +247,9 @@ const MEditFood = ({ foodId }) => {
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-[#4b382a] mb-1">
-                            Image Cover
-                        </label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            name="image"
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4b382a]"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                            Leave empty to keep current image
-                        </p>
-                    </div>
+                    
 
-                    <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    <div className="flex flex-col sm:flex-row gap-4 items-center  ">
                         <div className="flex items-center mt-4">
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <span className="mr-3 text-sm text-[#4b382a]">
@@ -323,7 +309,7 @@ const MEditFood = ({ foodId }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-[#905618] text-white py-2 px-4 rounded-md hover:bg-[#3d2e22] focus:outline-none focus:ring-2 focus:ring-[#4b382a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="w-full bg-[#905618] text-white  py-2 px-4 rounded-md hover:bg-[#3d2e22] focus:outline-none focus:ring-2 focus:ring-[#4b382a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         {loading ? "Updating..." : "Update Food Item"}
                     </button>
@@ -340,13 +326,46 @@ const MEditFood = ({ foodId }) => {
                                 alt="Food Preview"
                                 className="h-48 w-48 object-cover rounded-md shadow-md"
                             />
+                            
                         </div>
                     ) : (
                         <div className="h-48 w-48 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400">
                             No Image
                         </div>
                     )}
+                    <div>
+                        {/* <label className="block text-sm font-medium text-[#4b382a] mb-1">
+                            Image Cover
+                        </label> */}
+                        <label className="flex mt-4 items-center justify-center w-full p-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition-colors">
+                            <svg 
+                                className="w-5 h-5 mr-2 text-[#4b382a]" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth={2} 
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                                />
+                            </svg>
+                            <span className="text-sm font-medium text-[#4b382a]">Upload Image</span>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                name="image"
+                                onChange={handleInputChange}
+                                className="hidden"
+                            />
+                        </label>
+                        <p className="text-xs text-gray-500 mt-1">
+                            Leave empty to keep current image
+                        </p>
+                    </div>
                 </div>
+                
             </div>
 
             <div className="flex justify-center items-center gap-4 absolute bottom-3 left-0 right-0 h-[50px] pt-2">
