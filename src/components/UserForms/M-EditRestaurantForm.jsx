@@ -171,10 +171,10 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
           Edit Restaurant Details
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col">
-          <div className="flex flex-row gap-6 justify-around">
+        <form onSubmit={handleSubmit} className="flex flex-col ">
+          <div className="flex flex-row items-center gap-6 justify-center">
             <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1  md:grid-cols-2 gap-6">
                 {/* <div>
                   <label htmlFor="name" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Restaurant Name
@@ -187,7 +187,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200 placeholder-gray-400"
                   /> 
                 </div>*/}
-                <div className="flex flex-col justify-center border ">
+                {/* <div className="flex flex-col justify-center border ">
                   <label htmlFor="cuisineTypes" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Cuisine Types <span className="text-gray-500 text-xs">(comma separated)</span>
                   </label>
@@ -198,7 +198,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200 placeholder-gray-400"
                   />
-                </div>
+                </div> */}
               </div>
 
               <div>
@@ -210,13 +210,13 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   name="description"
                   value={form.description}
                   onChange={handleChange}
-                  rows="2"
+                  rows="5"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200 resize-y placeholder-gray-400"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                {/* <div>
                   <label htmlFor="openHours" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Open Hours
                   </label>
@@ -244,7 +244,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                     min="0"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200 placeholder-gray-400"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label htmlFor="address" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Address
@@ -261,14 +261,30 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   <label htmlFor="imageCover" className="block text-sm font-semibold text-[#4b382a] mb-2">
                     Cover Image
                   </label>
-                  <input
-                    id="imageCover"
-                    name="imageCover"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bfa66a] focus:border-transparent transition duration-200 placeholder-gray-400"
-                  />
+                  <label className="flex items-center justify-center w-full p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors focus-within:ring-2 focus-within:ring-[#bfa66a] focus-within:border-transparent">
+                    <svg 
+                      className="w-5 h-5 mr-2 text-[#4b382a]" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                      />
+                    </svg>
+                    <span className="text-sm font-medium text-[#4b382a]">Upload Cover Image</span>
+                    <input
+                      id="imageCover"
+                      name="imageCover"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleChange}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
               </div>
                   {/* location button */}
@@ -296,7 +312,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   className="border rounded-lg w-[200px] h-[200px] object-cover shadow-md"
                 />
               </div>
-              <div className="flex items-center w-fit h-fit space-y-2 sm:justify-around gap-2 mt-2 p-2 bg-[#f9f4ea] rounded-lg border border-[#e0cda9]">
+              <div className="flex flex items-center w-fit h-fit space-y-2 sm:justify-around gap-2 mt-2 p-2 bg-[#f9f4ea] rounded-lg border border-[#e0cda9]">
                 <label htmlFor="isOpenNow" className="flex flex-col items-center gap-3 text-[#4b382a] cursor-pointer">
                   <div
                     className="relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out mt-2"
@@ -351,7 +367,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
             )}
             <button
               type="submit"
-              className={`px-8 py-2 bg-[#894718] text-white  font-semibold rounded-lg hover:bg-[#3a2f24] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#bfa66a] ${loading ? "cursor-not-allowed opacity-50" : ""}`}
+              className={`px-8 py-2 bg-[#894718] text-white m-3 font-semibold rounded-lg hover:bg-[#3a2f24] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#bfa66a] ${loading ? "cursor-not-allowed opacity-50" : ""}`}
             >
              {loading ? <InlineLoadingDots /> : "Save Changes"}
             </button>

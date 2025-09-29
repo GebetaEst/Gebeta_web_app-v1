@@ -102,6 +102,7 @@ class OrderPollingService {
       const res = await axios.get(apiURL, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(res)
 
       const orders = res.data.data || [];
       const sorted = this.sortOrders(orders);

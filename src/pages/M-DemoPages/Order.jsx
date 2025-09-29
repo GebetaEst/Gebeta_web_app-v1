@@ -77,7 +77,7 @@ const ManagerOrders = () => {
   };
 
   const handelVerify = async (orderId , deliveryCode) => {
-    // console.log(orderId, deliveryCode);
+    console.log(orderId, deliveryCode);
     setLoading(true);
     try{
       const res = await axios.post(`https://gebeta-delivery1.onrender.com/api/v1/orders/verify-restaurant-pickup`,{
@@ -88,7 +88,8 @@ const ManagerOrders = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      // console.log(res);
+      console.log(res);
+      console.log(orderId, deliveryCode);
       addSuccessNotification("Order Verified", "Delivery verification completed successfully");
     } catch (err) {
       console.error("Failed to verify order", err);
