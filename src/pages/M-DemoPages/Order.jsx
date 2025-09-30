@@ -81,14 +81,14 @@ const ManagerOrders = () => {
     setLoading(true);
     try{
       const res = await axios.post(`https://gebeta-delivery1.onrender.com/api/v1/orders/verify-restaurant-pickup`,{
-        order_id: orderId,
-        deliveryVerificationCode: deliveryCode,
+        orderId: orderId,
+        pickupVerificationCode: deliveryCode,
       },{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log(res);
+      console.log("+++++=",res);
       console.log(orderId, deliveryCode);
       addSuccessNotification("Order Verified", "Delivery verification completed successfully");
     } catch (err) {
@@ -233,7 +233,7 @@ const ManagerOrders = () => {
                           className="w-full p-2 border border-[#caa954] rounded-md bg-[#fefcf7] focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                         />
                         <button
-                        onClick={(e)=>{handelVerify(order.orderCode, deliveryCode); console.log(order.orderId)}}
+                        onClick={(e)=>{handelVerify(order.orderId, deliveryCode); console.log(order.orderId)}}
                         className={`py-2 px-2 bg-[#8b4513c8] text-white rounded-md hover:bg-[#a05c2c] transition-colors duration-200 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}>
                           {loading ? <InlineLoadingDots /> : "Verify"}
                         </button>
