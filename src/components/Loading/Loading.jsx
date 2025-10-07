@@ -1,3 +1,5 @@
+import "../../index.css"
+
 const Loading = () => {
   return (
     <div className="flex justify-center items-center py-10">
@@ -10,6 +12,36 @@ const Loading = () => {
         {/* <div className="w-3 h-3 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
         <div className="w-3 h-3 bg-primary rounded-full animate-bounce [animation-delay:-0.2s]"></div>
         <div className="w-3 h-3 bg-primary rounded-full animate-bounce [animation-delay:-0.1s]"></div> */}
+      </div>
+    </div>
+  );
+};
+const CubeLoader = () => {
+  return (
+    <div className="boxes">
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
     </div>
   );
@@ -37,4 +69,4 @@ const InlineLoadingDots = () => {
   );
 };
 
-export { Loading, InlineLoadingDots };
+export { Loading, InlineLoadingDots, CubeLoader };

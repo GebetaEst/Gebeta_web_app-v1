@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useUserStore from "../../Store/UseStore";
 import { InlineLoadingDots , Loading } from "../../components/Loading/Loading";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
+import { useOrderFetcher } from "../../services/OrderPollingService";
 
 const ManagerOrders = () => {
   const [expandedCards, setExpandedCards] = useState([]); // ✅ multiple expanded cards
@@ -22,6 +23,17 @@ const ManagerOrders = () => {
     setNewOrderAlert 
   } = useUserStore();
 
+  // Use order fetcher hook to trigger fetching when component mounts
+  const { refreshOrders } = useOrderFetcher();
+
+  // Trigger order fetch when user enters this page
+  const ordersExist = JSON.parse(sessionStorage.getItem("user-data")).state.orders
+
+  console.log(ordersExist);
+  useEffect(() => {
+  if(ordersExist < 0){
+    refreshOrders();}
+  }, []);
   // Orders are already sorted by OrderPollingService
 
   const filteredOrders = orders

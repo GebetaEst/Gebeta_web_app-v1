@@ -108,7 +108,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
     }
   
     try {
-      setLoading(true);
+      setLoading(true); 
       const res = await fetch(
         `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantFromStore._id}`,
         {

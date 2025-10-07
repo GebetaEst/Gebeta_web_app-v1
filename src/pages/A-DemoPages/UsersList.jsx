@@ -6,7 +6,7 @@ import { Pencil, Trash, Search, RefreshCcw } from "lucide-react";
 import ShowById from "./showById";
 import { useUserId } from "../../contexts/userIdContext";
 
-const UsersList = () => {
+const UsersList = ({ role }) => {
   const [users, setUsers] = useState([]);
   const { getId, setGetId, refreshUsers } = useUserId();
   const [data, setData] = useState(null);
@@ -63,7 +63,12 @@ const UsersList = () => {
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
     const userId = user._id ? user._id.toLowerCase() : '';
-    return fullName.includes(searchTerm.toLowerCase()) || userId.includes(searchTerm.toLowerCase());
+    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || userId.includes(searchTerm.toLowerCase());
+    
+    // Filter by role if role prop is provided and not "all"
+    const matchesRole = role && role !== "all" ? user.role === role : true;
+    
+    return matchesSearch && matchesRole;
   });
 
   return (

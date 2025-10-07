@@ -111,8 +111,18 @@ const Landing = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8">
             {/* Placeholder cards for featured restaurants */}
-            <div className={` bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 scroll-hidden ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[-69%] motion-translate-y-in-[-57%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
-              <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+1" alt="Placeholder for Restaurant 1" className="w-full h-48 object-cover" />
+            <div className={` m-2 group px-10 py-5 
+                  bg-white/10 rounded-lg 
+                  flex flex-col items-center justify-center gap-2 
+                  relative overflow-hidden cursor-pointer
+                  shadow-lg z-20
+                  after:absolute after:h-full after:w-full after:inset-0 after:rounded-lg
+                  after:bg-[#f5dbb3] after:-z-20
+                  after:-translate-y-full after:transition-all after:duration-500 
+                  after:hover:translate-y-0
+                  transition-all duration-300 hover:duration-300 
+                  [&_p]:delay-200 [&_p]:transition-all ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[-69%] motion-translate-y-in-[-57%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
+              <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+1" alt="Placeholder for Restaurant 1" className="w-full h-48 object-cover rounded-lg" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Gourmet Grills</h3>
                 <p className="text-gray-600 mb-4">A modern twist on classic comfort food.</p>
@@ -124,8 +134,18 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className={` bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-800 ${scrollY >=  399.6614074707031 ? "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
-              <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+2" alt="Placeholder for Restaurant 2" className="w-full h-48 object-cover" />
+            <div className={` m-2 group px-10 py-5 
+                bg-white/10 rounded-lg 
+                flex flex-col items-center justify-center gap-2 
+                relative overflow-hidden cursor-pointer
+                shadow-lg z-20
+                after:absolute after:h-full after:w-full after:inset-0 after:rounded-lg
+                after:bg-[#f5dbb3] after:-z-20
+                after:-translate-y-full after:transition-all after:duration-500 
+                after:hover:translate-y-0
+                transition-all duration-300 hover:duration-300 
+                [&_p]:delay-200 [&_p]:transition-all ${scrollY >=  399.6614074707031 ? "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
+              <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+2" alt="Placeholder for Restaurant 2" className="w-full h-48 object-cover rounded-lg" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Spicy Spoon</h3>
                 <p className="text-gray-600 mb-4">Authentic and fiery international cuisine.</p>
@@ -137,8 +157,24 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className={` bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity" : "hidden"} ${scrollY >= 402 ? "scale-105" : ""}`}>
-              <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+3" alt="Placeholder for Restaurant 3" className="w-full h-48 object-cover" />
+            <div className={`
+              m-2 group px-10 py-5 
+              bg-white/10 rounded-lg 
+              flex flex-col items-center justify-center gap-2 
+              relative overflow-hidden cursor-pointer
+              shadow-lg z-20
+              after:absolute after:h-full after:w-full after:inset-0 after:rounded-lg
+              after:bg-[#f5dbb3] after:-z-20
+              after:-translate-y-full after:transition-all after:duration-500 
+              after:hover:translate-y-0
+              transition-all duration-300 hover:duration-300 
+              [&_p]:delay-200 [&_p]:transition-all
+              ${scrollY >= 399.6614074707031 
+                ? "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity"
+                : "hidden"} 
+              ${scrollY >= 402 ? "scale-105" : ""}
+            `}>
+              <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+3" alt="Placeholder for Restaurant 3" className="w-full h-48 object-cover rounded-lg" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">The Vegan Corner</h3>
                 <p className="text-gray-600 mb-4">Fresh, plant-based meals crafted with care.</p>
@@ -182,7 +218,7 @@ const Landing = () => {
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
         </div>
-      
+        
 
       {/* Optional: Add a simple footer */}
       {/* <footer className="relative z-10 text-center py-8 bg-gray-900 text-white">

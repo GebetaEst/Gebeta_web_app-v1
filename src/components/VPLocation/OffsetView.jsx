@@ -16,11 +16,9 @@ export function ParallaxBackground({ backgroundImage }) {
         height: "15vh", // Make page scrollable
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "contain",
-        
         // backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed", // optional: smooth parallax effect
         backgroundPosition: `center ${offset * 0.4}px`, // Moves slower than scroll
-        
       }}
       className="relative"
     >

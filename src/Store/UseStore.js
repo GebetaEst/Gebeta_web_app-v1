@@ -6,7 +6,10 @@ const useUserStore = create(
     (set, get) => ({
       user: null,
       restaurant: null,
-      
+
+      // Boolean to track if user is logged in
+      isLoggedIn: false,
+
       // Notification state
       notifications: [],
       newOrderAlert: false,
@@ -17,8 +20,8 @@ const useUserStore = create(
       ordersLoading: false,
       ordersError: null,
 
-      setUser: (userData) => set({ user: userData }),
-      clearUser: () => set({ user: null }),
+      setUser: (userData) => set({ user: userData, isLoggedIn: !!userData }),
+      clearUser: () => set({ user: null, isLoggedIn: false }),
 
       setRestaurant: (restaurantData) => set({ restaurant: restaurantData }),
       clearRestaurant: () => set({ restaurant: null }),

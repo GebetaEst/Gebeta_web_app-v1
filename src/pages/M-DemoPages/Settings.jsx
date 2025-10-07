@@ -12,8 +12,12 @@ const Settings = () => {
   const token = localStorage.getItem("token");
 
   const logout = () => {
+    // Clear all user-related data from both storage types
     sessionStorage.removeItem("user-data");
+    sessionStorage.clear(); // Clear all session storage as backup
     localStorage.removeItem("token");
+    localStorage.removeItem("user-data"); // Also remove from localStorage if it exists there
+    
     setMessage("Get back soon 👋");
     setTimeout(() => {
       navigate("/login");

@@ -1,34 +1,35 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UseUserStore from "../../Store/UseStore";
-import {Loading , InlineLoadingDots} from "../Loading/Loading";
+import { Loading, InlineLoadingDots } from "../Loading/Loading";
 import { Eye, EyeOff } from "lucide-react";
 
 const LoginForm = () => {
-  
+
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [errorMg, setErrorMg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [results , setResults] = useState([]);
-  
+  const [results, setResults] = useState([]);
+  const [token, setToken] = useState("");
+
   const navigate = useNavigate();
-  const {setUser , restaurant, setRestaurant } = UseUserStore();
+  const { setUser,  setRestaurant, setIsLoggedIn } = UseUserStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation
     if (!phone || !password) {
       setErrorMg("All fields are required");
       return;
-    }else{
+    } else {
       setErrorMg(""); // Clear previous errors
 
     }
-    
-    
+
+
     try {
       setLoading(true);
       const res = await fetch(
@@ -38,38 +39,70 @@ const LoginForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone, password }), 
+          body: JSON.stringify({ phone, password }),
         }
       );
-      console.log(res)
+      // console.log(res)
       const data = await res.json();
-      
-      
+
+
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
-        setUser(data.data.user); 
-        setResults(data.data.user);
-      
+      setUser(data.data.user);
+      setResults(data.data.user);
+      setToken(data.token);
+      // console.log(token)
       localStorage.setItem("token", data.token);
       // navigate("/adminDashboard");
       // console.log(data.data.user._id)
 
-      console.log(data)
-      if(data.data.user.role === "Manager"){
+      // console.log(data)
+      if (data.data.user.role === "Manager") {
         navigate("/managerDashboard");
-      }else if(data.data.user.role === "Admin"){
+      } else if (data.data.user.role === "Admin") {
         navigate("/adminDashboard");
       }
-      
+
     } catch (error) {
       console.error("Login error:", error.message);
       setErrorMg("Incorrect phone number or password");
-    }finally{
+    } finally {
       setLoading(false);
+      setIsLoggedIn(true);
+
     }
-  }; 
-  const [resData , setResData] = useState([]);
+  };
+  const fetchRestaurants = async () => {
+    // const storedUser = JSON.parse(sessionStorage.getItem("user-data"))?.state?.user;
+    const role = results.role;
+    console.log(role)
+    try {
+      // ${storedUser._id}
+      const res = await fetch(
+        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/by-manager/${results._id}`,
+        {
+          headers: {
+            // Using a placeholder token for demonstration as localStorage is not ideal in some environments
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (res.ok && data.status === "success") {
+        // console.log(data.data.restaurants[0])
+        setResData(data.data.restaurants || []);
+        setRestaurant(data.data.restaurants[0]);
+      } else {
+        throw new Error(data.message || "Failed to load restaurants.");
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+  if (results.role === "Manager") { fetchRestaurants() }
+  const [resData, setResData] = useState([]);
 
   // useEffect(() => {
   //   const demoId = "687f8356ba35b7d99e36f647"
@@ -88,7 +121,7 @@ const LoginForm = () => {
   //           },
   //         }
   //       );
-        
+
   //       const data = await res.json();
   //       if (res.ok && data.status === "success") {
   //         // console.log(data.data.restaurants[0])
@@ -117,7 +150,7 @@ const LoginForm = () => {
     >
       <h1 className="text-2xl font-bold text-center">Login</h1>
       <p className="text-[13px] text-gray-500 text-center">Welcome back!</p>
-      
+
       <div className="w-full space-y-1">
         <label htmlFor="phone">Phone Number:</label>
         <input
@@ -126,10 +159,11 @@ const LoginForm = () => {
           value={phone}
           onChange={(e) => {
             const sanitizedPhone =
-            e.target.value.startsWith("0")
-              ? e.target.value.slice(1)
-              : e.target.value;
-            setPhone(sanitizedPhone)}}
+              e.target.value.startsWith("0")
+                ? e.target.value.slice(1)
+                : e.target.value;
+            setPhone(sanitizedPhone)
+          }}
           placeholder="912345678"
           required
           className="bg-white border-[0.5px] border-gray p-2 rounded-md w-full text-black"
@@ -139,7 +173,7 @@ const LoginForm = () => {
       <div className="w-full space-y-1">
         <label htmlFor="password">Password:</label>
         <div className="relative">
-        <input
+          <input
             type={showPassword ? "text" : "password"}
             name="password"
             value={password}
@@ -158,7 +192,7 @@ const LoginForm = () => {
           </button>
         </div>
       </div>
-      
+
       <Link
         to="/forgot-password"
         className="flex -translate-x-5 -translate-y-3 self-end hover:underline hover:text-black text-[13px] text-gray-500"
@@ -172,10 +206,10 @@ const LoginForm = () => {
         type="submit"
         className={`bg-white flex items-center justify-center transform duration-200 text-gray-800 font-bold py-2 px-4 rounded-md w-[100px] hover:bg-black hover:text-white border-[0.5px] border-gray ${loading ? "cursor-not-allowed opacity-50 hover:bg-white" : ""}`}
       >
-        {loading ? <InlineLoadingDots/> : "Log In"}
+        {loading ? <InlineLoadingDots /> : "Log In"}
       </button>
       {/* {loading && <Loading/>} */}
-      
+
       <p className="text-[13px] text-gray-800 flex self-end">
         {/* Don't have an account? &nbsp;
         <Link

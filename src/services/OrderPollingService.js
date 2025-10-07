@@ -15,7 +15,7 @@ class OrderPollingService {
     this.minFetchInterval = 3000;
     this.socket = null;
     this.onNewOrderCallback = null; // Callback for React component
-    this.connectWebSocket();
+    // Do not connect WebSocket on construction; only connect if allowed
   }
 
   // Set the callback function from the React hook
@@ -29,12 +29,20 @@ class OrderPollingService {
       this.socket = null;
     }
 
+    const storeData = JSON.parse(sessionStorage.getItem("user-data"));
+    const userRole = storeData?.state?.user?.role;
+    const isLoggedIn = storeData?.state?.isLoggedIn;
     const token = localStorage.getItem("token");
-    const store = JSON.parse(sessionStorage.getItem("user-data"));
-    const restaurantId = store?.state?.restaurant?._id;
+    const restaurantId = storeData?.state?.restaurant?._id;
 
-    if (!token || !restaurantId) {
-      console.error("❌ Cannot connect to WebSocket: Missing token or restaurantId");
+    // Only connect if user is manager and logged in
+    if (
+      !token ||
+      !restaurantId ||
+      userRole !== "Manager" ||
+      !isLoggedIn
+    ) {
+      console.error("❌ Cannot connect to WebSocket: Missing token, restaurantId, or user is not manager/logged in");
       return;
     }
 
@@ -76,6 +84,18 @@ class OrderPollingService {
   }
 
   async fetchOrders() {
+    // Only fetch if user is manager and logged in
+    const storeData = JSON.parse(sessionStorage.getItem("user-data"));
+    const userRole = storeData?.state?.user?.role;
+    const isLoggedIn = storeData?.state?.isLoggedIn;
+    if (userRole !== "Manager" || !isLoggedIn) {
+      // Optionally clear orders if not manager/logged in
+      const store = useUserStore.getState();
+      store.setOrders?.([]);
+      store.setOrdersLoading?.(false);
+      return;
+    }
+
     const now = Date.now();
     if (now - this.lastFetchTime < this.minFetchInterval) {
       return;
@@ -86,7 +106,7 @@ class OrderPollingService {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("❌ No token found in localStorage");
-        this.stopPolling();
+        this.stopPolling?.();
         return;
       }
       const apiURL = this.getAPI_URL();
@@ -102,15 +122,15 @@ class OrderPollingService {
       const res = await axios.get(apiURL, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res)
+      console.log(res);
 
       const orders = res.data.data || [];
       const sorted = this.sortOrders(orders);
-      
+
       // Store orders in Zustand store
       store.setOrders?.(sorted);
       store.setOrdersLoading?.(false);
-      
+
       // Handle new order notification if there are orders
       if (orders.length > 0) {
         this.handleNewOrder(sorted[0]);
@@ -199,22 +219,46 @@ export const useOrderFetcher = () => {
   const isInitialMount = useRef(true);
 
   useEffect(() => {
-    // Set up a callback in the service to trigger a fetch when a new order is received
-    const fetchOnNewOrder = () => {
-      orderPollingService.fetchOrders();
-    };
-    orderPollingService.setNewOrderCallback(fetchOnNewOrder);
+    // Check if user is manager and logged in
+    const storeData = JSON.parse(sessionStorage.getItem("user-data"));
+    const userRole = storeData?.state?.user?.role;
+    const isLoggedIn = storeData?.state?.isLoggedIn;
 
-    // Initial fetch on component mount
-    if (isInitialMount.current) {
-      orderPollingService.fetchOrders();
-      isInitialMount.current = false;
-    }
+    if (userRole === "Manager" && isLoggedIn) {
+      // Set up a callback in the service to trigger a fetch when a new order is received
+      const fetchOnNewOrder = () => {
+        orderPollingService.fetchOrders();
+      };
+      orderPollingService.setNewOrderCallback(fetchOnNewOrder);
 
-    // Cleanup: Remove the callback when the component unmounts
-    return () => {
+      // Connect WebSocket if not already connected
+      orderPollingService.connectWebSocket();
+
+      // Initial fetch on component mount
+      if (isInitialMount.current) {
+        orderPollingService.fetchOrders();
+        isInitialMount.current = false;
+      }
+
+      // Cleanup: Remove the callback and disconnect socket when the component unmounts
+      return () => {
+        orderPollingService.setNewOrderCallback(null);
+        if (orderPollingService.socket) {
+          orderPollingService.socket.disconnect();
+          orderPollingService.socket = null;
+        }
+      };
+    } else {
+      // If not manager or not logged in, clear orders and disconnect socket
+      const store = useUserStore.getState();
+      store.setOrders?.([]);
+      store.setOrdersLoading?.(false);
+      if (orderPollingService.socket) {
+        orderPollingService.socket.disconnect();
+        orderPollingService.socket = null;
+      }
       orderPollingService.setNewOrderCallback(null);
-    };
+    }
   }, []);
 
   // Return refresh function for manual triggering
