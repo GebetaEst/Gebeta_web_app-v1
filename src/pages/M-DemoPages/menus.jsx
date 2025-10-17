@@ -7,6 +7,7 @@ import {
   ChefHat,
   ArrowLeft,
   Salad,
+  RefreshCcw,
 } from "lucide-react";
 import AddFood from "../../components/UserForms/M-addFood";
 import PopupCard from "../../components/Cards/PopupCard";
@@ -27,6 +28,8 @@ const Menus = () => {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showEditFood, setShowEditFood] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
+  const [menuLoading, setMenuLoading] = useState(false);
+  const [refreshFoods, setRefreshFoods] = useState(false);
 
   const [menuForm, setMenuForm] = useState({
     menuType: "",
@@ -94,6 +97,12 @@ const Menus = () => {
       setLoadingFoods(false);
     }
   };
+  useEffect(() => {
+    if (refreshFoods) {
+      fetchMenuFoods(selectedMenu._id);
+      setRefreshFoods(false);
+    }
+  }, [refreshFoods, selectedMenu?._id]);
 
   const handleMenuClick = async (menu) => {
     setSelectedMenu(menu);
@@ -104,6 +113,7 @@ const Menus = () => {
     if (!menuForm.menuType) return alert("Menu type is required");
 
     try {
+      setMenuLoading(true);
       const payload = {
         menuType: menuForm.menuType.trim(),
         active: menuForm.active,
@@ -119,7 +129,9 @@ const Menus = () => {
           },
           body: JSON.stringify(payload),
         }
+
       );
+
 
       const data = await res.json();
       if (res.ok) {
@@ -130,6 +142,8 @@ const Menus = () => {
       } else {
         alert(data.message || "Failed to update menu item");
       }
+      setMenuLoading(false);
+
     } catch (error) {
       console.error("Error editing menu:", error);
       alert("Error updating menu item. Please try again.");
@@ -416,10 +430,12 @@ const Menus = () => {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleEditMenu}
-                  className="flex-1 bg-[#4b382a] text-white py-2 px-4 rounded-lg hover:bg-[#3d2e22] transition-colors flex items-center justify-center gap-2"
+                  className={`flex-1 bg-[#4b382a] text-white py-2 px-4 rounded-lg hover:bg-[#3d2e22] transition-colors flex items-center justify-center gap-2 ${menuLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                  disabled={menuLoading}
                 >
                   <Save size={18} />
-                  Save
+                  {menuLoading ? "saving... " : "Save"
+                  }
                 </button>
 
               </div>
@@ -429,10 +445,26 @@ const Menus = () => {
 
         {selectedMenu ? (
           <div>
-            <h3 className="text-2xl font-semibold text-[#4b382a] mb-4 flex items-center gap-2">
+            <div className="flex items-center gap-16 mb-4">
+
+            <h3 className="text-2xl font-semibold text-[#4b382a] mb- flex items-center gap-2">
               <ChefHat size={24} />
               Foods ({menuFoods.length})
             </h3>
+            <button
+              onClick={() => setRefreshFoods(true)}
+              className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 "
+            >
+              <span
+            className={`flex justify-center items-center ${
+              loadingFoods ? "animate-spin" : ""
+            }`}
+          >
+            <RefreshCcw size={24} color="#4b382a" />
+          </span>
+            
+            </button>
+            </div>
             {loadingFoods ? (
               <div className="text-center py-8">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4b382a]"></div>
@@ -446,14 +478,16 @@ const Menus = () => {
                       key={food._id}
                       className="bg-white rounded-lg p-4 shadow-md border border-[#e0cda9]"
                     >
+                      <img src={food.imageCover} alt={food.foodName} className="w-full h-32 object-cover rounded-lg" />
+
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <p className="text-lg font-bold text-[#a95b23]">
                             {food.foodName}
                           </p>
-                          {food.instructions && (
+                          {food.ingredients && (
                             <p className="text-gray-600 text-sm mt-1">
-                              {food.instructions}
+                              {food.ingredients}
                             </p>
                           )}
                           <p className="text-[#4b382a] font-bold text-lg mt-2">
@@ -471,10 +505,10 @@ const Menus = () => {
 
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 self-end">
                           <button
                             onClick={() => handleEditFood(food._id)}
-                            className="text-blue-600 hover:text-blue-800 p-1"
+                            className="text-blue-600 hover:text-blue-800 p-1 "
                           >
                             <Edit size={16} />
                           </button>

@@ -43,7 +43,8 @@ const AddRestaurantsForm = () => {
         const data = await response.json();
         if (response.ok) {
           // Filter for users with role 'manager' if possible, otherwise map all phones
-          setManagerList(data.data.users.map((user) => user.phone));
+          setManagerList(data.data.users.map((user)));
+          console.log(managerList)
         } else {
           console.error("Failed to fetch manager list:", data.message);
         }
@@ -108,7 +109,7 @@ const AddRestaurantsForm = () => {
             cuisineTypes: formData.cuisineTypes
               .split(",")
               .map((cuisine) => cuisine.trim()),
-            deliveryRadiusMeters: parseInt(formData.deliveryRadiusMeters),
+            // deliveryRadiusMeters: parseInt(formData.deliveryRadiusMeters),
             openHours: formData.openHours,
             description: formData.description,
             isDeliveryAvailable: formData.isDeliveryAvailable,
@@ -222,7 +223,7 @@ const AddRestaurantsForm = () => {
             />
           </div>
 
-          <div className="space-y-2 ">
+          {/* <div className="space-y-2 ">
             <label className="block text-sm font-medium text-gray-700">
               Delivery Radius (meters)
             </label>
@@ -233,7 +234,7 @@ const AddRestaurantsForm = () => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"
             />
-          </div>
+          </div> */}
           <div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">

@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
+import { CloudCog } from "lucide-react";
 
 const InlineLoadingDots = () => <span className="inline-block text-white">. . .</span>;
 
@@ -9,11 +10,10 @@ const AddUserForm = () => {
     firstName: "",
     lastName: "",
     phone: "",
-    password: "",
     passwordConfirm: "",
     role: "Customer",
     deliveryMethod: "Car",
-    fcnId: "",
+    fcnNumber: "",
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
@@ -50,14 +50,15 @@ const AddUserForm = () => {
       // Convert base64 to blob for better handling
       const response = await fetch(profilePicture);
       const blob = await response.blob();
+      
 
       // Create a file from the blob
       const fileName = `profile_${formData.firstName || 'user'}_${Date.now()}.png`;
       const file = new File([blob], fileName, { type: 'image/png' });
 
       // Save to localStorage for persistence
-      localStorage.setItem('tempProfilePicture', profilePicture);
-      localStorage.setItem('tempProfilePictureTimestamp', Date.now().toString());
+      // localStorage.setItem('tempProfilePicture', profilePicture);
+      // localStorage.setItem('tempProfilePictureTimestamp', Date.now().toString());
 
       // Trigger download
       const url = window.URL.createObjectURL(blob);
@@ -68,32 +69,32 @@ const AddUserForm = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      console.log(profilePicture);
 
-      // Optional: Upload to server (uncomment and configure as needed)
-      /*
-      const formData = new FormData();
-      formData.append('profilePicture', file);
-      const uploadResponse = await axios.post(
-        'https://gebeta-delivery1.onrender.com/api/v1/upload', // Replace with your upload endpoint
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      
+      
       // Assuming the server returns the URL of the uploaded image
       const uploadedImageUrl = uploadResponse.data.imageUrl;
-      setProfilePicture(uploadedImageUrl); // Update state with server URL if needed
-      */
+      console.log('File uploaded successfully:', uploadedImageUrl);
+      
+      // Optionally update the profile picture state with the server URL
+      // setProfilePicture(uploadedImageUrl);
 
       // Mark as saved
       setIsPhotoSaved(true);
-      alert("📸 Photo saved successfully and downloaded!");
+      alert("📸 Photo saved successfully, downloaded, and uploaded to server!");
     } catch (error) {
       console.error('Error saving photo:', error);
-      setError("Failed to save photo. Please try again.");
+      if (error.response) {
+        // Server responded with error
+        setError(`Failed to upload photo: ${error.response.data?.message || 'Server error'}`);
+      } else if (error.request) {
+        // Network error
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        // Other error
+        setError("Failed to save photo. Please try again.");
+      }
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -115,20 +116,10 @@ const AddUserForm = () => {
       !formData.firstName ||
       !formData.lastName ||
       !formData.phone ||
-      !formData.password ||
-      !formData.passwordConfirm
+      (formData.role === "Delivery_Person" && !profilePicture) ||
+      (formData.role === "Manager" && !formData.fcnNumber) 
     ) {
       setError("All required fields are needed");
-      return;
-    }
-
-    if (formData.password !== formData.passwordConfirm) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -139,23 +130,60 @@ const AddUserForm = () => {
       ? formData.phone.slice(1)
       : formData.phone;
 
-    const payload = {
-      ...formData,
-      phone: sanitizedPhone,
-      profilePicture,
-    };
-
     try {
-      const response = await axios.post(
-        "https://gebeta-delivery1.onrender.com/api/v1/users",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
+      let response;
+
+      // For Delivery Person, use FormData with image file
+      if (formData.role === "Delivery_Person") {
+        const formDataPayload = new FormData();
+        
+        // Append all form fields
+        formDataPayload.append("firstName", formData.firstName);
+        formDataPayload.append("lastName", formData.lastName);
+        formDataPayload.append("phone", sanitizedPhone);
+        formDataPayload.append("role", formData.role);
+        formDataPayload.append("deliveryMethod", formData.deliveryMethod);
+        if (formData.fcnNumber) {
+          formDataPayload.append("fcnNumber", formData.fcnNumber);
         }
-      );
+
+        // Convert base64 profilePicture to image file
+        if (profilePicture) {
+          const response = await fetch(profilePicture);
+          const blob = await response.blob();
+          const fileName = `profile_${formData.firstName}_${Date.now()}.png`;
+          const file = new File([blob], fileName, { type: 'image/png' });
+          formDataPayload.append("profilePicture", file);
+        }
+
+        response = await axios.post(
+          "https://gebeta-delivery1.onrender.com/api/v1/users",
+          formDataPayload,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // For other roles, use regular JSON payload
+        const payload = {
+          ...formData,
+          phone: sanitizedPhone,
+        };
+
+        response = await axios.post(
+          "https://gebeta-delivery1.onrender.com/api/v1/users",
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
 
       if (response.data) {
         alert("✅ User added successfully!");
@@ -167,11 +195,11 @@ const AddUserForm = () => {
           passwordConfirm: "",
           role: "Customer",
           deliveryMethod: "Car",
-          fcnId: "",
+          fcnNumber: "",
         });
         setProfilePicture(null);
-        localStorage.removeItem('tempProfilePicture');
-        localStorage.removeItem('tempProfilePictureTimestamp');
+        // localStorage.removeItem('tempProfilePicture');
+        // localStorage.removeItem('tempProfilePictureTimestamp');
         setIsPhotoSaved(false);
       }
     } catch (err) {
@@ -217,13 +245,13 @@ const AddUserForm = () => {
       )}
 
       {/* FORM */}
-      <form onSubmit={handleSubmit} className="">
-        <div className="flex">
+      <form onSubmit={handleSubmit} className="flex flex-col">
+        <div className="flex md:gap-2">
           <div>
             {/* Role Selection */}
-            <div className="">
-              <label className="block font-semibold text-gray-700 mb-1">Role</label>
-              <div className="flex gap-0 rounded-lg overflow-hidden shadow-sm mb-1">
+            <div className="gap-6 mb-6">
+              <label className="block font-semibold text-gray-700 mb-2">Role</label>
+              <div className="flex rounded-lg overflow-hidden shadow-sm mb-1">
                 {roles.map((role) => (
                   <button
                     key={role.value}
@@ -244,7 +272,7 @@ const AddUserForm = () => {
             {/* Names */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col">
-                <label className="mb-2 font-medium text-gray-700">First Name *</label>
+                <label className="mb-2 font-medium text-gray-700">First Name <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={formData.firstName}
@@ -257,7 +285,7 @@ const AddUserForm = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className="mb-2 font-medium text-gray-700">Last Name *</label>
+                <label className="mb-2 font-medium text-gray-700">Last Name <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={formData.lastName}
@@ -273,7 +301,7 @@ const AddUserForm = () => {
             {/* Phone and FCN ID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="flex flex-col">
-                <label className="mb-2 font-medium text-gray-700">Phone *</label>
+                <label className="mb-2 font-medium text-gray-700">Phone <span className="text-red-500">*</span></label>
                 <input
                   type="tel"
                   value={formData.phone}
@@ -285,46 +313,25 @@ const AddUserForm = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="mb-2 font-medium text-gray-700">FCN ID</label>
+                <label className="mb-2 font-medium text-gray-700">
+                  FCN ID
+                  <span className={formData.role === "Customer" ? " hidden" : "text-red-500"}> *</span>
+                </label>
                 <input
                   type="text"
-                  value={formData.fcnId}
+                  value={formData.fcnNumber}
                   onChange={(e) =>
-                    setFormData({ ...formData, fcnId: e.target.value })
+                    setFormData({ ...formData, fcnNumber: e.target.value })
                   }
                   className="w-full p-2 border border-[#f0d5b9] rounded-lg focus:ring-2 focus:ring-[#deb770] focus:border-transparent transition-all"
                   placeholder="Enter FCN ID"
+                  disabled={formData.role === "Customer"}
                 />
               </div>
             </div>
 
             {/* Password Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="flex flex-col">
-                <label className="mb-2 font-medium text-gray-700">Password *</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full p-2 border border-[#f0d5b9] rounded-lg focus:ring-2 focus:ring-[#deb770] focus:border-transparent transition-all"
-                  placeholder="Enter password (min 8 characters)"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="mb-2 font-medium text-gray-700">Confirm Password *</label>
-                <input
-                  type="password"
-                  value={formData.passwordConfirm}
-                  onChange={(e) =>
-                    setFormData({ ...formData, passwordConfirm: e.target.value })
-                  }
-                  className="w-full p-2 border border-[#f0d5b9] rounded-lg focus:ring-2 focus:ring-[#deb770] focus:border-transparent transition-all"
-                  placeholder="Confirm password"
-                />
-              </div>
-            </div>
+            
           </div>
 
           {/* Vehicle Type - Only show for Delivery Person */}

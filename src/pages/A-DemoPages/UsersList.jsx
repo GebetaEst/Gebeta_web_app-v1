@@ -115,7 +115,7 @@ const UsersList = ({ role }) => {
                   <div className="flex justify-center items-center ">
 
                     <img
-                      className={`mx- ${
+                      className={`mx- object-cover object-center ${
                         user.profilePicture ? "" : "bg-gray"
                       } w-[70px] h-[70px] flex justify-center items-center shadow-lg rounded-full`}
                       src={user.profilePicture}

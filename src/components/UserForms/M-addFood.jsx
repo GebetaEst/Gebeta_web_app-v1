@@ -8,7 +8,7 @@ const AddFood = ({ menuId }) => {
     ingredients: "",
     instructions: "",
     cookingTimeMinutes: "",
-    image: "",
+    imageCover: "",
     isFeatured: false,
     status: "Available",
   });
@@ -69,8 +69,9 @@ const AddFood = ({ menuId }) => {
       payload.append("menuId", formData.menuId);
       
       if (formData.ingredients) payload.append("ingredients", formData.ingredients);
+      if (formData.instructions) payload.append("instructions", formData.instructions);
       if (formData.cookingTimeMinutes) payload.append("cookingTimeMinutes", parseInt(formData.cookingTimeMinutes));
-      if (formData.image) payload.append("image", formData.image);
+      if (formData.imageCover) payload.append("imageCover", formData.imageCover);
       
       payload.append("isFeatured", formData.isFeatured);
       payload.append("status", formData.status);
@@ -92,7 +93,7 @@ const AddFood = ({ menuId }) => {
           menuId: menuId,
           ingredients: "",
           cookingTimeMinutes: "",
-          image: "",
+          imageCover: "",
           isFeatured: false,
           status: "Available",
         });
@@ -196,13 +197,13 @@ const AddFood = ({ menuId }) => {
           <input
             type="file"
             accept="image/*"
-            name="image"
+            name="imageCover"
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4b382a]"
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
+        {/* <div className="flex flex-col sm:flex-row gap-4 items-center">
           <div className="flex-1">
             <label className="block text-sm font-medium text-[#4b382a] mb-1">
               Status
@@ -218,7 +219,7 @@ const AddFood = ({ menuId }) => {
             </select>
           </div>
 
-          <div className="flex items-center mt-4">
+          {/* <div className="flex items-center mt-4">
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -240,8 +241,8 @@ const AddFood = ({ menuId }) => {
               </div>
               <span className="ml-3 text-sm text-[#4b382a]">Featured Item</span>
             </label>
-          </div>
-        </div>
+          </div> 
+        </div> */}
 
         <button
           type="submit"

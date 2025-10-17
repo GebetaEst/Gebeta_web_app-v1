@@ -62,7 +62,7 @@ const ShowById = () => {
           <div className="space-x-28 flex justify-around items-center motion-scale-in-[0.72] motion-translate-x-in-[-22%] motion-translate-y-in-[-3%] ">
                 <div className="flex flex-col self-start justify-self-start justify-center items-center gap-4 border-r h-[350px]  border-gray p-4">
                     <img
-                        className={` ${data?.data?.user?.profilePicture ? "rounded-full shadow-lg w-[150px] h-[150px]" : "p-2 rounded-md border"}  m-2 `}
+                        className={` ${data?.data?.user?.profilePicture ? "rounded-full shadow-lg w-[150px] h-[150px]" : "p-2 rounded-md border"}  m-2 object-cover object-center`}
                         src={data?.data?.user?.profilePicture }
                         alt=" No profile picture"
                     />
@@ -73,13 +73,14 @@ const ShowById = () => {
 
             <div className="flex flex-col  ">
                 <div className="flex flex-col gap-4 -translate-x-10">
-                    <p className="text-gray-600 font-semibold"> Email: <span className="text- font-normal">{data?.data?.user?.email}</span></p>
                     <p className="text-gray-600 font-semibold"> Phone: <span className="text- font-normal">{data?.data?.user?.phone}</span></p>
                     <p className="text-gray-600 font-semibold"> Role: <span className="text- font-normal">{data?.data?.user?.role}</span></p>
                     <p className="text-gray-600 font-semibold"> Created At: <span className="text-primary font-normal">{formatDate(data?.data?.user?.createdAt)}</span></p>
                     <p className="text-gray-600 font-semibold"> ID: <span className="text- font-normal">{data?.data?.user?._id}</span></p>
+                    {data?.data?.user?.role === "Delivery_Person" && <p className="text-gray-600 font-semibold"> FCN Number: <span className="text- font-normal">{data?.data?.user?.fcnNumber}</span></p>}
+                    {data?.data?.user?.role === "Delivery_Person" && <p className="text-gray-600 font-semibold"> Vehicle type: <span className="text- font-normal">{data?.data?.user?.deliveryMethod}</span></p>}
                 </div>
-                <div className="flex gap-3 self-end pr-5 translate-y-20">
+                <div className="flex gap-3 self-end pr-5 translate-y-10">
                     <button className=" bg-blue-200 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300" onClick={() =>setShowEditForm(true)}>
                         <Pencil strokeWidth={1} size={20} />
                     </button>
@@ -95,8 +96,10 @@ const ShowById = () => {
       </div>
       {showEditForm ? (
         <PopupCard>
-            <div className=" space-x-2 flex justify-end">
-                <button className=" hover:bg-red-100 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300" onClick={() => setShowEditForm(false)}>
+            <div className=" space-x-10 flex justify-between items-center">
+               <h1 className="text-2xl font-bold text-gray-900 mb-2 text-start">Edit User</h1>
+
+                <button className=" hover:bg-red-100 m-2 rounded-full w-[40px] h-[40px] flex items-center justify-center hover:translate-y-1 transition-transform hover:shadow-lg duration-300" onClick={() => setShowEditForm(false)}>
                     <X strokeWidth={1.5} size={30} color="red"/>
                 </button>
                 

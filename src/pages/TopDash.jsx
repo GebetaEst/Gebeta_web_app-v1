@@ -21,7 +21,7 @@ const TopDash = () => {
         <p className="text-3xl font-bold ">{Title}</p>
         <div className="flex items-center gap-6 pt-1 justify-center">
           <div>
-            <button
+            {/* <button
               className="rounded-lg p-3 hover:bg-yellow-50 border"
               onClick={() => {
                 const audio = new Audio(bellSound);
@@ -29,7 +29,7 @@ const TopDash = () => {
               }}
             >
               <Bell/>
-            </button>
+            </button> */}
           </div>
           <div
             onClick={() => {

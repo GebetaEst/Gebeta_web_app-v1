@@ -91,7 +91,6 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
     // Append location data
     formData.append("description", form.description);
     // formData.append("name", form.name);
-
     formData.append("location[address]", form.location.address);
     formData.append("location[type]", "Point");
     // location coordinates
