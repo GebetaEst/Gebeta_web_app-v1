@@ -85,7 +85,7 @@ class OrderPollingService {
 
   async fetchOrders() {
     // Only fetch if user is manager and logged in
-    const storeData = JSON.parse(sessionStorage.getItem("user-data"));
+    const storeData = sessionStorage.getItem("user-data") ? JSON.parse(sessionStorage.getItem("user-data")) : null;
     const userRole = storeData?.state?.user?.role;
     const isLoggedIn = storeData?.state?.isLoggedIn;
     if (userRole !== "Manager" || !isLoggedIn) {
@@ -217,13 +217,12 @@ const orderPollingService = new OrderPollingService();
 export const useOrderFetcher = () => {
   // We use useRef to prevent the fetch from triggering on every render
   const isInitialMount = useRef(true);
+  
+  // Get login state and user from Zustand store to react to login changes
+  const { isLoggedIn, user } = useUserStore();
+  const userRole = user?.role;
 
   useEffect(() => {
-    // Check if user is manager and logged in
-    const storeData = JSON.parse(sessionStorage.getItem("user-data"));
-    const userRole = storeData?.state?.user?.role;
-    const isLoggedIn = storeData?.state?.isLoggedIn;
-
     if (userRole === "Manager" && isLoggedIn) {
       // Set up a callback in the service to trigger a fetch when a new order is received
       const fetchOnNewOrder = () => {
@@ -234,13 +233,10 @@ export const useOrderFetcher = () => {
       // Connect WebSocket if not already connected
       orderPollingService.connectWebSocket();
 
-      // Initial fetch on component mount
-      if (isInitialMount.current) {
-        orderPollingService.fetchOrders();
-        isInitialMount.current = false;
-      }
+      // Initial fetch on component mount or when manager logs in
+      orderPollingService.fetchOrders();
 
-      // Cleanup: Remove the callback and disconnect socket when the component unmounts
+      // Cleanup: Remove the callback and disconnect socket when the component unmounts or user logs out
       return () => {
         orderPollingService.setNewOrderCallback(null);
         if (orderPollingService.socket) {
@@ -259,7 +255,7 @@ export const useOrderFetcher = () => {
       }
       orderPollingService.setNewOrderCallback(null);
     }
-  }, []);
+  }, [isLoggedIn, userRole]); // React to login state and role changes
 
   // Return refresh function for manual triggering
   return {

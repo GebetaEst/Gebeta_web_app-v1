@@ -12,9 +12,22 @@ import {
 import AddFood from "../../components/UserForms/M-addFood";
 import PopupCard from "../../components/Cards/PopupCard";
 import MEditFood from "../../components/UserForms/M-EditFood";
+import useUserStore from "../../Store/UseStore";
+import { Loading , InlineLoadingDots} from "../../components/Loading/Loading";
 
 const Menus = () => {
-  const [menus, setMenus] = useState([]);
+  // Zustand store
+  const { 
+    menus, 
+    menusLoading, 
+    foodsByMenu,
+    foodsLoading,
+    fetchMenus, 
+    fetchFoodsByMenu,
+    updateMenu,
+    addMenu: addMenuToStore
+  } = useUserStore();
+
   const [loading, setLoading] = useState({
     editMenu: false,
     menuItems: false,
@@ -22,8 +35,6 @@ const Menus = () => {
   });
   const [editingMenu, setEditingMenu] = useState(null);
   const [selectedMenu, setSelectedMenu] = useState(null);
-  const [menuFoods, setMenuFoods] = useState([]);
-  const [loadingFoods, setLoadingFoods] = useState(false);
   const [showAddFood, setShowAddFood] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showEditFood, setShowEditFood] = useState(false);
@@ -41,72 +52,30 @@ const Menus = () => {
   const restaurantName = JSON.parse(sessionStorage.getItem("user-data")).state
     .restaurant?.name;
 
+  // Get foods for selected menu from store
+  const menuFoods = selectedMenu && foodsByMenu[selectedMenu._id] 
+    ? foodsByMenu[selectedMenu._id].foods 
+    : [];
+
   useEffect(() => {
     if (restaurantId) {
-      fetchMenus();
+      // Fetch menus from store (will use cache if available)
+      fetchMenus(restaurantId);
     }
   }, [restaurantId]);
 
-  const fetchMenus = async () => {
-    setLoading(loading => ({ ...loading, menuItems: true }));
-    try {
-      const res = await fetch(
-        `https://gebeta-delivery1.onrender.com/api/v1/food-menus?restaurantId=${restaurantId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await res.json();
-      // console.log(data);
-      if (res.ok) {
-        setMenus(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching menus:", error);
-    } finally {
-      setLoading(loading => ({ ...loading, menuItems: false }));
-    }
-  };
-
-  const fetchMenuFoods = async (menuId) => {
-    setLoadingFoods(true);
-    try {
-      const res = await fetch(
-        `https://gebeta-delivery1.onrender.com/api/v1/foods/by-menu/${menuId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await res.json();
-      if (res.ok) {
-        console.log(data);
-        setMenuFoods(data.data.foods || []);
-        console.log(menuFoods);
-      } else {
-        console.error("Failed to fetch foods:", data.message);
-        setMenuFoods([]);
-      }
-    } catch (error) {
-      console.error("Error fetching foods:", error);
-      setMenuFoods([]);
-    } finally {
-      setLoadingFoods(false);
-    }
-  };
   useEffect(() => {
-    if (refreshFoods) {
-      fetchMenuFoods(selectedMenu._id);
+    if (refreshFoods && selectedMenu) {
+      // Force refresh of foods
+      fetchFoodsByMenu(selectedMenu._id, true);
       setRefreshFoods(false);
     }
   }, [refreshFoods, selectedMenu?._id]);
 
   const handleMenuClick = async (menu) => {
     setSelectedMenu(menu);
-    await fetchMenuFoods(menu._id);
+    // Fetch foods from store (will use cache if available)
+    await fetchFoodsByMenu(menu._id);
   };
 
   const handleEditMenu = async () => {
@@ -135,7 +104,8 @@ const Menus = () => {
 
       const data = await res.json();
       if (res.ok) {
-        await fetchMenus();
+        // Update menu in store
+        updateMenu(editingMenu, payload);
         setMenuForm({ menuType: "", active: true });
         setEditingMenu(null);
         alert("Menu item updated successfully!");
@@ -175,7 +145,8 @@ const Menus = () => {
 
       const data = await res.json();
       if (res.ok) {
-        await fetchMenus();
+        // Add new menu to store
+        addMenuToStore(data.data);
         setMenuForm({ menuType: "", active: true });
         setShowAddMenu(false);
         alert("Menu created successfully!");
@@ -457,7 +428,7 @@ const Menus = () => {
             >
               <span
             className={`flex justify-center items-center ${
-              loadingFoods ? "animate-spin" : ""
+              foodsLoading ? "animate-spin" : ""
             }`}
           >
             <RefreshCcw size={24} color="#4b382a" />
@@ -465,70 +436,67 @@ const Menus = () => {
             
             </button>
             </div>
-            {loadingFoods ? (
-              <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#4b382a]"></div>
-                <p className="mt-2 text-[#4b382a]">Loading foods...</p>
-              </div>
+            {foodsLoading ? (
+              <Loading/>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {menuFoods.length > 0 ? (
                   menuFoods.map((food) => (
                     <div
                       key={food._id}
-                      className="bg-white rounded-lg p-4 shadow-md border border-[#e0cda9]"
+                      className="bg-white rounded-lg shadow-md border border-[#e0cda9] relative overflow-hidden"
+                      style={{
+                        backgroundImage: `url(${food.imageCover})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        minHeight: '280px'
+                      }}
                     >
-                      <img src={food.imageCover} alt={food.foodName} className="w-full h-32 object-cover rounded-lg" />
-
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex-1">
-                          <p className="text-lg font-bold text-[#a95b23]">
-                            {food.foodName}
-                          </p>
-                          {food.ingredients && (
-                            <p className="text-gray-600 text-sm mt-1">
-                              {food.ingredients}
+                      {/* Overlay for better text readability */}
+                      <div className="absolute inset-0 bg-black bg-opacity-25 rounded-lg"></div>
+                      
+                      {/* Content overlay */}
+                      <div className="relative z-10 p-4 h-full flex flex-col justify-betweenx">
+                        <div className="  flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <p className="text-lg font-bold text-white drop-shadow-lg">
+                              {food.foodName}
                             </p>
-                          )}
-                          <p className="text-[#4b382a] font-bold text-lg mt-2">
-                            {food.price} ETB
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${food.status === "Available"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                                }`}
+                            {food.ingredients && (
+                              <p className="text-gray-200 text-sm mt-1 drop-shadow-md">
+                                {food.ingredients}
+                              </p>
+                            )}
+                            <p className="text-white font-bold text-lg mt-2 drop-shadow-lg">
+                              {food.price} ETB
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${food.status === "Available"
+                                  ? "bg-green-500 text-white"
+                                  : "bg-red-500 text-white"
+                                  }`}
+                              >
+                                {food.status}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 self-end absolute bottom-5 right-5">
+                            <button
+                              onClick={() => handleEditFood(food._id)}
+                              className="text-white hover:text-blue-300 p-2 bg-blue-600 bg-opacity-80 hover:bg-opacity-100 rounded-full transition-all duration-200"
                             >
-                              {food.status}
-                            </span>
-
+                              <Edit size={16} />
+                            </button>
+                            {/* <button
+                              onClick={() => handleDeleteFood(food._id)}
+                              className="text-white hover:text-white hover:bg-red-500 p-1 text-xs bg-red-400 w-[90px] rounded-md px-2 py-1 transition-colors duration-200 font-medium shadow-sm"
+                            >
+                              Set to Unavailable
+                            </button> */}
                           </div>
                         </div>
-                        <div className="flex gap-2 self-end">
-                          <button
-                            onClick={() => handleEditFood(food._id)}
-                            className="text-blue-600 hover:text-blue-800 p-1 "
-                          >
-                            <Edit size={16} />
-                          </button>
-                          {/* <button
-                            onClick={() => handleDeleteFood(food._id)}
-                            className="text-white hover:text-white hover:bg-red-500 p-1 text-xs bg-red-400 w-[90px] rounded-md px-2 py-1 transition-colors duration-200 font-medium shadow-sm"
-                          >
-                            Set to Unavailable
-                          </button> */}
-                        </div>
                       </div>
-                      {food.image && (
-                        <div className="mt-3">
-                          <img
-                            src={food.image}
-                            alt={food.name}
-                            className="w-full h-32 object-cover rounded-lg"
-                          />
-                        </div>
-                      )}
                     </div>
                   ))
                 ) : (
@@ -541,15 +509,27 @@ const Menus = () => {
           </div>
         ) : (
           <div>
-            <h3 className="text-2xl font-semibold text-[#4b382a] mb-4 flex items-center gap-2">
-              <ChefHat size={24} />
-              Menu Items ({menus.length})
-            </h3>
-            {loading.menuItems ? (
-              <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-8 border-l-8 border-r-8 border-[#4b382a]"></div>
-                <p className="mt-2 text-[#4b382a]">Loading menus...</p>
-              </div>
+            <div className="flex items-center gap-16 mb-4">
+              <h3 className="text-2xl font-semibold text-[#4b382a] flex items-center gap-2">
+                <ChefHat size={24} />
+                Menu Items ({menus.length})
+              </h3>
+              <button
+                onClick={() => fetchMenus(restaurantId, true)}
+                className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500"
+                title="Refresh menus"
+              >
+                <span
+                  className={`flex justify-center items-center ${
+                    menusLoading ? "animate-spin" : ""
+                  }`}
+                >
+                  <RefreshCcw size={24} color="#4b382a" />
+                </span>
+              </button>
+            </div>
+            {menusLoading ? (
+              <Loading/>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {menus
@@ -586,7 +566,7 @@ const Menus = () => {
                             </span>
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 ">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

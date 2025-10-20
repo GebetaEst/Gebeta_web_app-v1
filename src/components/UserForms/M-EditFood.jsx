@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
+import useUserStore from "../../Store/UseStore";
+import { Loading } from "../Loading/Loading";
 
 const MEditFood = ({ foodId }) => {
+  const { updateFood, foodsByMenu } = useUserStore();
     const [formData, setFormData] = useState({
         foodName: "",
         price: "",
@@ -38,9 +41,10 @@ const MEditFood = ({ foodId }) => {
                         },
                     }
                 );
+                // console.log(response)
 
                 const data = await response.json();
-
+                console.log(data)
                 if (response.ok) {
                     setFormData({
                         foodName: data.data.foodName || "",
@@ -48,7 +52,7 @@ const MEditFood = ({ foodId }) => {
                         ingredients: data.data.ingredients || "",
                         instructions: data.data.instructions || "",
                         cookingTimeMinutes: data.data.cookingTimeMinutes || "",
-                        image: "",
+                        image: data.data.imageCover || "",
                         isFeatured: data.data.isFeatured || false,
                         status: data.data.status || "Available",
                     });
@@ -121,8 +125,6 @@ const MEditFood = ({ foodId }) => {
 
             if (formData.ingredients)
                 payload.append("ingredients", formData.ingredients);
-            if (formData.instructions)
-                payload.append("instructions", formData.instructions);
             if (formData.cookingTimeMinutes)
                 payload.append(
                     "cookingTimeMinutes",
@@ -130,7 +132,7 @@ const MEditFood = ({ foodId }) => {
                 );
             if (formData.image) payload.append("imageCover", formData.image);
 
-            payload.append("isFeatured", String(formData.isFeatured));
+            // payload.append("isFeatured", String(formData.isFeatured));
             payload.append("status", formData.status);
 
             const response = await fetch(
@@ -143,21 +145,35 @@ const MEditFood = ({ foodId }) => {
                     body: payload,
                 }
             );
+            console.log(response)
 
             const data = await response.json();
 
             if (response.ok) {
-                setSuccess("Food item updated successfully!");
-                if (formData.image) {
-                    const imageUrl = URL.createObjectURL(formData.image);
-                    setImagePreview(imageUrl);
+                // Find which menu this food belongs to and update it in the store
+                let menuIdForFood = null;
+                Object.entries(foodsByMenu).forEach(([menuId, menuData]) => {
+                    if (menuData.foods.some(food => food._id === foodId)) {
+                        menuIdForFood = menuId;
+                    }
+                });
+                
+                if (menuIdForFood) {
+                    updateFood(menuIdForFood, foodId, data.data);
                 }
+                
+                setSuccess("Food item updated successfully!");
+                // if (formData.image) {
+                //     const imageUrl = URL.createObjectURL(formData.image);
+                //     setImagePreview(imageUrl);
+                // }
                 setFormData((prev) => ({ ...prev, image: "" }));
             } else {
                 setError(data.message || "Failed to update food item");
             }
         } catch (error) {
             console.error("Error updating food item:", error);
+            setSuccess('')
             setError("Error updating food item. Please try again.");
         } finally {
             setLoading(false);
@@ -165,12 +181,7 @@ const MEditFood = ({ foodId }) => {
     };
 
     if (fetchLoading) {
-        return (
-            <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-8 border-r-8  border-l-8 border-[#4b382a]"></div>
-                <p className="mt-2 text-[#4b382a]">Loading foods...</p>
-              </div>
-        );
+        return <Loading/>
     }
 
     if (error && !formData.foodName) {
@@ -185,8 +196,8 @@ const MEditFood = ({ foodId }) => {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row gap-6 w-[750px] h-[470px] mx-auto p-1">
-                <form onSubmit={handleSubmit} className="space-y-1 font-noto flex-1">
+            <div className="flex flex-col md:flex-row gap-6 mx-auto p-2 py-4">
+                <form onSubmit={handleSubmit} className="space-y-1 font-noto flex-1 p-2">
                     <div>
                         <label className="block text-sm font-medium text-[#4b382a] mb-1">
                             Food Name *
@@ -220,7 +231,7 @@ const MEditFood = ({ foodId }) => {
 
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-[#4b382a] mb-1">
-                                Cooking Time (minutes)
+                                Cooking Time (minutes)*
                             </label>
                             <input
                                 type="number"
@@ -280,36 +291,13 @@ const MEditFood = ({ foodId }) => {
                             </label>
                         </div>
 
-                        <div className="flex items-center mt-4">
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <span className="mr-3 text-sm text-[#4b382a]">
-                                    Featured
-                                </span>
-                                <input
-                                    type="checkbox"
-                                    name="isFeatured"
-                                    checked={formData.isFeatured}
-                                    onChange={handleInputChange}
-                                    className="sr-only"
-                                />
-                                <div
-                                    className={`w-11 h-6 rounded-full transition-colors duration-200 ${formData.isFeatured ? "bg-[#4b382a]" : "bg-gray-200"
-                                        }`}
-                                >
-                                    <div
-                                        className={`w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-200 ${formData.isFeatured ? "translate-x-5" : "translate-x-0"
-                                            } mt-0.5 ml-0.5`}
-                                    ></div>
-                                </div>
-
-                            </label>
-                        </div>
+                        
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-[#905618] text-white  py-2 px-4 rounded-md hover:bg-[#3d2e22] focus:outline-none focus:ring-2 focus:ring-[#4b382a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="w-full bg-[#905618] text-white  py-2 px-4 rounded-md hover:bg-[#3d2e22] focus:outline-none focus:ring-2 focus:ring-[#4b382a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors m-2"
                     >
                         {loading ? "Updating..." : "Update Food Item"}
                     </button>
@@ -324,13 +312,13 @@ const MEditFood = ({ foodId }) => {
                             <img
                                 src={imagePreview}
                                 alt="Food Preview"
-                                className="h-48 w-48 object-cover rounded-md shadow-md"
+                                className="h-48 w-48 rounded-md shadow-md object-cover"
                             />
                             
                         </div>
                     ) : (
-                        <div className="h-48 w-48 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400">
-                            No Image
+                        <div className="relative h-48 w-48 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-center text-gray-400">
+                          <span className="text-lg text-center"> Recommended image size is 1:1 (100x100)</span>
                         </div>
                     )}
                     <div>

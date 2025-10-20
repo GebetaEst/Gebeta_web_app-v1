@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import useUserStore from "../../Store/UseStore";
 import { InlineLoadingDots , Loading } from "../../components/Loading/Loading";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
-import { useOrderFetcher } from "../../services/OrderPollingService";
+import orderPollingService from "../../services/OrderPollingService";
 
 const ManagerOrders = () => {
   const [expandedCards, setExpandedCards] = useState([]); // ✅ multiple expanded cards
@@ -23,16 +23,50 @@ const ManagerOrders = () => {
     setNewOrderAlert 
   } = useUserStore();
 
-  // Use order fetcher hook to trigger fetching when component mounts
-  const { refreshOrders } = useOrderFetcher();
-
   // Trigger order fetch when user enters this page
   const ordersExist = JSON.parse(sessionStorage.getItem("user-data")).state.orders
-
   console.log(ordersExist);
+  const fetchOrders = async () => {
+    try {
+      const storeData = JSON.parse(sessionStorage.getItem("user-data"));
+      const restaurantId = storeData?.state?.restaurant?._id;
+      const token = localStorage.getItem("token");
+      if (!restaurantId || !token) {
+        throw new Error("Missing restaurantId or token");
+      }
+
+      const response = await fetch(
+        `https://gebeta-delivery1.onrender.com/api/v1/orders/restaurant/${restaurantId}/orders`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch orders");
+      }
+      const data = await response.json();
+
+      // Store orders in Zustand if used, otherwise just log
+      if (Array.isArray(data?.data)) {
+        useUserStore.getState().setOrders?.(data.data);
+      }
+      // Optionally handle new order logic similar to polling service
+    } catch (error) {
+      console.error("Error fetching orders: ", error);
+      useUserStore.getState().setOrdersError?.("Failed to fetch orders");
+    }
+  };
+
+  // console.log(ordersExist);
   useEffect(() => {
-  if(ordersExist < 0){
-    refreshOrders();}
+  if(ordersExist.length === 0){
+    orderPollingService.refreshOrders();
+    fetchOrders();
+  }
   }, []);
   // Orders are already sorted by OrderPollingService
 

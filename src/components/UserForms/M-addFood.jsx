@@ -1,6 +1,8 @@
 import { useState } from "react";
+import useUserStore from "../../Store/UseStore";
 
 const AddFood = ({ menuId }) => {
+  const { addFood } = useUserStore();
   const [formData, setFormData] = useState({
     foodName: "",
     price: "",
@@ -87,6 +89,9 @@ const AddFood = ({ menuId }) => {
       const data = await response.json();
 
       if (response.ok) {
+        // Add the new food to the store
+        addFood(menuId, data.data);
+        
         setFormData({
           foodName: "",
           price: "",
@@ -264,8 +269,9 @@ const AddFood = ({ menuId }) => {
             />
           </div>
         ) : (
-          <div className="h-48 w-48 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400">
-            No Image
+          <div className="relative h-48 w-48 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-center text-gray-400">
+           
+              <span className="text-lg text-center"> Recommended image size is 1:1 (100x100)</span>
           </div>
         )}
       </div>

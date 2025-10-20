@@ -16,37 +16,6 @@ const Loading = () => {
     </div>
   );
 };
-const CubeLoader = () => {
-  return (
-    <div className="boxes">
-      <div className="box">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-      <div className="box">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-      <div className="box">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-      <div className="box">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </div>
-  );
-};
-
 const InlineLoadingDots = () => {
   return (
     // Container for the dots. Using flex to arrange them horizontally.
@@ -69,4 +38,4 @@ const InlineLoadingDots = () => {
   );
 };
 
-export { Loading, InlineLoadingDots, CubeLoader };
+export { Loading, InlineLoadingDots };

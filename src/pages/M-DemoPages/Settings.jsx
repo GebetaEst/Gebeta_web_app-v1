@@ -2,12 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import EditRestaurantForm from "../../components/UserForms/M-EditRestaurantForm";
 import { Loading, InlineLoadingDots } from "../../components/Loading/Loading";
+import useUserStore from "../../Store/UseStore";
 
 const Settings = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [showEditForm, setShowEditForm] = useState("");
+  const { clearMenusCache } = useUserStore();
 
   const token = localStorage.getItem("token");
 
@@ -17,6 +19,9 @@ const Settings = () => {
     sessionStorage.clear(); // Clear all session storage as backup
     localStorage.removeItem("token");
     localStorage.removeItem("user-data"); // Also remove from localStorage if it exists there
+    
+    // Clear menus and foods cache
+    clearMenusCache();
     
     setMessage("Get back soon 👋");
     setTimeout(() => {
