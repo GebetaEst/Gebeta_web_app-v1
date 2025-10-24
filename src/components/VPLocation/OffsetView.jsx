@@ -14,13 +14,13 @@ export function ParallaxBackground({ backgroundImage }) {
     <div
       style={{
         height: "15vh", // Make page scrollable
-        backgroundImage: `url(src/assets/images/p.png)`,
+        // backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "contain",
         // backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed", // optional: smooth parallax effect
         backgroundPosition: `center ${offset * 0.4}px`, // Moves slower than scroll
       }}
-      className="relative"
+      className="relative bg-parallax-2"
     >
       
       {/* <h1 className="text-[#ef6836] text-5xl font-bold">

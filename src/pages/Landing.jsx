@@ -213,7 +213,7 @@ const Landing = () => {
         <li>Authentic Traditional Recipes</li>
         <li>Outstanding Customer Service</li>
       </ul>
-      </div>u
+      </div>
       <div className="h-[]">
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 

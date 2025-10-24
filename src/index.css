@@ -69,6 +69,15 @@
   background-size: cover;
   height: 100vh;
 }
+.bg-parallax-2 {
+  background-image: url("/src/assets/images/p.png");
+  background-attachment: fixed;
+  background-position: center;
+  height: 100vh;
+  
+  background-size: cover;
+  height: 100vh;
+}
 .boxes {
   --size: 32px;
   --duration: 800ms;
