@@ -91,10 +91,7 @@ const AddUserForm = () => {
       } else if (error.request) {
         // Network error
         setError("Network error. Please check your connection and try again.");
-      } else {
-        // Other error
-        setError("Failed to save photo. Please try again.");
-      }
+      } 
     } finally {
       setLoading(false); // Reset loading state
     }

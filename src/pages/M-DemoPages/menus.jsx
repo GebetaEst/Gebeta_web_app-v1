@@ -13,16 +13,16 @@ import AddFood from "../../components/UserForms/M-addFood";
 import PopupCard from "../../components/Cards/PopupCard";
 import MEditFood from "../../components/UserForms/M-EditFood";
 import useUserStore from "../../Store/UseStore";
-import { Loading , InlineLoadingDots} from "../../components/Loading/Loading";
+import { Loading, InlineLoadingDots } from "../../components/Loading/Loading";
 
 const Menus = () => {
   // Zustand store
-  const { 
-    menus, 
-    menusLoading, 
+  const {
+    menus,
+    menusLoading,
     foodsByMenu,
     foodsLoading,
-    fetchMenus, 
+    fetchMenus,
     fetchFoodsByMenu,
     updateMenu,
     addMenu: addMenuToStore
@@ -53,8 +53,8 @@ const Menus = () => {
     .restaurant?.name;
 
   // Get foods for selected menu from store
-  const menuFoods = selectedMenu && foodsByMenu[selectedMenu._id] 
-    ? foodsByMenu[selectedMenu._id].foods 
+  const menuFoods = selectedMenu && foodsByMenu[selectedMenu._id]
+    ? foodsByMenu[selectedMenu._id].foods
     : [];
 
   useEffect(() => {
@@ -418,26 +418,25 @@ const Menus = () => {
           <div>
             <div className="flex items-center gap-16 mb-4">
 
-            <h3 className="text-2xl font-semibold text-[#4b382a] mb- flex items-center gap-2">
-              <ChefHat size={24} />
-              Foods ({menuFoods.length})
-            </h3>
-            <button
-              onClick={() => setRefreshFoods(true)}
-              className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 "
-            >
-              <span
-            className={`flex justify-center items-center ${
-              foodsLoading ? "animate-spin" : ""
-            }`}
-          >
-            <RefreshCcw size={24} color="#4b382a" />
-          </span>
-            
-            </button>
+              <h3 className="text-2xl font-semibold text-[#4b382a] mb- flex items-center gap-2">
+                <ChefHat size={24} />
+                Foods ({menuFoods.length})
+              </h3>
+              <button
+                onClick={() => setRefreshFoods(true)}
+                className="bg-[#e0cda9] p-2 rounded-md transition-transform duration-500 "
+              >
+                <span
+                  className={`flex justify-center items-center ${foodsLoading ? "animate-spin" : ""
+                    }`}
+                >
+                  <RefreshCcw size={24} color="#4b382a" />
+                </span>
+
+              </button>
             </div>
             {foodsLoading ? (
-              <Loading/>
+              <Loading />
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {menuFoods.length > 0 ? (
@@ -454,7 +453,7 @@ const Menus = () => {
                     >
                       {/* Overlay for better text readability */}
                       <div className="absolute inset-0 bg-black bg-opacity-25 rounded-lg"></div>
-                      
+
                       {/* Content overlay */}
                       <div className="relative z-10 p-4 h-full flex flex-col justify-betweenx">
                         <div className="  flex justify-between items-start mb-3">
@@ -520,16 +519,15 @@ const Menus = () => {
                 title="Refresh menus"
               >
                 <span
-                  className={`flex justify-center items-center ${
-                    menusLoading ? "animate-spin" : ""
-                  }`}
+                  className={`flex justify-center items-center ${menusLoading ? "animate-spin" : ""
+                    }`}
                 >
                   <RefreshCcw size={24} color="#4b382a" />
                 </span>
               </button>
             </div>
             {menusLoading ? (
-              <Loading/>
+              <Loading />
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {menus

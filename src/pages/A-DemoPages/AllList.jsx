@@ -47,14 +47,7 @@ const AllList = () => {
                 >
                   Users
                 </button>
-                <button
-                  className={`bg-[#e0cda9]  text-sm px-3 py-2 rounded-lg hover:bg-[#daa33e]   ${
-                    list === "Delivery_Person" ? "translate-y-2 bg-[#deb770]" : ""
-                  } transition-all duration-300`}
-                  onClick={() => setList("Delivery_Person")}
-                >
-                  Delivery Person
-                </button>
+                
                 <button
                   className={`bg-[#e0cda9]  text-sm px-3 py-2 rounded-lg hover:bg-[#deaa4a] ${
                     list === "Manager" ? "translate-y-2 bg-[#deb770]" : ""
@@ -62,6 +55,14 @@ const AllList = () => {
                   onClick={() => setList("Manager")}
                 >
                   Managers
+                </button>
+                <button
+                  className={`bg-[#e0cda9]  text-sm px-3 py-2 rounded-lg hover:bg-[#daa33e]   ${
+                    list === "Delivery_Person" ? "translate-y-2 bg-[#deb770]" : ""
+                  } transition-all duration-300`}
+                  onClick={() => setList("Delivery_Person")}
+                >
+                  Delivery Person
                 </button>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import UseFetch from "../../services/get";
 import Card from "../../components/Cards/Cards";
 import { Loading , InlineLoadingDots} from "../../components/Loading/Loading";
-import { Pencil, Trash, Search, RefreshCcw } from "lucide-react";
+import { Pencil, Trash, Search, RefreshCcw, Phone } from "lucide-react";
 import ShowById from "./showById";
 import { useUserId } from "../../contexts/userIdContext";
 
@@ -59,17 +59,24 @@ const UsersList = ({ role }) => {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-
+//  console.log("eeeee", users)
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
     const userId = user._id ? user._id.toLowerCase() : '';
-    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || userId.includes(searchTerm.toLowerCase());
+    const Phone = user.phone ? user.phone.toLowerCase() : ''; // Add toLowerCase() and a check
     
-    // Filter by role if role prop is provided and not "all"
+    // Ensure searchTerm is converted to lowercase once
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    // The fix is in this line:
+    const matchesSearch = fullName.includes(lowerCaseSearchTerm) || 
+                          userId.includes(lowerCaseSearchTerm) || 
+                          Phone.includes(lowerCaseSearchTerm); // Use the lowercase search term here
+
     const matchesRole = role && role !== "all" ? user.role === role : true;
     
     return matchesSearch && matchesRole;
-  });
+});
 
   return (
     <div className="">
@@ -107,6 +114,7 @@ const UsersList = ({ role }) => {
             className="  transition-all duration-300"
             onClick={() => {
               setGetId(user._id);
+              // console.log("Selected User ID:", user._id);
             }}
           >
             <div className=" w-fit p-4 bg-white border  rounded-lg font-noto m-2 shadow-lg hover:bg-gray-50 ">

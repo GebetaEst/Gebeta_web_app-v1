@@ -18,13 +18,13 @@ const Settings = () => {
     sessionStorage.removeItem("user-data");
     sessionStorage.clear(); // Clear all session storage as backup
     localStorage.removeItem("token");
-    localStorage.removeItem("user-data"); // Also remove from localStorage if it exists there
     
     // Clear menus and foods cache
     clearMenusCache();
     
     setMessage("Get back soon 👋");
     setTimeout(() => {
+    sessionStorage.clear(); // Clear all session storage as backup
       navigate("/login");
     }, 2000);
   };

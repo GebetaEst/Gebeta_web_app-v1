@@ -42,7 +42,7 @@ const LoginForm = () => {
           body: JSON.stringify({ phone, password }),
         }
       );
-      // console.log(res)
+      console.log(res)
       const data = await res.json();
 
 

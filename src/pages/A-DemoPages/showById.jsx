@@ -15,14 +15,15 @@ const ShowById = () => {
   const { getId, setGetId } = useUserId();
 
   const { data, loading, errorMg } = UseFetch(
-    `https://gebeta-delivery1.onrender.com/api/v1/users/${getId}`,
+    `https://gebeta-delivery1.onrender.com/api/v1/users/?id=${getId}`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+      }, 
     }
   );
   console.log(data);
+  console.log("selected user id", getId);
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
