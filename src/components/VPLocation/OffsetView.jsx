@@ -14,7 +14,7 @@ export function ParallaxBackground({ backgroundImage }) {
     <div
       style={{
         height: "15vh", // Make page scrollable
-        backgroundImage: `url(${backgroundImage})`,
+        backgroundImage: `url(src/assets/images/p.png)`,
         backgroundSize: "contain",
         // backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed", // optional: smooth parallax effect
