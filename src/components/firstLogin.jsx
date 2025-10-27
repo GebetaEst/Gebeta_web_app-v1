@@ -1,5 +1,6 @@
 import PopupCard from "./Cards/PopupCard";
 import { useState } from "react";
+import useUserStore from "../Store/UseStore";
 
 
 const FirstLogin = () => {
@@ -9,6 +10,8 @@ const FirstLogin = () => {
     const [successMsg, setSuccessMsg] = useState("");
     const [SetInput, setSetInput] = useState(true);
     const [address, setAddress] = useState("");
+    const { user } = useUserStore();
+    console.log(user.firstLogin);
 
     // Get managerId from sessionStorage, handle missing/null
     let managerId = null;
@@ -64,6 +67,8 @@ const FirstLogin = () => {
                     if (res.ok && result.status === "success") {
                         setSuccessMsg("Location updated successfully!");
                         setTimeout(() => setShow(false), 1200);
+                        user.firstLogin = false;
+
                     } else {
                         setErrorMsg(result.message || "Failed to update location.");
                     }
