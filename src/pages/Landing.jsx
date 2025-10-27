@@ -215,6 +215,7 @@ const Landing = () => {
       </ul>
       </div>
       <div className="h-[]">
+        thsr
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
         </div>
