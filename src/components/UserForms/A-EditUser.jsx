@@ -4,9 +4,9 @@ import Webcam from "react-webcam";
 import { useUserId } from "../../contexts/userIdContext";
 import { Loading, InlineLoadingDots } from "../Loading/Loading";
 
-const EditUser = () => {
+const EditUser = ({ id, phone }) => {
   const navigate = useNavigate();
-  const { getId } = useUserId();
+  console.log(id, phone);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -31,7 +31,7 @@ const EditUser = () => {
     const fetchUser = async () => {
       try {
         const res = await fetch(
-          `https://gebeta-delivery1.onrender.com/api/v1/users/${getId}`,
+          `https://gebeta-delivery1.onrender.com/api/v1/users/getUser?id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -53,8 +53,8 @@ const EditUser = () => {
       }
     };
 
-    if (getId) fetchUser();
-  }, [getId]);
+    if (id) fetchUser();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -103,7 +103,7 @@ const EditUser = () => {
         }
       }
       const res = await fetch(
-        `https://gebeta-delivery1.onrender.com/api/v1/users/${getId}`,
+        `https://gebeta-delivery1.onrender.com/api/v1/users/${id}`,
         {
           method: "PATCH",
           headers: {

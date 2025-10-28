@@ -48,7 +48,7 @@ const Menus = () => {
   });
 
   const restaurantId = JSON.parse(sessionStorage.getItem("user-data")).state
-    .restaurant?._id;
+    .restaurant?.id;
   const restaurantName = JSON.parse(sessionStorage.getItem("user-data")).state
     .restaurant?.name;
 
@@ -130,6 +130,7 @@ const Menus = () => {
         menuType: menuForm.menuType.trim(),
         active: menuForm.active,
       };
+      console.log(restaurantId)
 
       const res = await fetch(
         "https://gebeta-delivery1.onrender.com/api/v1/food-menus",

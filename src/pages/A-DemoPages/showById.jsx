@@ -12,10 +12,10 @@ const ShowById = () => {
   const navigate = useNavigate();
   const [showEditForm, setShowEditForm] = useState(false);
   const [message , setMessage] = useState('Select a user');
-  const { getId, setGetId } = useUserId();
-
+  const { getId, setGetId ,phone } = useUserId();
+  console.log(getId);
   const { data, loading, errorMg } = UseFetch(
-    `https://gebeta-delivery1.onrender.com/api/v1/users/?id=${getId}`,
+    `https://gebeta-delivery1.onrender.com/api/v1/users/getUser?id=${getId}`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -105,7 +105,7 @@ const ShowById = () => {
                 </button>
                 
             </div>
-          <EditUser /> 
+          <EditUser id={data?.data?.user?._id} phone={data?.data?.user?.phone}/> 
         </PopupCard>) : null}
     </>
   );

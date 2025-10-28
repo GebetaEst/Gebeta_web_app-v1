@@ -2,9 +2,9 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const OtpVerificationForm = () => {
+const OtpVerificationForm = ({ phone, setShowOtpForm }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]); // for 6-digit OTP
-  const [phone, setPhone] = useState("");
+  // const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
@@ -34,10 +34,16 @@ const OtpVerificationForm = () => {
         setOtp(newOtp);
       }
     }
+
+    // Handle Enter key to submit
+    if (event.key === "Enter" && index === otp.length - 1) {
+      handleSubmit(event);
+    }
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // No need for e.preventDefault() since no <form>
+    e?.preventDefault?.();
 
     const code = otp.join("");
     if (code.length !== 6 || !phone || !password || !passwordConfirm) {
@@ -49,7 +55,6 @@ const OtpVerificationForm = () => {
       return;
     }
 
-
     try {
       const res = await axios.post(
         "https://gebeta-delivery1.onrender.com/api/v1/users/resetPasswordOTP",
@@ -60,6 +65,7 @@ const OtpVerificationForm = () => {
           passwordConfirm,
         }
       );
+      console.log(res.data);
       res.data.status === "success" && navigate("/login");
       
       setMessage(res.data.message || "OTP verified successfully");
@@ -91,14 +97,14 @@ const OtpVerificationForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
+    <div
       className="space-y-1 bg-cardBackground p-8 rounded-lg shadow-lg w-[370px] flex flex-col items-center gap-3 border border-gray font-noto"
     >
       <h2 className="text-xl font-bold">Reset Password</h2>
+      <h3 className="text-sm text-gray-600">Enter the 6-digit OTP sent to {phone}</h3>
 
       {/* Phone Input */}
-      <div className="w-full">
+      {/* <div className="w-full">
         <label className="block mb-1">Phone Number:</label>
         <input
           type="text"
@@ -107,7 +113,7 @@ const OtpVerificationForm = () => {
           placeholder="912345678"
           className="w-full border border-gray rounded-lg px-3 py-2"
         />
-      </div>
+      </div> */}
 
       {/* OTP */}
       <div className="flex gap-2 justify-center">
@@ -142,6 +148,11 @@ const OtpVerificationForm = () => {
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
           className="w-full border border-gray rounded-lg px-3 py-2"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSubmit(e);
+            }
+          }}
         />
       </div>
 
@@ -151,7 +162,8 @@ const OtpVerificationForm = () => {
 
       {/* Submit Button */}
       <button
-        type="submit"
+        type="button"
+        onClick={handleSubmit}
         className="bg-black text-white py-2 px-6 rounded-lg hover:opacity-90"
       >
       Reset Password
@@ -164,7 +176,7 @@ const OtpVerificationForm = () => {
       >
         Resend OTP
       </p>
-    </form>
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { CloudCog } from "lucide-react";
+import VerifyForm from "../AuthForms/VerifyForm";
 
 const InlineLoadingDots = () => <span className="inline-block text-white">. . .</span>;
 
@@ -21,6 +22,7 @@ const AddUserForm = () => {
   const [error, setError] = useState(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isPhotoSaved, setIsPhotoSaved] = useState(false);
+  const [showVerifyForm, setShowVerifyForm] = useState(false);
 
   const webcamRef = useRef(null);
 
@@ -50,7 +52,7 @@ const AddUserForm = () => {
       // Convert base64 to blob for better handling
       const response = await fetch(profilePicture);
       const blob = await response.blob();
-      
+
 
       // Create a file from the blob
       const fileName = `profile_${formData.firstName || 'user'}_${Date.now()}.png`;
@@ -71,12 +73,12 @@ const AddUserForm = () => {
       window.URL.revokeObjectURL(url);
       console.log(profilePicture);
 
-      
-      
+
+
       // Assuming the server returns the URL of the uploaded image
       const uploadedImageUrl = uploadResponse.data.imageUrl;
       console.log('File uploaded successfully:', uploadedImageUrl);
-      
+
       // Optionally update the profile picture state with the server URL
       // setProfilePicture(uploadedImageUrl);
 
@@ -91,7 +93,7 @@ const AddUserForm = () => {
       } else if (error.request) {
         // Network error
         setError("Network error. Please check your connection and try again.");
-      } 
+      }
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -114,7 +116,7 @@ const AddUserForm = () => {
       !formData.lastName ||
       !formData.phone ||
       (formData.role === "Delivery_Person" && !profilePicture) ||
-      (formData.role === "Manager" && !formData.fcnNumber) 
+      (formData.role === "Manager" && !formData.fcnNumber)
     ) {
       setError("All required fields are needed");
       return;
@@ -133,7 +135,7 @@ const AddUserForm = () => {
       // For Delivery Person, use FormData with image file
       if (formData.role === "Delivery_Person") {
         const formDataPayload = new FormData();
-        
+
         // Append all form fields
         formDataPayload.append("firstName", formData.firstName);
         formDataPayload.append("lastName", formData.lastName);
@@ -163,6 +165,8 @@ const AddUserForm = () => {
             },
           }
         );
+
+
       } else {
         // For other roles, use regular JSON payload
         const payload = {
@@ -180,10 +184,10 @@ const AddUserForm = () => {
             },
           }
         );
-      }
 
+      }
+      console.log(response.data);
       if (response.data) {
-        alert("✅ User added successfully!");
         setFormData({
           firstName: "",
           lastName: "",
@@ -195,9 +199,8 @@ const AddUserForm = () => {
           fcnNumber: "",
         });
         setProfilePicture(null);
-        // localStorage.removeItem('tempProfilePicture');
-        // localStorage.removeItem('tempProfilePictureTimestamp');
         setIsPhotoSaved(false);
+        setShowVerifyForm(true);
       }
     } catch (err) {
       console.error(err);
@@ -243,7 +246,7 @@ const AddUserForm = () => {
 
       {/* FORM */}
       <form onSubmit={handleSubmit} className="flex flex-col">
-        <div className="flex md:gap-2">
+        <div className={`flex md:gap-2 ${showVerifyForm ? "hidden" : ""}`}>
           <div>
             {/* Role Selection */}
             <div className="gap-6 mb-6">
@@ -253,11 +256,10 @@ const AddUserForm = () => {
                   <button
                     key={role.value}
                     type="button"
-                    className={`flex-1 px-4 py-3 border border-[#f0d5b9] text-sm font-medium transition-all duration-200 ${
-                      formData.role === role.value
+                    className={`flex-1 px-4 py-3 border border-[#f0d5b9] text-sm font-medium transition-all duration-200 ${formData.role === role.value
                         ? "bg-[#deb770] text-white font-semibold shadow-inner"
                         : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
+                      }`}
                     onClick={() => setFormData({ ...formData, role: role.value })}
                   >
                     {role.label}
@@ -328,7 +330,7 @@ const AddUserForm = () => {
             </div>
 
             {/* Password Fields */}
-            
+
           </div>
 
           {/* Vehicle Type - Only show for Delivery Person */}
@@ -340,11 +342,10 @@ const AddUserForm = () => {
                   <button
                     key={vehicle.value}
                     type="button"
-                    className={`flex-1 px-4 py-3 border border-[#f0d5b9] text-sm font-medium transition-all duration-200 ${
-                      formData.deliveryMethod === vehicle.value
+                    className={`flex-1 px-4 py-3 border border-[#f0d5b9] text-sm font-medium transition-all duration-200 ${formData.deliveryMethod === vehicle.value
                         ? "bg-[#deb770] text-white font-semibold shadow-inner"
                         : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
+                      }`}
                     onClick={() => setFormData({ ...formData, deliveryMethod: vehicle.value })}
                   >
                     {vehicle.label}
@@ -397,12 +398,12 @@ const AddUserForm = () => {
             </div>
           )}
         </div>
-        <div className="pt-2">
+        <div className={`pt-2 ${showVerifyForm ? "hidden" : ""}`}>
           <button
             type="submit"
-            className={`flex justify-self-end bg-[#deb770] text-white py-2 px-6 rounded-lg font-semibold text-lg shadow-lg hover:bg-[#d4a853] transition-all duration-200 ${
-              loading ? "cursor-not-allowed opacity-75" : "hover:shadow-xl"
-            }`}
+            // onClick={() => setShowVerifyForm(true)}
+            className={`flex justify-self-end bg-[#deb770] text-white py-2 px-6 rounded-lg font-semibold text-lg shadow-lg hover:bg-[#d4a853] transition-all duration-200 ${loading ? "cursor-not-allowed opacity-75" : "hover:shadow-xl"
+              }`}
             disabled={loading}
           >
             {loading ? <InlineLoadingDots /> : "Add User"}
@@ -414,6 +415,7 @@ const AddUserForm = () => {
           )}
         </div>
       </form>
+      {showVerifyForm && <VerifyForm phone={formData.phone} setShowVerifyForm={setShowVerifyForm} />}
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState, useRef } from "react";
+import { InlineLoadingDots } from "../Loading/Loading";
 
-
-const VerifyForm = () => {
+const VerifyForm = ({ phone, setShowVerifyForm }) => {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
     const inputRefs = useRef([]);
@@ -41,27 +42,36 @@ const VerifyForm = () => {
         }
 
         try {
+            setLoading(true);
             const res = await axios.post(
                 "https://gebeta-delivery1.onrender.com/api/v1/users/verifyOTP",
                 {
-                    otp: code,
+                    phone: phone,
+                    code: code,
                 }
             );
             setMessage(res.data.message || "OTP verified successfully");
             setError("");
-            navigate("/login");
+            const role = sessionStorage.getItem("user-data").state.user.role;
+            if (role !== "Admin") {
+                setTimeout(() => {
+                    navigate("/login");
+                }, 1500);
+            }
         } catch (err) {
             setError(err.response?.data?.message || "Invalid or expired OTP");
             setMessage("");
+        } finally {
+            setLoading(false);
+            // setShowVerifyForm(true);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 bg-cardBackground p-8 rounded-lg shadow-lg w-[370px] flex flex-col items-center gap-12 border min-h-[250px] border-gray font-noto">
+        <form onSubmit={handleSubmit} className="space-y-4 p-8 flex flex-col items-center gap-12 min-h-[250px]  font-noto motion-preset-fade ">
             <h2 className="text-xl font-bold">Verify OTP</h2>
             <p className="text-sm">
-                Please enter the 6-digit OTP sent to your registered phone
-                number
+                Please enter the 6-digit OTP sent to {phone || "your registered phone number"}
             </p>
             <div className="flex items-center justify-center gap-2">
                 {otp.map((item, index) => (
@@ -72,6 +82,7 @@ const VerifyForm = () => {
                         onChange={(e) => handleChange(index, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(index, e)}
                         ref={(el) => (inputRefs.current[index] = el)}
+                        maxLength={1}
                         className="w-[40px] h-[40px] bg-gray-200 rounded-lg border border-gray-300 text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 ))}
@@ -80,9 +91,10 @@ const VerifyForm = () => {
             {message && <p className="text-green-500 text-sm">{message}</p>}
             <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                className={`bg-[#deb770] text-white font-bold py-2 px-4 rounded ${loading ? "cursor-not-allowed opacity-50" : ""}`}
+                disabled={loading}
             >
-                Verify
+                {loading ? <InlineLoadingDots /> : "Verify"}
             </button>
         </form>
     );
