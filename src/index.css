@@ -60,8 +60,8 @@
   }
 }
 
-.bg-parallax {
-  background-image: url("/src/assets/images/landing.jpg");
+.bg-landing {
+  background-image: url("https://res.cloudinary.com/drinuph9d/image/upload/v1761892982/food_images/food_1761892981740_landing_2.jpg");
   background-attachment: fixed;
   background-position: center;
   height: 100vh;
@@ -69,8 +69,8 @@
   background-size: cover;
   height: 100vh;
 }
-.bg-parallax-2 {
-  background-image: url("/src/assets/images/p.png");
+.bg-telet {
+  background-image: url("https://res.cloudinary.com/drinuph9d/image/upload/v1761892217/food_images/food_1761892216821_telet.png");
   background-attachment: fixed;
   background-position: center;
   height: 100vh;

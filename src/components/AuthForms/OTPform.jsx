@@ -65,7 +65,7 @@ const OtpVerificationForm = ({ phone, setShowOtpForm }) => {
           passwordConfirm,
         }
       );
-      console.log(res.data);
+      console.log(res);
       res.data.status === "success" && navigate("/login");
       
       setMessage(res.data.message || "OTP verified successfully");

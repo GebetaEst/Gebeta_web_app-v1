@@ -18,9 +18,9 @@ export function ParallaxBackground({ backgroundImage }) {
         backgroundSize: "contain",
         // backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed", // optional: smooth parallax effect
-        backgroundPosition: `center ${offset * 0.4}px`, // Moves slower than scroll
+        backgroundPosition: ` ${offset * 0.1}px`, // Moves slower than scroll
       }}
-      className="relative bg-parallax-2"
+      className="relative bg-telet"
     >
       
       {/* <h1 className="text-[#ef6836] text-5xl font-bold">

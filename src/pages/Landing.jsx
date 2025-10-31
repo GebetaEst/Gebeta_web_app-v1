@@ -1,10 +1,9 @@
-import React, { useState ,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownToDot, Search, Star } from "lucide-react";
 import { useViewport } from "../components/VPLocation/ViewPort";
-import {ParallaxBackground} from "../components/VPLocation/OffsetView";
-
-
+import { ParallaxBackground } from "../components/VPLocation/OffsetView";
+import WaveDivider from "../components/VPLocation/WaveDivider"; // NEW: Import the WaveDivider component
 
 // This is the main Landing page component for your food delivery app.
 const Landing = () => {
@@ -21,23 +20,23 @@ const Landing = () => {
   };
   const { width, height, scrollX, scrollY } = useViewport();
   console.log(
-  //   // "width", width, 
-  //   // "height", height, 
-  //   // "scrollX", scrollX, 
+    //   // "width", width, 
+    //   // "height", height, 
+    //   // "scrollX", scrollX, 
     "scrollY", scrollY
   );
 
   return (
     // The main container with a full-screen background image and a dark overlay.
-    <div className="relative min-h-screen bg-cover font-sans text-gray-900 bg-parallax bg-no-repeat bg-center ">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/70 to-black/50 z-0" />
+    <div className="relative min-h-screen bg-cover font-sans text-gray-900 bg-landing ">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/50 z-0" />
 
       {/* Header section with branding and navigation buttons. */}
       <header >
         <nav className={`flex justify-between items-center px-6 md:px-8 md:py-1 w-full top-0 left-0  mt-0 rounded-b-3xl fixed z-50  ${scrollY >= 101.20816040039062 ? " bg-black/10 backdrop-blur-sm " : ""}`}>
 
           <Link to="/" className=" flex items-center gap-2 p-2 font-logo text-3xl md:text-2xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition-colors duration-300 transform hover:scale-105">
-            Gebeታ
+            Gebeታ <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761897257/food_images/food_1761897256388_logo.png" alt="Logo" className="w-14 h-14 object-cover rounded-l4" />
           </Link>
           <div className="flex gap-4">
             <button
@@ -101,11 +100,12 @@ const Landing = () => {
             className="animate-bounce"
           />
         </Link>
-      </div>
 
-      {/* This new section is a placeholder to show the "explore" part of the page. */}
-      <section id="explore" className={` py-20  bg-[#f4f1e9] backdrop-blur-md rounded-t-3xl h-[700px]  `}>
-      <div className="max-w-6xl mx-auto overflow-x-hidden overflow-y-hidden">
+      </div>
+      <WaveDivider />
+      {/* UPDATED: Explore section with relative positioning and WaveDivider at bottom */}
+      <section id="explore" className={`relative py-20 pb-48 bg-[#f4f1e9] backdrop-blur-lg rounded-t-xl min-h-[700px] `}> {/* ADDED: relative, pb-48 for wave height, min-h instead of fixed h */}
+        <div className="max-w-6xl mx-auto overflow-x-hidden overflow-y-hidden">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
             Featured Restaurants
           </h2>
@@ -187,12 +187,12 @@ const Landing = () => {
             </div>
           </div>
         </div>
+        {/* NEW: Add the WaveDivider at the bottom of the section */}
       </section>
-        <div className="h-[]">
+      <div className="h-[]">
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
-
-        </div>
-       {/* <div className="relative">
+      </div>
+      {/* <div className="relative">
        <img src="src/assets/images/fewa.png" alt="Parallax Background" className="hover:z-50 h-[450px] w-[450px] object-cover flex justify-end items-end absolute transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
       <h1 className="absolute transition-all lg:right-[140px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
         Owr bast restaurant 
@@ -204,32 +204,28 @@ const Landing = () => {
       </ul>
       </div> */}
       <div className="relative">
-      <img src="src/assets/images/fewa.png" alt="Parallax Background" className="hover:-z-50 h-[450px] w-[450px] object-cover flex justify-end items-end  transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
-      <h1 className=" absolute transition-all lg:left-[80px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
-        Owr bast restaurant 
-      </h1>
-      <ul className=" absolute p-5 mt-6 transition-all lg:left-[80px] lg:top-[190px] bg-gradient-to-r text-white bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
-        <li>Premium Quality Ingredients</li>
-        <li>Authentic Traditional Recipes</li>
-        <li>Outstanding Customer Service</li>
-      </ul>
+        <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761891464/food_images/food_1761891463855_Cheese_Burger.png" alt="Parallax Background" className="hover:-z-50 h-[450px] w-[450px] object-cover flex justify-end items-end  transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
+        <h1 className=" absolute transition-all lg:left-[80px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
+          Owr bast restaurant 
+        </h1>
+        <ul className=" absolute p-5 mt-6 transition-all lg:left-[80px] lg:top-[190px] bg-gradient-to-r text-white bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
+          <li>Premium Quality Ingredients</li>
+          <li>Authentic Traditional Recipes</li>
+          <li>Outstanding Customer Service</li>
+        </ul>
       </div>
       <div className="h-[]">
         thsr
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
-
-        </div>
-        
+      </div>
 
       {/* Optional: Add a simple footer */}
       {/* <footer className="relative z-10 text-center py-8 bg-gray-900 text-white">
         <p>&copy; 2025 Gebeታ. All rights reserved.</p>
       </footer> */}
-      
 
     </div>
   );
 };
 
 export default Landing;
-
