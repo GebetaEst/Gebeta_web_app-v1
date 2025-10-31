@@ -9,6 +9,17 @@ import WaveDivider from "../components/VPLocation/WaveDivider"; // NEW: Import t
 const Landing = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [rotate, setRotate] = useState(45);
+
+  useEffect(() => {
+    let currentAngle = 45;
+    const interval = setInterval(() => {
+      currentAngle += 90;
+      setRotate(currentAngle);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+  console.log(rotate);
 
   // Handles the search form submission.
   const handleSearch = (e) => {
@@ -20,8 +31,8 @@ const Landing = () => {
   };
   const { width, height, scrollX, scrollY } = useViewport();
   console.log(
-    //   // "width", width, 
-    //   // "height", height, 
+    "width", width,
+    "height", height,
     //   // "scrollX", scrollX, 
     "scrollY", scrollY
   );
@@ -144,7 +155,7 @@ const Landing = () => {
                 after:-translate-y-full after:transition-all after:duration-500 
                 after:hover:translate-y-0
                 transition-all duration-300 hover:duration-300 
-                [&_p]:delay-200 [&_p]:transition-all ${scrollY >=  399.6614074707031 ? "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
+                [&_p]:delay-200 [&_p]:transition-all ${scrollY >= 399.6614074707031 ? "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]" : "hidden"} ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}`}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+2" alt="Placeholder for Restaurant 2" className="w-full h-48 object-cover rounded-lg" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2">Spicy Spoon</h3>
@@ -169,10 +180,10 @@ const Landing = () => {
               after:hover:translate-y-0
               transition-all duration-300 hover:duration-300 
               [&_p]:delay-200 [&_p]:transition-all
-              ${scrollY >= 399.6614074707031 
+              ${scrollY >= 399.6614074707031
                 ? "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0%] motion-duration-[0.87s]/opacity"
                 : "hidden"} 
-              ${scrollY >= 402 ? "scale-105" : ""}
+              ${scrollY >= 402 ? "scale-105 transition-all duration-300" : ""}
             `}>
               <img src="https://placehold.co/600x400/FFF/000?text=Restaurant+3" alt="Placeholder for Restaurant 3" className="w-full h-48 object-cover rounded-lg" />
               <div className="p-6">
@@ -189,33 +200,73 @@ const Landing = () => {
         </div>
         {/* NEW: Add the WaveDivider at the bottom of the section */}
       </section>
-      <div className="h-[]">
+      <div className="">
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
       </div>
-      {/* <div className="relative">
-       <img src="src/assets/images/fewa.png" alt="Parallax Background" className="hover:z-50 h-[450px] w-[450px] object-cover flex justify-end items-end absolute transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
-      <h1 className="absolute transition-all lg:right-[140px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
-        Owr bast restaurant 
-      </h1>
-      <ul className="absolute p-5 mt-6 transition-all lg:right-[140px] lg:top-[190px] bg-gradient-to-r text-white bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
-        <li>Premium Quality Ingredients</li>
-        <li>Authentic Traditional Recipes</li>
-        <li>Outstanding Customer Service</li>
-      </ul>
-      </div> */}
-      <div className="relative">
-        <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761891464/food_images/food_1761891463855_Cheese_Burger.png" alt="Parallax Background" className="hover:-z-50 h-[450px] w-[450px] object-cover flex justify-end items-end  transition-all duration-500  blur-[3px] hover:blur-0 right-[100px] top-[30px]" />
-        <h1 className=" absolute transition-all lg:left-[80px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
-          Owr bast restaurant 
-        </h1>
-        <ul className=" absolute p-5 mt-6 transition-all lg:left-[80px] lg:top-[190px] bg-gradient-to-r text-white bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
-          <li>Premium Quality Ingredients</li>
-          <li>Authentic Traditional Recipes</li>
-          <li>Outstanding Customer Service</li>
-        </ul>
+      <div className={`md:w-[${width}px] overflow-hidden border-2  h-[800px] relative `}>
+
+        <div
+          className={`
+          z-0 border-separate border-2 border-black  p-5 m-5 gap-44 flex flex-col
+           origin-center transition-transform duration-700 bg-[#333]
+           absolute md:-left-[595px] md:-top-[55px]  rounded-full 
+        `}
+          style={{ transform: `rotate(${rotate}deg)` }}
+        >
+          <div className="flex justify-between gap-x-44">
+
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761891464/food_images/food_1761891463855_Cheese_Burger.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761912096/food_images/food_1761912094928_food_2.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+          </div>
+          <div className="flex justify-between gap-44">
+
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761913788/food_images/food_1761913787869_food_3.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761914500/food_images/food_1761914499863_food_3.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+          </div>
+          <div className="hidden">
+            <h1 className=" absolute transition-all lg:left-[80px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
+              Our best restaurant
+            </h1>
+            <ul className=" absolute p-5 mt-6 transition-all lg:left-[80px] lg:top-[190px] from-amber-400 via-orange-500 to-red-500 bg-gradient-to-r bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
+              <li>Premium Quality Ingredients</li>
+              <li>Authentic Traditional Recipes</li>
+              <li>Outstanding Customer Service</li>
+            </ul>
+          </div>
+        </div>
+        <div
+          className={`
+          z-0 border-separate border-2 border-black  p-5 m-5 gap-44 flex flex-col
+           origin-center transition-transform duration-700 bg-[#333]
+           absolute md:-right-[595px] md:-top-[55px]  rounded-full 
+        `}
+          style={{ transform: `rotate(${rotate}deg)` }}
+        >
+          <div className="flex justify-between gap-44">
+
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761914500/food_images/food_1761914499863_food_3.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761913788/food_images/food_1761913787869_food_3.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+          </div>
+          <div className="flex justify-between gap-x-44">
+
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761912096/food_images/food_1761912094928_food_2.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+            <img src="https://res.cloudinary.com/drinuph9d/image/upload/v1761891464/food_images/food_1761891463855_Cheese_Burger.png" alt="Parallax Background" className="h-[300px] w-[300px] object-cover transition-all duration-530 m-3" />
+          </div>
+          <div className="hidden">
+            <h1 className=" absolute transition-all lg:left-[80px] lg:top-[150px] bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent text-4xl font-bold duration-300 drop-shadow-lg" >
+              Our best restaurant
+            </h1>
+            <ul className=" absolute p-5 mt-6 transition-all lg:left-[80px] lg:top-[190px] from-amber-400 via-orange-500 to-red-500 bg-gradient-to-r bg-clip-text text-transparent text-xl font-bold duration-300 drop-shadow-lg">
+              <li>Premium Quality Ingredients</li>
+              <li>Authentic Traditional Recipes</li>
+              <li>Outstanding Customer Service</li>
+            </ul>
+          </div>
+        </div>
+
+
       </div>
-      <div className="h-[]">
-        thsr
+      <div className="">
         <ParallaxBackground backgroundImage="src/assets/images/p.png" />
       </div>
 

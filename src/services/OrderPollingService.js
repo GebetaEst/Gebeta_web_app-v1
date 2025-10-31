@@ -33,7 +33,8 @@ class OrderPollingService {
     const userRole = storeData?.state?.user?.role;
     const isLoggedIn = storeData?.state?.isLoggedIn;
     const token = localStorage.getItem("token");
-    const restaurantId = storeData?.state?.restaurant?._id;
+    const restaurantId = storeData?.state?.restaurant?.id;
+    console.log( restaurantId );
 
     // Only connect if user is manager and logged in
     if (
@@ -75,8 +76,9 @@ class OrderPollingService {
 
   getAPI_URL() {
     const store = JSON.parse(sessionStorage.getItem("user-data"));
-    const restaurantId = store?.state?.restaurant?._id;
+    const restaurantId = store?.state?.restaurant?.id;
     if (!restaurantId) {
+
       console.error("❌ No restaurantId found in sessionStorage");
       return null;
     }

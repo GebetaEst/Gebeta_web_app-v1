@@ -29,7 +29,7 @@ const ManagerOrders = () => {
   const fetchOrders = async () => {
     try {
       const storeData = JSON.parse(sessionStorage.getItem("user-data"));
-      const restaurantId = storeData?.state?.restaurant?._id;
+      const restaurantId = storeData?.state?.restaurant?.id;
       const token = localStorage.getItem("token");
       if (!restaurantId || !token) {
         throw new Error("Missing restaurantId or token");
