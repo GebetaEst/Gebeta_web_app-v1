@@ -203,7 +203,7 @@ const Landing = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
             Featured Restaurants
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8 ${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}>
             {restaurants.map((restaurant) => (
               <div key={restaurant.name} className={getCardClasses(restaurant.index)}>
                 <img
