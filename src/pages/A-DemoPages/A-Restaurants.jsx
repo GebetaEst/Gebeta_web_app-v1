@@ -42,7 +42,7 @@ const ACustomers = () => {
         const data = await res.json();
         console.log(data)
         if (res.ok && data.status === "success") {
-          setRestaurants(data.data.restaurants || []);
+          setRestaurants(data.data|| []);
         } else {
           throw new Error(data.message || "Failed to load restaurants.");
         }
@@ -287,10 +287,10 @@ const ACustomers = () => {
                 </tr>
               ) : (
                 filteredRestaurants.map((restaurant, index) => (
-                  <React.Fragment key={restaurant._id}>
+                  <React.Fragment key={restaurant.id}>
                     <tr
                       className="border-b hover:bg-[#f9f4ea] cursor-pointer"
-                      onClick={() => toggleExpand(restaurant._id)}
+                      onClick={() => toggleExpand(restaurant.id)}
                     >
                       <td className="p-3">{index + 1}</td>
                       <td className="p-3 font-medium">{restaurant.name}</td>
@@ -314,9 +314,9 @@ const ACustomers = () => {
                         <button
                           onClick={() =>
                             setStatusDropdownId(
-                              statusDropdownId === restaurant._id
+                              statusDropdownId === restaurant.id
                                 ? null
-                                : restaurant._id
+                                : restaurant.id
                             )
                           }
                           className={`px-3 py-1 rounded-full text-xs font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors w-24 mx-auto
@@ -342,11 +342,11 @@ const ACustomers = () => {
                           </svg>
                         </button>
 
-                        {statusDropdownId === restaurant._id && (
+                        {statusDropdownId === restaurant.id && (
                           <div className="absolute z-10 mt-2 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded shadow-lg w-28">
                             <button
                               onClick={() =>
-                                handleStatusChange(restaurant._id, "Active")
+                                handleStatusChange(restaurant.id, "Active")
                               }
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700"
                             >
@@ -354,7 +354,7 @@ const ACustomers = () => {
                             </button>
                             <button
                               onClick={() =>
-                                handleStatusChange(restaurant._id, "Inactive")
+                                handleStatusChange(restaurant.id, "Inactive")
                               }
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700"
                             >
@@ -364,7 +364,7 @@ const ACustomers = () => {
                         )}
                       </td>
                     </tr>
-                    {expandedRestaurant === restaurant._id && (
+                    {expandedRestaurant === restaurant.id && (
                       <tr className="bg-[#f6efe0] text-sm">
                         <td colSpan="6" className="p-4">
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-2 gap-x-4 px-4">
@@ -384,14 +384,7 @@ const ACustomers = () => {
                                   } votes)`
                                 : "N/A"}
                             </p>
-                            <p>
-                              <span className="font-semibold text-[#4b382a]">
-                                Delivery Radius:
-                              </span>{" "}
-                              {restaurant.deliveryRadiusMeters
-                                ? `${restaurant.deliveryRadiusMeters} meters`
-                                : "N/A"}
-                            </p>
+                            
                             <p>
                               <span className="font-semibold text-[#4b382a]">
                                 License:
@@ -413,34 +406,29 @@ const ACustomers = () => {
                             <div>
                               
                             <button className="bg-[#e0cda9] border-[#b88c69] border text-[#4b382a] p-2  rounded-md mt-1 cursor-pointer" 
-                            onClick={() => handelShowOrders(restaurant._id , restaurant.name)}>
+                            onClick={() => handelShowOrders(restaurant.id , restaurant.name)}>
                               See Orders details
                               </button>
                             </div>
-                            {restaurant.managerId &&
-                            typeof restaurant.managerId === "object" ? (
+                            {restaurant.manager &&
+                            typeof restaurant.manager === "object" ? (
                               <>
-                                <div className="relative group border h-fit w-fit">
+                                <div className="relative group  h-fit w-fit">
                                   <p className="cursor-pointer">
                                     <span className="font-semibold text-[#4b382a]">
                                       Manager Name:
                                     </span>{" "}
-                                    {`${restaurant.managerId.firstName || ""} ${
-                                      restaurant.managerId.lastName || ""
-                                    }`.trim() || "N/A"}
+                                    {`${restaurant.manager.name || ""} `.trim() || "N/A"}
                                   </p>
                                   
                                   {/* Hover tooltip with manager details - positioned to the right */}
                                   <div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white border border-[#e0cda9] rounded-lg shadow-lg p-3 bottom-5 left-100 ml-2 min-w-[200px]">
                                     <div className="space-y-1 text-xs">
-                                      <p><span className="font-semibold">Full Name:</span> {`${restaurant.managerId.firstName || ""} ${restaurant.managerId.lastName || ""}`.trim() || "N/A"}</p>
-                                      <p><span className="font-semibold">Email:</span> {restaurant.managerId.email || "N/A"}</p>
-                                      <p><span className="font-semibold">Phone:</span> {restaurant.managerId.phone || "N/A"}</p>
-                                      <p><span className="font-semibold">ID:</span> {restaurant.managerId._id || "N/A"}</p>
-                                      <p><span className="font-semibold">Role:</span> {restaurant.managerId.role || "N/A"}</p>
-                                      <p><span className="font-semibold">Verified:</span> {restaurant.managerId.isPhoneVerified ? <span className="text-green-500">✓</span> : <span className="text-red-500">✗</span>}</p>
-                                      {restaurant.managerId.createdAt && (
-                                        <p><span className="font-semibold">Joined:</span> {new Date(restaurant.managerId.createdAt).toLocaleDateString()}</p>
+                                      <p><span className="font-semibold">Full Name:</span> {`${restaurant.manager.name || ""}`.trim() || "N/A"}</p>
+                                      <p><span className="font-semibold">Phone:</span> {restaurant.manager.phone || "N/A"}</p>
+                                      <p><span className="font-semibold">ID:</span> {restaurant.manager.id || "N/A"}</p>
+                                      {restaurant.manager.createdAt && (
+                                        <p><span className="font-semibold">Joined:</span> {new Date(restaurant.manager.createdAt).toLocaleDateString()}</p>
                                       )}
                                     </div>
                                   </div>
@@ -461,7 +449,7 @@ const ACustomers = () => {
                               <div className="flex gap-2">
                                 <input
                                   className="w-[150px] border border-[#e0cda9] rounded-md p-1 mt-1"
-                                  value={managerInputs[restaurant._id] || ""}
+                                  value={managerInputs[restaurant.id] || ""}
                                   onChange={(e) =>
                                     handleManagerInputChange(
                                       restaurant._id,
