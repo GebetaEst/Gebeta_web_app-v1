@@ -230,7 +230,7 @@ const Landing = () => {
       <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
       {/* Rotating Images Container */}
-      <div className={`md:w-[${width}px] overflow-hidden border-2 h-[800px] relative bg-cover bg-center`}>
+      <div className="overflow-hidden border-2 h-[800px] relative bg-cover bg-center" style={{ width: width ? `${width}px` : '100%' }}>
         {/* First Rotating Wheel */}
         <div
           className="z-0 border-separate border-2 border-black p-5 m-5 gap-44 flex flex-col origin-center transition-transform duration-700 bg-[#333] absolute md:-left-[595px] md:-top-[55px] rounded-full"

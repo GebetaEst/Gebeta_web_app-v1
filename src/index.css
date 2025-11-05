@@ -170,7 +170,7 @@
   height: 100vh;
 }
 .bg-parallax-3 {
-  background-image: url("/src/assets/images/fewa.png");
+  background-image: url("/fewa.png");
   background-attachment: fixed;
   background-position: center;
   height: 100vh;
