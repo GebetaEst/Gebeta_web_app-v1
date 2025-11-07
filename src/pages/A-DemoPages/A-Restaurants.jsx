@@ -31,7 +31,7 @@ const ACustomers = () => {
       setError(null);
       try {
         const res = await fetch(
-          "https://gebeta-delivery1.onrender.com/api/v1/restaurants",
+          "https://gebeta-delivery1.onrender.com/api/v1/restaurants/admin/list",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -80,7 +80,7 @@ const ACustomers = () => {
       if (res.ok && data.status === "success") {
         setRestaurants((prev) =>
           prev.map((restaurant) =>
-            restaurant._id === id
+            restaurant.id === id
               ? { ...restaurant, active: newStatus === "Active" }
               : restaurant
           )
@@ -143,6 +143,7 @@ const ACustomers = () => {
             }),
           }
         );
+        console.log( "assign",  res)
 
         const data = await res.json();
         if (res.ok) {
@@ -321,12 +322,12 @@ const ACustomers = () => {
                           }
                           className={`px-3 py-1 rounded-full text-xs font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors w-24 mx-auto
                             ${
-                              restaurant.active
+                              restaurant.isActive
                                 ? "bg-green-100 text-green-700 hover:bg-green-200"
                                 : "bg-red-100 text-red-700 hover:bg-red-200"
                             }`}
                         >
-                          {restaurant.active ? "Active" : "Inactive"}
+                          {restaurant.isActive ? "Active" : "Inactive"}
                           <svg
                             className="w-3 h-3 ml-1"
                             fill="none"
@@ -393,9 +394,12 @@ const ACustomers = () => {
                             </p>
                             <p>
                               <span className="font-semibold text-[#4b382a]">
-                                Open Hours:
+                                Restaurant is:
                               </span>{" "}
-                              {restaurant.openHours || "N/A"}
+                              <span className={`font-semibold ${restaurant.isOpenNow ? 'text-green-600' : 'text-red-600'}`}>
+
+                              {restaurant.isOpenNow ? "Open" : "Closed"}
+                              </span>
                             </p>
                             <p>
                               <span className="font-semibold text-[#4b382a]">
@@ -452,16 +456,17 @@ const ACustomers = () => {
                                   value={managerInputs[restaurant.id] || ""}
                                   onChange={(e) =>
                                     handleManagerInputChange(
-                                      restaurant._id,
+                                      restaurant.id,
                                       e.target.value
                                     )
                                   }
+                                  onClick={(e) => e.stopPropagation()}
                                   placeholder="+251..."
                                 />
                                 <button
                                   className="bg-[#e0cda9] border-[#b88c69] border text-[#4b382a] px-2 py-1 rounded-md mt-1 cursor-pointer"
                                   onClick={() =>
-                                    handleAssignManager(restaurant._id)
+                                    handleAssignManager(restaurant.id)
                                   }
                                 >
                                   Assign

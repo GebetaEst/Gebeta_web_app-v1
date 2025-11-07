@@ -32,10 +32,10 @@ const AddFood = ({ menuId }) => {
         }
         
         // Validate file size (max 5MB)
-        // if (file.size > 5 * 1024 * 1024) {
-        //   setError("Image size should be less than 5MB");
-        //   return;
-        // }
+        if (file.size > 5 * 1024 * 1024) {
+          setError("Image size should be less than 5MB");
+          return;
+        }
         
         setError("");
         const imageUrl = URL.createObjectURL(file);

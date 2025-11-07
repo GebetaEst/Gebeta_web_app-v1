@@ -19,8 +19,8 @@ const AResOrders = ({ restaurantId , restaurantName }) => {
                         },
                     }
                 );
-
                 const data = await res.json();
+                console.log(data);
                 if (res.ok && data.status === "success") {
                     setOrders(data.data || []);
                 } else {
