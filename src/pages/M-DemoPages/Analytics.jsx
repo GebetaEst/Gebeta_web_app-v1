@@ -29,7 +29,7 @@ const Analytics = () => {
 
     // Calculate total revenue and order count (only up to 28th of each month)
     const totalRevenue = filteredOrders.reduce((sum, order) => sum + (order.totalFoodPrice || 0), 0);
-    const orderCount = filteredOrders.length;
+    const orderCount = orders.length;
 
     // Calculate unique customers (assuming each order has a customer ID or email)
     const uniqueCustomers = new Set();
@@ -205,7 +205,7 @@ const Analytics = () => {
                     />
                     <StatCard
                         title="Total Orders"
-                        value={analytics.orderCount}
+                        value={analytics.orderCount }
                         growth={analytics.orderGrowth}
                         icon={ShoppingBag}
                     />

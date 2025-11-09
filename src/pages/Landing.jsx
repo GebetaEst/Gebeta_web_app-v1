@@ -8,7 +8,7 @@ import WaveDivider from "../components/VPLocation/WaveDivider";
 // Constants for scroll thresholds (abstracted from hardcoded values)
 const NAV_SCROLL_THRESHOLD = 100;
 const CARDS_SCROLL_THRESHOLD = 400;
-const CARDS_APPEARANCE_THRESHOLD = 400;
+const CARDS_APPEARANCE_THRESHOLD = 430;
 
 // Animation configurations for restaurant cards
 const CARD_ANIMATIONS = [
@@ -39,7 +39,7 @@ const Landing = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [rotate, setRotate] = useState(45);
   const { width, height, scrollY } = useViewport(); // Removed unused scrollX
-
+  console.log(scrollY)
   // Rotation effect: Increment angle every 5 seconds
   useEffect(() => {
     let currentAngle = 45;
@@ -74,11 +74,17 @@ const Landing = () => {
       transition-all duration-300 hover:duration-300
       [&_p]:delay-200 [&_p]:transition-all
     `;
-    const conditionalClasses = scrollY >= CARDS_APPEARANCE_THRESHOLD
-      ? `motion-scale-in-[${anim.scale}] motion-translate-x-in-[${anim.translateX}%] motion-translate-y-in-[${anim.translateY}%] ${
-          anim.opacity !== undefined ? `motion-opacity-in-[${anim.opacity}]` : ""
-        } ${anim.duration ? `motion-duration-[${anim.duration}]/opacity` : ""}`
-      : "hidden";
+    const opacityClass =
+      anim.opacity !== undefined ? `motion-opacity-in-[${anim.opacity}]` : "";
+    const durationClass = anim.duration
+      ? `motion-duration-[${anim.duration}]/opacity`
+      : "";
+    const motionBase = `motion-scale-in-[${anim.scale}] motion-translate-x-in-[${anim.translateX}%] motion-translate-y-in-[${anim.translateY}%]`;
+
+    const conditionalClasses =
+      scrollY >= CARDS_APPEARANCE_THRESHOLD
+        ? `${motionBase} ${opacityClass} ${durationClass}`
+        : "hidden";
     const scaleClasses = scrollY >= CARDS_SCROLL_THRESHOLD
       ? "scale-105 transition-all duration-300"
       : "";
@@ -128,9 +134,8 @@ const Landing = () => {
 
       {/* Fixed Header */}
       <header>
-        <nav className={`flex justify-between items-center px-6 md:px-8 md:py-1 w-full top-0 left-0 mt-0 rounded-b-3xl fixed z-50 ${
-          scrollY >= NAV_SCROLL_THRESHOLD ? "bg-black/10 backdrop-blur-sm" : ""
-        }`}>
+        <nav className={`flex justify-between items-center px-6 md:px-8 md:py-1 w-full top-0 left-0 mt-0 rounded-b-3xl fixed z-50 ${scrollY >= NAV_SCROLL_THRESHOLD ? "bg-black/10 backdrop-blur-sm" : ""
+          }`}>
           <Link
             to="/"
             className="flex items-center gap-2 p-2 font-logo text-3xl md:text-2xl text-white border-2 border-white rounded-lg hover:border-yellow-400 transition-colors duration-300 transform hover:scale-105"
@@ -199,29 +204,59 @@ const Landing = () => {
 
       {/* Explore Section */}
       <section id="explore" className="relative py-20 pb-48 bg-[#f4f1e9] backdrop-blur-lg rounded-t-xl min-h-[700px]">
-        <div className="max-w-6xl mx-auto overflow-hidden">
+        <div className="max-w-6xl mx-auto overflow-hidden flex flex-col items-center justify-center">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
             Featured Restaurants
           </h2>
           <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8 ${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}>
-            {restaurants.map((restaurant) => (
-              <div key={restaurant.name} className={getCardClasses(restaurant.index)}>
-                <img
-                  src={restaurant.image}
-                  alt={`Placeholder for ${restaurant.name}`}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{restaurant.name}</h3>
-                  <p className="text-gray-600 mb-4">{restaurant.description}</p>
-                  <div className="flex items-center text-yellow-500">
-                    <Star size={16} fill="currentColor" stroke="none" />
-                    <span className="ml-1 font-semibold text-gray-800">{restaurant.rating}</span>
-                    <span className="text-sm text-gray-500 ml-2">({restaurant.reviews})</span>
-                  </div>
+            <div className={getCardClasses(0) +`${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[121%] motion-translate-y-in-[-47%]" : "opacity-0"} transition-opacity duration-300`}>
+              <img
+                src="https://placehold.co/600x400/FFF/000?text=Restaurant+1"
+                alt="Placeholder for Gourmet Grills"
+                className="w-full h-48 object-cover rounded-lg"
+              />
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">Gourmet Grills</h3>
+                <p className="text-gray-600 mb-4">A modern twist on classic comfort food.</p>
+                <div className="flex items-center text-yellow-500">
+                  <Star size={16} fill="currentColor" stroke="none" />
+                  <span className="ml-1 font-semibold text-gray-800">4.8</span>
+                  <span className="text-sm text-gray-500 ml-2">(2,500 ratings)</span>
                 </div>
               </div>
-            ))}
+            </div>
+            <div className={getCardClasses(1) +`${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[128%] motion-translate-y-in-[139%]" : "opacity-0"} transition-opacity duration-300`}>
+              <img
+                src="https://placehold.co/600x400/FFF/000?text=Restaurant+2"
+                alt="Placeholder for Spicy Spoon"
+                className="w-full h-48 object-cover rounded-lg"
+              />
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">Spicy Spoon</h3>
+                <p className="text-gray-600 mb-4">Authentic and fiery international cuisine.</p>
+                <div className="flex items-center text-yellow-500">
+                  <Star size={16} fill="currentColor" stroke="none" />
+                  <span className="ml-1 font-semibold text-gray-800">4.5</span>
+                  <span className="text-sm text-gray-500 ml-2">(1,800 ratings)</span>
+                </div>
+              </div>
+            </div>
+            <div className={getCardClasses(2) +`${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[121%] motion-translate-y-in-[-47%]" : "opacity-0"} transition-opacity duration-300`}>
+              <img
+                src="https://placehold.co/600x400/FFF/000?text=Restaurant+3"
+                alt="Placeholder for The Vegan Corner"
+                className="w-full h-48 object-cover rounded-lg"
+              />
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">The Vegan Corner</h3>
+                <p className="text-gray-600 mb-4">Fresh, plant-based meals crafted with care.</p>
+                <div className="flex items-center text-yellow-500">
+                  <Star size={16} fill="currentColor" stroke="none" />
+                  <span className="ml-1 font-semibold text-gray-800">4.9</span>
+                  <span className="text-sm text-gray-500 ml-2">(3,100 ratings)</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -230,7 +265,7 @@ const Landing = () => {
       <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
       {/* Rotating Images Container */}
-      <div className="overflow-hidden border-2 h-[800px] relative bg-cover bg-center" style={{ width: width ? `${width}px` : '100%' }}>
+      <div className={`overflow-hidden border-2 h-[800px] relative bg-cover bg-center w-${width}`} >
         {/* First Rotating Wheel */}
         <div
           className="z-0 border-separate border-2 border-black p-5 m-5 gap-44 flex flex-col origin-center transition-transform duration-700 bg-[#333] absolute md:-left-[595px] md:-top-[55px] rounded-full"

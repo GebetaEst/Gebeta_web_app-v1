@@ -160,7 +160,7 @@ class OrderPollingService {
 
   handleNewOrder(orderData) {
     const store = useUserStore.getState();
-    const latestFetchedId = orderData?.orderId || orderData?._id;
+    const latestFetchedId = orderData?.orderId;
     const currentLatestId = store.latestOrderId;
     if (latestFetchedId && latestFetchedId !== currentLatestId) {
       store.setNewOrderAlert?.(true);
