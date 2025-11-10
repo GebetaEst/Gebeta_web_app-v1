@@ -7,7 +7,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import Card from "../../components/Cards/Cards";
-import TimerToggle from "../../components/timer";
+import TimerToggle from "../../components/open-close-timer";
 import { useMemo } from "react";
 import useUserStore from "../../Store/UseStore";
 

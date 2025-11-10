@@ -66,7 +66,7 @@ const TimerToggle = () => {
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 scale-90">
       <label className="relative inline-flex items-center cursor-pointer">
         <input
           type="checkbox"

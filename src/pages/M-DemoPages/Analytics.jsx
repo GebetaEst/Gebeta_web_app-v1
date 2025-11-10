@@ -21,20 +21,21 @@ const Analytics = () => {
       };
     }
 
-    // Filter orders to only include those up to the 28th day of each month
-    const filteredOrders = orders.filter(order => {
-      const orderDate = new Date(order.createdAt || order.orderDate || Date.now());
-      const dayOfMonth = orderDate.getDate();
-      return dayOfMonth <= 28;
+    // Keep only orders with a valid date
+    const datedOrders = orders.filter(order => {
+      const rawDate = order.createdAt || order.orderDate;
+      if (!rawDate) return false;
+      const orderDate = new Date(rawDate);
+      return !isNaN(orderDate);
     });
 
-    // Calculate total revenue and order count (only up to 28th of each month)
-    const totalRevenue = filteredOrders.reduce((sum, order) => sum + (order.totalFoodPrice || 0), 0);
+    // Calculate total revenue and order count (all valid dated orders)
+    const totalRevenue = datedOrders.reduce((sum, order) => sum + (order.totalFoodPrice || 0), 0);
     const orderCount = orders.length;
 
     // Calculate unique customers (assuming each order has a customer ID or email)
     const uniqueCustomers = new Set();
-    filteredOrders.forEach(order => {
+    datedOrders.forEach(order => {
       if (order.customerId) {
         uniqueCustomers.add(order.customerId);
       } else if (order.customerEmail) {
@@ -58,43 +59,45 @@ const Analytics = () => {
       return acc;
     }, { dineIn: 0, delivery: 0, takeAway: 0 });
 
-    // Group orders by month for charts (only including orders up to 28th)
+    // Group orders by month for charts
     const monthlyStats = {};
-    const currentDate = new Date();
     
-    filteredOrders.forEach(order => {
-      const orderDate = new Date(order.createdAt || order.orderDate || Date.now());
-      const monthKey = orderDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    datedOrders.forEach(order => {
+      const rawDate = order.createdAt || order.orderDate;
+      if (!rawDate) return;
+      const orderDate = new Date(rawDate);
+      if (isNaN(orderDate)) return;
+      const monthYearKey = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
       
-      if (!monthlyStats[monthKey]) {
-        monthlyStats[monthKey] = {
+      if (!monthlyStats[monthYearKey]) {
+        monthlyStats[monthYearKey] = {
           month: orderDate.toLocaleDateString('en-US', { month: 'short' }),
           revenue: 0,
           orders: 0,
-          customers: new Set()
+          customers: new Set(),
+          sortKey: new Date(orderDate.getFullYear(), orderDate.getMonth(), 1).getTime()
         };
       }
       
-      monthlyStats[monthKey].revenue += order.totalFoodPrice || 0;
-      monthlyStats[monthKey].orders += 1;
+      monthlyStats[monthYearKey].revenue += order.totalFoodPrice || 0;
+      monthlyStats[monthYearKey].orders += 1;
       
       if (order.customerId) {
-        monthlyStats[monthKey].customers.add(order.customerId);
+        monthlyStats[monthYearKey].customers.add(order.customerId);
       } else if (order.customerEmail) {
-        monthlyStats[monthKey].customers.add(order.customerEmail);
+        monthlyStats[monthYearKey].customers.add(order.customerEmail);
       } else if (order.userId) {
-        monthlyStats[monthKey].customers.add(order.userId);
+        monthlyStats[monthYearKey].customers.add(order.userId);
       }
     });
 
-    // Convert to array and sort by date
+    // Convert to array and sort by year-month
     const monthlyData = Object.values(monthlyStats)
       .map(month => ({
         ...month,
         customers: month.customers.size
       }))
-      .sort((a, b) => new Date(a.month + " 2024") - new Date(b.month + " 2024"))
-      .slice(-6); // Get last 6 months
+      .sort((a, b) => a.sortKey - b.sortKey);
 
     // Calculate growth rates (simplified - comparing last month to previous)
     const revenueGrowth = monthlyData.length >= 2 
@@ -317,7 +320,7 @@ const Analytics = () => {
                 </div>
 
                 {/* Summary Section */}
-                <div className="mt-8 bg-white border border-[#e2b96c] rounded-xl p-6 shadow-md">
+                {/* <div className="mt-8 bg-white border border-[#e2b96c] rounded-xl p-6 shadow-md">
                     <h3 className="text-xl font-semibold text-[#4b2e2e] mb-4">Performance Summary</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div className="text-center p-4 bg-[#8B4513] bg-opacity-5 rounded-lg">
@@ -333,7 +336,7 @@ const Analytics = () => {
                             <p className="text-lg font-semibold text-[#4b2e2e]">{formatCurrency(analytics.totalRevenue / analytics.customerCount)}</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

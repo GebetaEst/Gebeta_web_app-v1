@@ -5,7 +5,7 @@ import { useUserProfile } from "../contexts/UserProfileContext";
 import bellSound from '../assets/N-Bell.mp3';
 import ProtectedRoute from "../components/ProtectedRoute";
 import { Bell } from 'lucide-react';
-import TimerToggle from "../components/timer";
+import TimerToggle from "../components/open-close-timer";
 const TopDash = () => {
   const { activeNav, setActiveNav } = useNavigation();
   const [Title, setTitle] = useState(null);

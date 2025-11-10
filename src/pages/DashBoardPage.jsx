@@ -3,7 +3,6 @@ import { useEffect , useState } from "react";
 import InfoCards from "./M-DemoPages/InfoCards";
 import RecentOrdersTB from "./M-DemoPages/RecentOrdersTB";
 import useUserStore  from "../Store/UseStore";
-import Timer from "../components/timer";
 
 
 const DashBoardPage = () => {

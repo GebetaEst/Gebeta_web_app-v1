@@ -5,6 +5,7 @@ const RecentOrdersTB = () => {
   // Get orders directly from Zustand store - no local state needed
   const { orders, ordersLoading } = useUserStore();
   const role = JSON.parse(sessionStorage.getItem("user-data"))?.state?.user?.role;
+  const restaurantName = JSON.parse(sessionStorage.getItem("user-data"))?.state?.restaurant?.name;
 
   // Filter orders to exclude delivering and completed statuses
   const filteredOrders = orders.filter(order => {
@@ -42,6 +43,7 @@ const RecentOrdersTB = () => {
     const firstItem = items[0];
     return `${firstItem.foodName}${items.length > 1 ? ` +${items.length - 1} more` : ''}`;
   };
+  console.log(recentOrders);
 
   return (
     <>
@@ -73,12 +75,13 @@ const RecentOrdersTB = () => {
                 >
                   <div className="motion-preset-bounce motion-duration-300 text-left flex gap-2 px-1">
                     <div>
-                      <div className="p-6 max-w-[50px] border-gray border rounded-full bg-cardBackground motion-preset-bounce motion-duration-300"></div>
+                      <div className="px-4 py-2 text2xl text-gray-400 pb-1 w-[50px] h-[50px] flex items-center justify-center  border-gray border rounded-full bg-cardBackground motion-preset-bounce motion-duration-300 font-gambetta font-bold">{restaurantName[0]}</div>
                     </div>
                     <div>
-                      <p>{order.userName || "Unknown User"}</p>
+                      <p className="text-sm">{getMainFoodItem(order.items)}&nbsp;x{getTotalQuantity(order.items)}</p>
                       <p className="text-xs text-placeholderText">
-                        x{getTotalQuantity(order.items)}&nbsp;{getMainFoodItem(order.items)}
+                        
+                        {order.phone || "Unknown User"}
                       </p>
                     </div>
                   </div>
