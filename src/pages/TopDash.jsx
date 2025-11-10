@@ -5,6 +5,7 @@ import { useUserProfile } from "../contexts/UserProfileContext";
 import bellSound from '../assets/N-Bell.mp3';
 import ProtectedRoute from "../components/ProtectedRoute";
 import { Bell } from 'lucide-react';
+import TimerToggle from "../components/timer";
 const TopDash = () => {
   const { activeNav, setActiveNav } = useNavigation();
   const [Title, setTitle] = useState(null);
@@ -14,6 +15,7 @@ const TopDash = () => {
   }, [activeNav]);
 
   const storedUser = JSON.parse(sessionStorage.getItem("user-data")).state.user;
+  const role = storedUser.role;
   // console.log(storedUser.role);
   return (
     <>
@@ -21,6 +23,7 @@ const TopDash = () => {
         <p className="text-3xl font-bold ">{Title}</p>
         <div className="flex items-center gap-6 pt-1 justify-center">
           <div>
+            {role === "Manager" && <TimerToggle />}
             {/* <button
               className="rounded-lg p-3 hover:bg-yellow-50 border"
               onClick={() => {
@@ -44,7 +47,7 @@ const TopDash = () => {
           </div>
         </div>
       </div>
-      {userProfile   && <UserProfile />}
+      {/* {userProfile   && <UserProfile />} */}
 {/* && storedUser?.role === "Manager"  */}
     </>
   );

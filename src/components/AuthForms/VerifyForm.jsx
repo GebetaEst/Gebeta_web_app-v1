@@ -3,13 +3,14 @@ import axios from "axios";
 import { useState, useRef } from "react";
 import { InlineLoadingDots } from "../Loading/Loading";
 
-const VerifyForm = ({ phone, setShowVerifyForm }) => {
+const VerifyForm = ({ phone }) => {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
     const inputRefs = useRef([]);
+    console.log(phone);
 
     const handleChange = (index, value) => {
         if (!/^[0-9]?$/.test(value)) return;
@@ -50,7 +51,13 @@ const VerifyForm = ({ phone, setShowVerifyForm }) => {
                     code: code,
                 }
             );
-            setMessage(res.data.message || "OTP verified successfully");
+            console.log(res.data);
+
+            if(res.data.status === "success"){
+
+                setMessage(res.data.message || "OTP verified successfully");
+
+            }
             setError("");
             const role = sessionStorage.getItem("user-data").state.user.role;
             if (role !== "Admin") {
@@ -59,7 +66,11 @@ const VerifyForm = ({ phone, setShowVerifyForm }) => {
                 }, 1500);
             }
         } catch (err) {
-            setError(err.response?.data?.message || "Invalid or expired OTP");
+            if(res.data.status !== "success"){
+                console.log(err);
+                setError(res.data.status !== "success" ? res.data.message : "Invalid or expired OTP");
+
+            }
             setMessage("");
         } finally {
             setLoading(false);

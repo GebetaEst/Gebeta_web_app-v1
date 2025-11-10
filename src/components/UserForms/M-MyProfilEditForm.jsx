@@ -65,7 +65,7 @@ const ProfileEditForm = () => {
       // Only append fields that backend expects
       form.append("firstName", formData.firstName);
       form.append("lastName", formData.lastName);
-      form.append("email", formData.email);
+      // form.append("email", formData.email);
       // form.append("phone", formData.phone);
       if (profilePicture) {
         form.append("profilePicture", profilePicture);
@@ -77,7 +77,6 @@ const ProfileEditForm = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -102,14 +101,18 @@ const ProfileEditForm = () => {
       }
     } catch (err) {
       console.error("Update error:", err);
-      alert("Something went wrong while updating the profile.");
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong while updating the profile.";
+      alert(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex">
+    <div className="flex border-t-2 border-[#deb770] pt-5">
       {/* Profile Image & Upload */}
       <div className="flex flex-col gap-2 p-2">
         <img
@@ -188,7 +191,7 @@ const ProfileEditForm = () => {
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-primary">Email</label>
           <input
             name="email"
@@ -198,7 +201,7 @@ const ProfileEditForm = () => {
             onChange={handleChange}
             required
           />
-        </div>
+        </div> */}
 
         <div className="flex gap-10">
           <div>
@@ -237,7 +240,7 @@ const ProfileEditForm = () => {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end items-center">
+        <div className="flex justify-end items-center mt-10">
           <button
             type="submit"
             className={`bg-primary text-white px-6 py-2 rounded-lg hover:bg-white hover:text-primary border border-gray transition-all duration-300 ${loading ? "cursor-not-allowed bg-white" : ""}`}

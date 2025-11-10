@@ -23,6 +23,7 @@ const AddUserForm = () => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isPhotoSaved, setIsPhotoSaved] = useState(false);
   const [showVerifyForm, setShowVerifyForm] = useState(false);
+  const [submittedPhone, setSubmittedPhone] = useState("");
 
   const webcamRef = useRef(null);
 
@@ -107,7 +108,8 @@ const AddUserForm = () => {
       setIsCameraActive(false);
     }
   };
-
+  
+  console.log(formData.phone);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -186,8 +188,9 @@ const AddUserForm = () => {
         );
 
       }
-      console.log(response.data);
+     
       if (response.data) {
+        setSubmittedPhone(sanitizedPhone);
         setFormData({
           firstName: "",
           lastName: "",
@@ -205,6 +208,7 @@ const AddUserForm = () => {
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Failed to add user");
+      console.log(err.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -415,7 +419,7 @@ const AddUserForm = () => {
           )}
         </div>
       </form>
-      {showVerifyForm && <VerifyForm phone={formData.phone} setShowVerifyForm={setShowVerifyForm} />}
+      {showVerifyForm && <VerifyForm phone={submittedPhone} />}
     </div>
   );
 };

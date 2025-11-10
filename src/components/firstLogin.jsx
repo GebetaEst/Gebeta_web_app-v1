@@ -10,7 +10,7 @@ const FirstLogin = () => {
     const [successMsg, setSuccessMsg] = useState("");
     const [SetInput, setSetInput] = useState(true);
     const [address, setAddress] = useState("");
-    const { user } = useUserStore();
+    const { user, setUserFirstLogin } = useUserStore();
     console.log(user.firstLogin);
 
     // Get managerId from sessionStorage, handle missing/null
@@ -67,7 +67,7 @@ const FirstLogin = () => {
                     if (res.ok && result.status === "success") {
                         setSuccessMsg("Location updated successfully!");
                         setTimeout(() => setShow(false), 1200);
-                        user.firstLogin = false;
+                        setUserFirstLogin(false);
 
                     } else {
                         setErrorMsg(result.message || "Failed to update location.");
@@ -92,6 +92,7 @@ const FirstLogin = () => {
     // Handler for "Remind me later"
     const handleLater = () => {
         setShow(false);
+        setUserFirstLogin(false);
     };
 
     // Don't show popup if dismissed or no managerId

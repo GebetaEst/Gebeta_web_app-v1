@@ -1,133 +1,105 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 
 const TimerToggle = () => {
-  const [status, setStatus] = useState("CLOSED");
-  const lastStatusRef = useRef(null);
-  const didMountRef = useRef(false); // track if component has already mounted
-
-  // Parse sessionStorage
-  const storedData = sessionStorage?.getItem("user-data");
-  let data = null;
-  try {
-    data = storedData ? JSON.parse(storedData) : null;
-  } catch (err) {
-    console.error("Invalid JSON in sessionStorage", err);
-  }
-
-  const role = data?.state?.user?.role;
-  const restaurantId = data?.state?.restaurant?._id;
-  const input = data?.state?.restaurant?.openHours || null;
-
-  // Parse "hh:mm AM - hh:mm PM" into Date objects
-  function parseTimeToDate(timeStr) {
-    const now = new Date();
-    const [time, period] = timeStr.trim().split(/\s+/);
-    let [hours, minutes] = time.split(":").map(Number);
-    if (!minutes) minutes = 0;
-
-    if (period.toLowerCase() === "pm" && hours !== 12) {
-      hours += 12;
-    } else if (period.toLowerCase() === "am" && hours === 12) {
-      hours = 0;
+  // Get user data from sessionStorage and extract isOpenNow status
+  const userData = useMemo(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("user-data"));
+    } catch {
+      return null;
     }
+  }, []);
+  const restaurantFromStore = userData?.state?.restaurant;
+  const [isOpen, setIsOpen] = useState(Boolean(restaurantFromStore?.isOpenNow));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
-    const d = new Date(now);
-    d.setHours(hours, minutes, 0, 0);
-    return d;
-  }
+  // Handle switch toggle and PATCH request
+  const handleToggle = async () => {
+    setLoading(true);
+    setError("");
+    setSuccessMsg("");
+    try {
+      const formData = new FormData();
+      formData.append("isOpenNow", String(!isOpen));
+      const res = await fetch(
+        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantFromStore?.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        }
+      );
+      const result = await res.json();
 
-  function isShopOpen(openHours) {
-    if (!openHours) return false;
-
-    const [openStr, closeStr] = openHours.split(" - ");
-    const openTime = parseTimeToDate(openStr);
-    let closeTime = parseTimeToDate(closeStr);
-
-    const now = new Date();
-
-    // Handle overnight (e.g. 8PM - 2AM)
-    if (closeTime <= openTime) {
-      closeTime.setDate(closeTime.getDate() + 1);
+      if (res.ok && result.status === "success") {
+        setIsOpen(prev => !prev);
+        setSuccessMsg(`Restaurant is now ${!isOpen ? "OPEN" : "CLOSED"}.`);
+        // Also update sessionStorage to persist change
+        try {
+          const existing = sessionStorage.getItem("user-data");
+          const parsed = existing ? JSON.parse(existing) : null;
+          const responseRestaurant =
+            result?.data?.restaurant ||
+            result?.data?.updatedRestaurant ||
+            result?.restaurant ||
+            null;
+          const updatedRestaurant = responseRestaurant
+            ? responseRestaurant
+            : { ...(parsed?.state?.restaurant || restaurantFromStore), isOpenNow: !isOpen };
+          const nextUserData = parsed
+            ? { ...parsed, state: { ...parsed.state, restaurant: updatedRestaurant } }
+            : { state: { restaurant: updatedRestaurant } };
+          sessionStorage.setItem("user-data", JSON.stringify(nextUserData));
+        } catch (_) { }
+      } else {
+        setError(result?.message || "Failed to update status.");
+      }
+    } catch (err) {
+      setError("Network error. Try again.");
+    } finally {
+      setLoading(false);
     }
-
-    return now >= openTime && now <= closeTime;
-  }
-
-  // Update status every 2 minutes
-  useEffect(() => {
-    if (!input) return;
-
-    function updateDisplay() {
-      const shopStatus = isShopOpen(input) ? "OPEN" : "CLOSED";
-      setStatus(shopStatus);
-    }
-
-    updateDisplay();
-    const interval = setInterval(updateDisplay, 120000);
-    return () => clearInterval(interval);
-  }, [input]);
-
-  // Update backend only after initial status check
-  // useEffect(() => {
-  //   if (!restaurantId || !input) return;
-
-  //   // skip the first render (before status is settled)
-  //   if (!didMountRef.current) {
-  //     didMountRef.current = true;
-  //     return;
-  //   }
-
-  //   if (lastStatusRef.current === status) return; // no duplicate calls
-  //   lastStatusRef.current = status;
-
-  //   async function updateOpeningStatus() {
-  //     try {
-  //       const res = await fetch(
-  //         `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantId}`,
-  //         {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //           },
-  //           body: JSON.stringify({
-  //             isOpenNow: status === "OPEN",
-  //           }),
-  //         }
-  //       );
-
-  //       if (!res.ok) {
-  //         console.error("Failed to update restaurant status");
-  //       } else {
-  //         console.log("Restaurant status updated:", status);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error updating restaurant status:", error);
-  //     }
-  //   }
-
-  //   updateOpeningStatus();
-  // }, [status, restaurantId, input]);
-
-  // Render
-  if (role === "Manager" && !input) {
-    return <p className="text-xs">Please set opening hours</p>;
-  }
-
-  if (!input) {
-    return <p className="text-xs">No opening hours available</p>;
-  }
+  };
 
   return (
-    <p
-      className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-        status === "OPEN"
-          ? "bg-green-200 text-green-800"
-          : "bg-red-200 text-red-800"
-      }`}
-    >
-      {status}
-    </p>
+    <div className="flex items-center gap-3">
+      <label className="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          className="sr-only"
+          checked={isOpen}
+          onChange={handleToggle}
+          disabled={loading}
+        />
+        <div
+          className={`relative w-20 h-8 rounded-full transition-colors duration-200 border-2 ${isOpen ? "bg-green-500 border-green-500" : "bg-gray-300 border-red-"
+            }`}
+        >
+          {/* Text inside the switch */}
+          <span
+            className={`absolute top-1/2 transform -translate-y-1/2 text-[10px] font-semibold tracking-wide transition-all duration-200 ${isOpen
+                ? "left-2 text-white" // Move left when open
+                : "right-2 text-gray-700" // Move right when closed
+              }`}
+          >
+            {isOpen ? "OPEN" : "CLOSED"}
+          </span>
+
+          {/* Knob */}
+          <div
+            className={`absolute top-[3px] left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-200 ${isOpen ? "translate-x-12" : "translate-x-0 bg-red-300"
+              }`}
+          ></div>
+        </div>
+      </label>
+
+      
+    </div>
+
   );
 };
 

@@ -36,6 +36,12 @@ const useUserStore = create(
       setUser: (userData) => set({ user: userData, isLoggedIn: !!userData }),
       clearUser: () => set({ user: null, isLoggedIn: false }),
 
+      // Update only the firstLogin flag inside the user object
+      setUserFirstLogin: (firstLogin) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, firstLogin } : state.user,
+        })),
+
       setRestaurant: (restaurantData) => set({ restaurant: restaurantData }),
       clearRestaurant: () => set({ restaurant: null }),
 

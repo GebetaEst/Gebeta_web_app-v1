@@ -130,13 +130,11 @@ const UsersList = ({ role }) => {
                       alt=""
                     />
                   </div>
-                  <div className="flex flex-col w-[150px]">
+                  <div className="flex flex-col w-[150px] gap-2">
                     <h2 className="text-md font-semibold ">
                       {user.firstName || "Unnamed"} {user.lastName || "Unnamed"}
                     </h2>
-                    <p className="text-[10px] pl-1">{user.phone || "N/A"}</p>
-                    <p className="text-[10px] pl-1">{user.email || "N/A"}</p>
-
+                    <p className="text-[10px] pl-1 text-md">{user.phone || "N/A"}</p>
                   </div>
                 <div className="flex flex-col items-start justify-end ">
                 <p className="text-xs">

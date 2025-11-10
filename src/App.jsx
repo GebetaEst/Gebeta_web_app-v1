@@ -1,5 +1,5 @@
 // App.jsx
-import { useEffect } from "react";
+import { useEffect , useState} from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -21,12 +21,16 @@ function App() {
   const userRole = user?.role;
   const firstLogin = user?.firstLogin;
   // console.log(firstLogin);
- 
+  const [showFirstLogin, setShowFirstLogin] = useState(false);
+
+  setTimeout(() => {
+    setShowFirstLogin(true);
+  }, 250000);
   useOrderFetcher();
 
   return (
     <>
-    {userRole === "Manager" && firstLogin === true &&  <FirstLogin />}
+    {userRole === "Manager" && firstLogin === true && showFirstLogin && <FirstLogin />}
       {/* <FirstLogin /> */}
       <GlobalNotifications />
       <Router>

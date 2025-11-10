@@ -1,27 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { MapPinCheckInside } from "lucide-react";
 import useUserStore from "../../Store/UseStore";
 import { Loading , InlineLoadingDots } from "../Loading/Loading";
 
 const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
-  const { restaurant: restaurantFromStore, setRestaurant } = useUserStore();
+  const {  setRestaurant } = useUserStore();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMSG, setErrorMSG] = useState(null);
   
+  const userData = useMemo(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("user-data"));
+    } catch {
+      return null;
+    }
+  }, []);
+  const restaurantFromStore = userData?.state?.restaurant;
+
   const [form, setForm] = useState({
     // name: "",
-    cuisineTypes: "",
+    // cuisineTypes: "",
     description: "",
-    openHours: "",
-    deliveryRadiusMeters: 0,
+    // openHours: "",
+    // deliveryRadiusMeters: 0,
     isDeliveryAvailable: false,
     isOpenNow: false,
     imageCover: null,
     location: {
       address: "",
       type: "Point",
-      coordinates: [], // [lng, lat]
+      // coordinates: [], // [lng, lat]
     },
   });
 
@@ -30,16 +39,16 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
     if (restaurantFromStore) {
       setForm({
         // name: restaurantFromStore.name || "",
-        cuisineTypes: restaurantFromStore.cuisineTypes?.join(", ") || "",
+        // cuisineTypes: restaurantFromStore.cuisineTypes?.join(", ") || "",
         description: restaurantFromStore.description || "",
-        openHours: restaurantFromStore.openHours || "",
-        deliveryRadiusMeters: restaurantFromStore.deliveryRadiusMeters || 0,
+        // openHours: restaurantFromStore.openHours || "",
+        // deliveryRadiusMeters: restaurantFromStore.deliveryRadiusMeters || 0,
         isDeliveryAvailable: !!restaurantFromStore.isDeliveryAvailable,
         isOpenNow: !!restaurantFromStore.isOpenNow,
         location: {
           address: restaurantFromStore.location?.address || "",
           type: "Point",
-          coordinates: restaurantFromStore.location?.coordinates || [],
+          // coordinates: restaurantFromStore.location?.coordinates || [],
         },
         imageCover: null, // can't pre-fill files
       });
@@ -71,45 +80,21 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
-    formData.append("openHours", form.openHours);
-    formData.append("deliveryRadiusMeters", Number(form.deliveryRadiusMeters)); // Convert to number
-    formData.append("isDeliveryAvailable", form.isDeliveryAvailable);
-    formData.append("isOpenNow", form.isOpenNow);
-    const cuisineTypesArray = form.cuisineTypes
-      .split(",")
-      .map(type => type.trim())
-      .filter(type => type);
-    
-    // Clear existing cuisineTypes if any
-    formData.delete("cuisineTypes");
-    // Append each cuisine type separately
-    cuisineTypesArray.forEach(type => {
-      formData.append("cuisineTypes", type);
-    });
-    // Append location data
     formData.append("description", form.description);
-    // formData.append("name", form.name);
-    formData.append("location[address]", form.location.address);
-    formData.append("location[type]", "Point");
-    // location coordinates
-    // if (form.location.coordinates.length === 2) {
-    //   formData.append("location[coordinates][0]", form.location.coordinates[0]);
-    //   formData.append("location[coordinates][1]", form.location.coordinates[1]);
-    // }
-  
-    // Properly format cuisine types as array
-    
-  
+    formData.append("isDeliveryAvailable", String(form.isDeliveryAvailable));
+    formData.append("isOpenNow", String(form.isOpenNow));
+    formData.append("address", form.location.address);
+
     if (form.imageCover) {
       formData.append("image", form.imageCover);
     }
-  
+
     try {
-      setLoading(true); 
+      setLoading(true);
       const res = await fetch(
-        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantFromStore._id}`,
+        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantFromStore?.id}`,
         {
           method: "PATCH",
           headers: {
@@ -118,24 +103,36 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
           body: formData,
         }
       );
-  
-      // console.log("Form data:", Object.fromEntries(formData.entries())); // Debug log
-  
+
       const result = await res.json();
+      console.log(result);
       if (res.ok && result.status === "success") {
-          setMessage("Restaurant updated successfully!");
-        const updatedRestaurant = result.data.restaurant;
+        setErrorMSG("");
+        setMessage("Restaurant updated successfully!");
+        const updatedRestaurant = result.data;
         setRestaurant(updatedRestaurant);
+        // Persist updated restaurant into sessionStorage under user-data.state.restaurant
+        try {
+          const existing = sessionStorage.getItem("user-data");
+          const parsed = existing ? JSON.parse(existing) : null;
+          const nextUserData = parsed
+            ? { ...parsed, state: { ...parsed.state, restaurant: updatedRestaurant } }
+            : { state: { restaurant: updatedRestaurant } };
+          sessionStorage.setItem("user-data", JSON.stringify(nextUserData));
+        } catch (_) {
+          // Ignore sessionStorage write errors
+        }
         onSaveSuccess && onSaveSuccess(updatedRestaurant);
       } else {
-        throw new Error(result.message || "Failed to update restaurant.");
-        setErrorMSG("Failed to update restaurant. try again!");
+        setMessage("");
+        setErrorMSG(result?.message || "Failed to update restaurant. Try again.");
       }
     } catch (err) {
-      console.error("Update error:", err);
-      setErrorMSG("Failed to update restaurant. try again");
+      setMessage("");
+      setErrorMSG("Failed to update restaurant. Try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGeolocation = () => {
@@ -311,7 +308,7 @@ const EditRestaurantForm = ({ onSaveSuccess, onCancel }) => {
                   className="border rounded-lg w-[200px] h-[200px] object-cover shadow-md"
                 />
               </div>
-              <div className="flex flex items-center w-fit h-fit space-y-2 sm:justify-around gap-2 mt-2 p-2 bg-[#f9f4ea] rounded-lg border border-[#e0cda9]">
+              <div className="flex items-center w-fit h-fit space-y-2 sm:justify-around gap-2 mt-2 p-2 bg-[#f9f4ea] rounded-lg border border-[#e0cda9]">
                 <label htmlFor="isOpenNow" className="flex flex-col items-center gap-3 text-[#4b382a] cursor-pointer">
                   <div
                     className="relative inline-block w-12 h-6 rounded-full transition-colors duration-200 ease-in-out mt-2"

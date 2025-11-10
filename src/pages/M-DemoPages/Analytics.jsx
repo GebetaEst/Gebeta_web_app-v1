@@ -16,6 +16,7 @@ const Analytics = () => {
         revenueGrowth: 0,
         orderGrowth: 0,
         customerGrowth: 0,
+        orderTypeCounts: { dineIn: 0, delivery: 0, takeAway: 0 },
         monthlyData: []
       };
     }
@@ -43,6 +44,19 @@ const Analytics = () => {
       }
     });
     const customerCount = uniqueCustomers.size || orderCount; // Fallback to order count if no customer IDs
+
+    // Count orders by type (dine-in, delivery, take away)
+    const orderTypeCounts = orders.reduce((acc, order) => {
+      const type = String(order.orderType || order.type || '').toLowerCase();
+      if (type.includes('dine')) {
+        acc.dineIn += 1;
+      } else if (type.includes('deliver')) {
+        acc.delivery += 1;
+      } else if (type.includes('take')) {
+        acc.takeAway += 1;
+      }
+      return acc;
+    }, { dineIn: 0, delivery: 0, takeAway: 0 });
 
     // Group orders by month for charts (only including orders up to 28th)
     const monthlyStats = {};
@@ -102,6 +116,7 @@ const Analytics = () => {
       revenueGrowth: Math.round(revenueGrowth * 10) / 10,
       orderGrowth: Math.round(orderGrowth * 10) / 10,
       customerGrowth: Math.round(customerGrowth * 10) / 10,
+      orderTypeCounts,
       monthlyData
     };
   };
@@ -145,6 +160,35 @@ const Analytics = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-[#4b2e2e] mb-1">{displayValue}</h3>
                 <p className="text-[#5f4637] text-sm">{title}</p>
+            </div>
+        );
+    };
+
+    const OrdersByTypeCard = ({ counts }) => {
+        const totalByType = counts.dineIn + counts.delivery + counts.takeAway;
+        return (
+            <div className="bg-white border border-[#e2b96c] rounded-2xl p-7 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="p-4 bg-[#8B4513]/10 rounded-xl flex items-center justify-center">
+                        <ShoppingBag className="w-7 h-7 text-[#8B4513]" />
+                    </div>
+                </div>
+                {/* <h3 className="text-3xl font-extrabold text-[#342211] mb-0.5 tracking-tight">{totalByType.toLocaleString()}</h3> */}
+                {/* <p className="text-[#85644b] text-[15px] mb-4 font-medium">Orders by Type</p> */}
+                <div className="mt-2 grid grid-cols-3 gap-3 text-center">
+                  <div className="flex flex-col items-center">
+                    <span className="text-[13px] text-[#927556] font-semibold mb-1">Dine-in</span>
+                    <span className="text-xl font-bold text-[#5a3620]">{counts.dineIn}</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[13px] text-[#927556] font-semibold mb-1">Delivery</span>
+                    <span className="text-xl font-bold text-[#5a3620]">{counts.delivery}</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[13px] text-[#927556] font-semibold mb-1">Take-away</span>
+                    <span className="text-xl font-bold text-[#5a3620]">{counts.takeAway}</span>
+                  </div>
+                </div>
             </div>
         );
     };
@@ -209,12 +253,7 @@ const Analytics = () => {
                         growth={analytics.orderGrowth}
                         icon={ShoppingBag}
                     />
-                    <StatCard
-                        title="Total Customers"
-                        value={analytics.customerCount}
-                        growth={analytics.customerGrowth}
-                        icon={Users}
-                    />
+                    <OrdersByTypeCard counts={analytics.orderTypeCounts} />
                 </div>
 
                 {/* Charts Section */}
