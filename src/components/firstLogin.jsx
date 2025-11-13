@@ -1,5 +1,5 @@
 import PopupCard from "./Cards/PopupCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useUserStore from "../Store/UseStore";
 
 
@@ -11,18 +11,19 @@ const FirstLogin = () => {
     const [SetInput, setSetInput] = useState(true);
     const [address, setAddress] = useState("");
     const { user, setUserFirstLogin } = useUserStore();
-    console.log(user.firstLogin);
+    // console.log(user?.firstLogin);
 
     // Get managerId from sessionStorage, handle missing/null
     let managerId = null;
     try {
         const userData = JSON.parse(sessionStorage.getItem("user-data"));
-        managerId = userData?.state?.restaurant?._id;
+        managerId = userData?.state.restaurant?.id
+        // console.log(userData?.state.restaurant?.id);
     } catch (e) {
         managerId = null;
     }
 
-    console.log(managerId);
+    // console.log(managerId);
 
     // Handler for "Set" button
     const handleSetLocation = () => {
@@ -84,10 +85,15 @@ const FirstLogin = () => {
             { enableHighAccuracy: true }
         );
     };
+    // setUserFirstLogin(false);    
 
-    setTimeout(() => {
-        setShow(true);
-    }, 250000);
+
+    useEffect(() => {
+        const id = setTimeout(() => {
+            setShow(true);
+        }, 250000);
+        return () => clearTimeout(id);
+    }, []);
 
     // Handler for "Remind me later"
     const handleLater = () => {

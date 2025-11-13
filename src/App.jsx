@@ -20,22 +20,24 @@ function App() {
   const { user } = useUserStore();
   const userRole = user?.role;
   const firstLogin = user?.firstLogin;
-  // console.log(firstLogin);
   const [showFirstLogin, setShowFirstLogin] = useState(false);
-
-  setTimeout(() => {
-    setShowFirstLogin(true);
-  }, 250000);
+  
+    console.log(userRole, firstLogin);
+  // setInterval(() => {
+  //   // setShowFirstLogin(true);
+  // }, 500000);
   useOrderFetcher();
 
   return (
     <>
-    {userRole === "Manager" && firstLogin === true && showFirstLogin && <FirstLogin />}
+    {userRole === "Manager" && firstLogin === true && <FirstLogin />}
       {/* <FirstLogin /> */}
       <GlobalNotifications />
       <Router>
         <Routes>
+
           <Route path="/" element={<Landing />} />
+          <Route path="/firstLogin" element={<FirstLogin />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPassPage />} />

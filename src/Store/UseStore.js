@@ -41,7 +41,7 @@ const useUserStore = create(
         set((state) => ({
           user: state.user ? { ...state.user, firstLogin } : state.user,
         })),
-
+          
       setRestaurant: (restaurantData) => set({ restaurant: restaurantData }),
       clearRestaurant: () => set({ restaurant: null }),
 

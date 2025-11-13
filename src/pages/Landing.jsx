@@ -60,7 +60,7 @@ const Landing = () => {
 
   // Generate animation classes for cards
   const getCardClasses = (index) => {
-    const anim = CARD_ANIMATIONS[index];
+    // Use static, pre-defined motion classes so Tailwind can statically extract them
     const baseClasses = `
       m-2 group px-10 py-5
       bg-white/10 rounded-lg
@@ -74,20 +74,29 @@ const Landing = () => {
       transition-all duration-300 hover:duration-300
       [&_p]:delay-200 [&_p]:transition-all
     `;
-    const opacityClass =
-      anim.opacity !== undefined ? `motion-opacity-in-[${anim.opacity}]` : "";
-    const durationClass = anim.duration
-      ? `motion-duration-[${anim.duration}]/opacity`
-      : "";
-    const motionBase = `motion-scale-in-[${anim.scale}] motion-translate-x-in-[${anim.translateX}%] motion-translate-y-in-[${anim.translateY}%]`;
+
+    // Motion classes per card index (no dynamic template values)
+    const motionClassesByIndex = [
+      // index 0 -> scale 0.37, x -69%, y -57%, opacity 0, duration 0.87s
+      "motion-scale-in-[0.37] motion-translate-x-in-[-69%] motion-translate-y-in-[-57%] motion-opacity-in-[0] motion-duration-[0.87s]/opacity",
+      // index 1 -> scale 0.29, x 0%, y -36%
+      "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]",
+      // index 2 -> scale 0.37, x 69%, y -55%, opacity 0, duration 0.87s
+      "motion-scale-in-[0.37] motion-translate-x-in-[69%] motion-translate-y-in-[-55%] motion-opacity-in-[0] motion-duration-[0.87s]/opacity",
+    ];
+
+    const motionBase =
+      motionClassesByIndex[index] ??
+      "motion-scale-in-[0.29] motion-translate-x-in-[0%] motion-translate-y-in-[-36%]";
 
     const conditionalClasses =
-      scrollY >= CARDS_APPEARANCE_THRESHOLD
-        ? `${motionBase} ${opacityClass} ${durationClass}`
-        : "hidden";
-    const scaleClasses = scrollY >= CARDS_SCROLL_THRESHOLD
-      ? "scale-105 transition-all duration-300"
-      : "";
+      scrollY >= CARDS_APPEARANCE_THRESHOLD ? `${motionBase}` : "hidden";
+
+    const scaleClasses =
+      scrollY >= CARDS_SCROLL_THRESHOLD
+        ? "scale-105 transition-all duration-300"
+        : "";
+
     return `${baseClasses} ${conditionalClasses} ${scaleClasses}`.trim();
   };
 
@@ -203,13 +212,13 @@ const Landing = () => {
       <WaveDivider />
 
       {/* Explore Section */}
-      <section id="explore" className="relative py-20 pb-48 bg-[#f4f1e9] backdrop-blur-lg rounded-t-xl min-h-[700px]">
-        <div className="max-w-6xl mx-auto overflow-hidden flex flex-col items-center justify-center">
+      <section id="explore" className="relative py-20 pb-48 bg-[#f4f1e9] backdrop-blur-lg rounded-t-xl min-h-[700px] ">
+        <div className="max-w-6xl mx-auto overflow-hidden flex flex-col items-center justify-center ">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
             Featured Restaurants
           </h2>
           <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8 ${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}>
-            <div className={getCardClasses(0) +`${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[121%] motion-translate-y-in-[-47%]" : "opacity-0"} transition-opacity duration-300`}>
+            <div className={getCardClasses(0) + `${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[121%] motion-translate-y-in-[-47%]" : "opacity-0"} transition-opacity duration-300`}>
               <img
                 src="https://placehold.co/600x400/FFF/000?text=Restaurant+1"
                 alt="Placeholder for Gourmet Grills"
@@ -225,7 +234,7 @@ const Landing = () => {
                 </div>
               </div>
             </div>
-            <div className={getCardClasses(1) +`${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[128%] motion-translate-y-in-[139%]" : "opacity-0"} transition-opacity duration-300`}>
+            <div className={getCardClasses(1) + `${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[128%] motion-translate-y-in-[139%]" : "opacity-0"} transition-opacity duration-300`}>
               <img
                 src="https://placehold.co/600x400/FFF/000?text=Restaurant+2"
                 alt="Placeholder for Spicy Spoon"
@@ -241,7 +250,7 @@ const Landing = () => {
                 </div>
               </div>
             </div>
-            <div className={getCardClasses(2) +`${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[121%] motion-translate-y-in-[-47%]" : "opacity-0"} transition-opacity duration-300`}>
+            <div className={getCardClasses(2) + `${scrollY >= CARDS_APPEARANCE_THRESHOLD ? "motion-translate-x-in-[121%] motion-translate-y-in-[-47%]" : "opacity-0"} transition-opacity duration-300`}>
               <img
                 src="https://placehold.co/600x400/FFF/000?text=Restaurant+3"
                 alt="Placeholder for The Vegan Corner"
@@ -265,7 +274,7 @@ const Landing = () => {
       <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
       {/* Rotating Images Container */}
-      <div className={`overflow-hidden border-2 h-[800px] relative bg-cover bg-center w-${width}`} >
+      <div className={`overflow-hidden border-2 h-[800px] relative bg-cover bg-center hidden md:block w-${width}`} >
         {/* First Rotating Wheel */}
         <div
           className="z-0 border-separate border-2 border-black p-5 m-5 gap-44 flex flex-col origin-center transition-transform duration-700 bg-[#333] absolute md:-left-[595px] md:-top-[55px] rounded-full"
@@ -330,7 +339,181 @@ const Landing = () => {
       </div>
       <ParallaxBackground backgroundImage="src/assets/images/p.png" />
 
-      {/* Duplicate Parallax removed; only one needed */}
+      {/* About / Why Gebeታ Section */}
+      <section id="about" className="relative py-16 bg-[#f4f1e9] overflow-hidden">
+        {/* Decorative gradient blobs */}
+        <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-[#f4f1e9] to-[#f8f6f0] blur-3xl opacity-70" />
+        <div className="pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 rounded-full bg-gradient-to-br from-[#f1d59b] to-[#e0cda9] blur-3xl opacity-60" />
+
+        <div className="relative max-w-6xl mx-auto px-6 md:px-8">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-extrabold">
+              <span className="bg-gradient-to-r from-[#905618] via-[#b8691e] to-[#905618] bg-clip-text text-transparent">
+                Why order with Gebeታ?
+              </span>
+            </h2>
+            <p className="mt-4 text-[#6b5b4b] text-lg leading-relaxed">
+              From the first tap to the last bite, we make food discovery simple and delightful.
+              Explore top-rated spots, search your cravings, and reorder your favorites in seconds.
+            </p>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#3d2e22]/90 px-5 py-2 text-white text-sm shadow-md">
+              Curated picks daily
+              <span className="inline-block h-2 w-2 rounded-full bg-[#2aa541]" />
+              <span className="text-white/80">Fast & easy</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            {/* Card 1 */}
+            <div className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-[#e0cda9] to-[#f1d59b] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white rounded-2xl p-6 h-full">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#905618] to-[#b8691e] flex items-center justify-center text-white shadow-md">
+                    <Search size={20} />
+                  </div>
+                  <h3 className="font-semibold text-lg text-[#3d2e22]">Search your cravings</h3>
+                </div>
+                <p className="mt-3 text-[#6b5b4b]">
+                  Find dishes, cuisines, or restaurants near you with a quick search.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-[#e0cda9] to-[#f1d59b] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white rounded-2xl p-6 h-full">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#905618] to-[#b8691e] flex items-center justify-center text-white shadow-md">
+                    <Star size={20} />
+                  </div>
+                  <h3 className="font-semibold text-lg text-[#3d2e22]">Top-rated picks</h3>
+                </div>
+                <p className="mt-3 text-[#6b5b4b]">
+                  Browse the community’s favorites and discover trending restaurants.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-[#e0cda9] to-[#f1d59b] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white rounded-2xl p-6 h-full">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#905618] to-[#b8691e] flex items-center justify-center text-white shadow-md">
+                    <ArrowDownToDot size={20} />
+                  </div>
+                  <h3 className="font-semibold text-lg text-[#3d2e22]">Tap. Eat. Repeat.</h3>
+                </div>
+                <p className="mt-3 text-[#6b5b4b]">
+                  Reorder your favorites effortlessly and keep meals as easy as a tap.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 flex justify-center">
+            <Link
+              to="/restaurants"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#905618] to-[#b8691e] px-6 py-3 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+            >
+              Explore Restaurants
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#1b1b1b] text-gray-300">
+        {/* Accent bar */}
+        <div className="h-[2px] w-full bg-gradient-to-r from-[#905618] via-[#b8691e] to-[#905618] opacity-60" />
+
+        <div className="max-w-6xl mx-auto px-6 md:px-8 py-12">
+          {/* Newsletter / CTA */}
+          <div className="mb-10 rounded-2xl p-[1px] bg-gradient-to-r from-[#3d2e22] to-transparent">
+            <div className="rounded-2xl bg-[#262626] p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <h4 className="text-white text-lg font-semibold">Stay in the loop</h4>
+                <p className="text-sm text-gray-400 mt-1">Get fresh picks and occasional treats in your inbox.</p>
+              </div>
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                className="w-full md:w-auto flex gap-2"
+              >
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full md:w-72 rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-2 text-sm text-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#b8691e]"
+                />
+                <button
+                  type="submit"
+                  className="rounded-lg bg-gradient-to-r from-[#905618] to-[#b8691e] px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <Link to="/" className="flex items-center gap-2">
+                <img
+                  src="https://res.cloudinary.com/drinuph9d/image/upload/v1761897257/food_images/food_1761897256388_logo.png"
+                  alt="Gebeታ logo"
+                  className="w-10 h-10 object-cover rounded"
+                />
+                <span className="font-logo text-2xl text-white">Gebeታ</span>
+              </Link>
+              <p className="mt-4 text-sm text-gray-400">
+                Discover local flavors, top-rated restaurants, and quick reorders — all in one place.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-3">Explore</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="#explore" className="hover:text-white transition-colors">Featured Restaurants</a>
+                </li>
+                <li>
+                  <Link to="/restaurants" className="hover:text-white transition-colors">All Restaurants</Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-3">Company</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="#about" className="hover:text-white transition-colors">About</a>
+                </li>
+                <li>
+                  <Link to="/login" className="hover:text-white transition-colors">Partner Login</Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-3">Get Started</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <button
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                    className="hover:text-white transition-colors"
+                  >
+                    Back to top
+                  </button>
+                </li>
+                <li>
+                  <Link to="/login" className="hover:text-white transition-colors">Login</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-white/10 py-4 text-center text-xs text-gray-400">
+          © {new Date().getFullYear()} Gebeታ. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 };

@@ -106,7 +106,7 @@ const InfoCards = () => {
       orderTypeCounts,
     };
   }, [orders]);
-  const openHours =JSON.parse(sessionStorage.getItem("user-data"))?.state?.restaurant.isOpenNow;
+  const openHours =JSON.parse(sessionStorage.getItem("user-data"))?.state?.restaurant?.isOpenNow;
   const CardInfo = [
     {
       label: "Total Revenue",
