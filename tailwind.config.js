@@ -4,10 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        gambetta: ["Gambetta", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
         noto: ["Noto Sans", "sans-serif"],
-        sans: ["Gambetta", "system-ui", "sans-serif"], // Set as default sans font
+        sans: ["Poppins", "system-ui", "sans-serif"], // Set as default sans font
       },
       colors: {
         primary: "#000000",

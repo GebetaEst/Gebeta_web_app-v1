@@ -75,7 +75,7 @@ const RecentOrdersTB = () => {
                 >
                   <div className="motion-preset-bounce motion-duration-300 text-left flex gap-2 px-1">
                     <div>
-                      <div className="px-4 py-2 text2xl text-gray-400 pb-1 w-[50px] h-[50px] flex items-center justify-center  border-gray border rounded-full bg-cardBackground motion-preset-bounce motion-duration-300 font-gambetta font-bold">{restaurantName[0]}</div>
+                      <div className="px-4 py-2 text2xl text-gray-400 pb-1 w-[50px] h-[50px] flex items-center justify-center  border-gray border rounded-full bg-cardBackground motion-preset-bounce motion-duration-300 font-poppins font-bold">{restaurantName[0]}</div>
                     </div>
                     <div>
                       <p className="text-sm">{getMainFoodItem(order.items)}&nbsp;x{getTotalQuantity(order.items)}</p>
