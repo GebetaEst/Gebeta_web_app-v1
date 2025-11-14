@@ -14,4 +14,19 @@ export default defineConfig({
       },
     },
   },
+  // ADDED Replit-friendly server + preview settings
+  server: {
+    host: '0.0.0.0',
+    port: 5000,
+    strictPort: true,
+    allowedHosts: true,
+    hmr: {
+      clientPort: 443,
+    },
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 5000,
+    strictPort: true,
+  },
 })
