@@ -25,29 +25,30 @@ const AddRestaurantsForm = () => {
   const [showManList, setShowManList] = useState([]);
 
   // --- NEW: useEffect to fetch managers on component mount ---
+  
   useEffect(() => {
     const getManagerList = async () => {
       // Don't run if there's no token
       // if (!token) return;
       try {
         const response = await fetch(
-          "https://gebeta-delivery1.onrender.com/api/v1/users",
+          "https://gebeta-delivery1.onrender.com/api/v1/users?role=Manager",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
+            param:{ role: "manager" },
           }
         );
         const data = await response.json();
-        if (response.ok) {
+        // console.log( response.ok, data.data.users);
+
           // Filter for users with role 'manager' if possible, otherwise map all phones
-          setManagerList(data.data.users.map((user)));
-          console.log(managerList)
-        } else {
-          console.error("Failed to fetch manager list:", data.message);
-        }
+        setManagerList(data.data.users.map((user) => user.phone) || []);
+        // console.log("dddddddddddddd",managerList)
+        
       } catch (error) {
         console.error("Error fetching manager list:", error);
       }
@@ -92,7 +93,19 @@ const AddRestaurantsForm = () => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
-
+    const payload ={
+      name: formData.name,
+      license: formData.license,
+      managerPhone: formData.manager, 
+      cuisineTypes: formData.cuisineTypes
+        .split(",")
+        .map((cuisine) => cuisine.trim()),
+      // deliveryRadiusMeters: parseInt(formData.deliveryRadiusMeters),
+      // openHours: formData.openHours,
+      description: formData.description,
+      isDeliveryAvailable: formData.isDeliveryAvailable,
+      // isOpenNow: formData.isOpenNow,
+    }
     try {
       const response = await fetch(
         "https://gebeta-delivery1.onrender.com/api/v1/restaurants",
@@ -103,22 +116,14 @@ const AddRestaurantsForm = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            name: formData.name,
-            license: formData.license,
-            manager: formData.manager,
-            cuisineTypes: formData.cuisineTypes
-              .split(",")
-              .map((cuisine) => cuisine.trim()),
-            // deliveryRadiusMeters: parseInt(formData.deliveryRadiusMeters),
-            openHours: formData.openHours,
-            description: formData.description,
-            isDeliveryAvailable: formData.isDeliveryAvailable,
-            isOpenNow: formData.isOpenNow,
+            ...payload
           }),
         }
       );
 
       const data = await response.json();
+      console.log(payload)
+      console.log("Response data:", data);
 
       if (response.ok) {
         setMessage("✅ Restaurant added successfully!");

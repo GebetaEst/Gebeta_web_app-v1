@@ -28,7 +28,6 @@ const navItems = [
 const AdminSidebar = () => {
   const { activeNav, setActiveNav } = useNavigation("");
   //  console.log(activeNav)
-  localStorage.setItem("activeNav", activeNav);
   
   
 

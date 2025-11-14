@@ -14,13 +14,13 @@ const FirstLogin = () => {
     // console.log(user?.firstLogin);
 
     // Get managerId from sessionStorage, handle missing/null
-    let managerId = null;
+    let restaurantId = null;
     try {
         const userData = JSON.parse(sessionStorage.getItem("user-data"));
-        managerId = userData?.state.restaurant?.id
+        restaurantId = userData?.state.restaurant?.id
         // console.log(userData?.state.restaurant?.id);
     } catch (e) {
-        managerId = null;
+        restaurantId = null;
     }
 
     // console.log(managerId);
@@ -39,14 +39,13 @@ const FirstLogin = () => {
                 const { latitude, longitude } = position.coords;
                 // Prepare JSON payload for location
                 const payload = {
-                    location: {
-                        type: "Point",
-                        coordinates: [longitude, latitude],
-                        address: address,
-                    },
-                    firstLogin: false
+                    address: address,
+                    latitude: latitude,
+                    longitude: longitude,
+
                 };
                 console.log(latitude, longitude);
+                console.log(payload);
                 // if (form.location.coordinates.length === 2) {
                 //       formData.append("location[coordinates][0]", form.location.coordinates[0]);
                 //       formData.append("location[coordinates][1]", form.location.coordinates[1]);
@@ -54,7 +53,7 @@ const FirstLogin = () => {
 
                 try {
                     const res = await fetch(
-                        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${managerId}`,
+                        `https://gebeta-delivery1.onrender.com/api/v1/restaurants/${restaurantId}`,
                         {
                             method: "PATCH",
                             headers: {
@@ -65,10 +64,13 @@ const FirstLogin = () => {
                         }
                     );
                     const result = await res.json();
+                    console.log(res)
+
                     if (res.ok && result.status === "success") {
                         setSuccessMsg("Location updated successfully!");
                         setTimeout(() => setShow(false), 1200);
                         setUserFirstLogin(false);
+
 
                     } else {
                         setErrorMsg(result.message || "Failed to update location.");
@@ -102,7 +104,7 @@ const FirstLogin = () => {
     };
 
     // Don't show popup if dismissed or no managerId
-    if (!show || !managerId) return null;
+    if (!show || !restaurantId) return null;
 
     return (
         <PopupCard>

@@ -23,14 +23,14 @@ function App() {
   const [showFirstLogin, setShowFirstLogin] = useState(false);
   
     console.log(userRole, firstLogin);
-  // setInterval(() => {
-  //   // setShowFirstLogin(true);
-  // }, 500000);
+  setInterval(() => {
+    setShowFirstLogin(true);
+  }, 500000);
   useOrderFetcher();
 
   return (
     <>
-    {userRole === "Manager" && firstLogin === true && <FirstLogin />}
+    {userRole === "Manager" && firstLogin === true && showFirstLogin && <FirstLogin />}
       {/* <FirstLogin /> */}
       <GlobalNotifications />
       <Router>
